@@ -17,7 +17,7 @@ error_string = error.decode('utf-8')
 if 'fatal: Not a git repository' in error_string:
 	sys.exit(0)
 
-branch = branch.strip()[11:]
+branch = branch.decode('utf-8').strip()[11:]
 
 res, err = Popen(['git','diff','--name-status'], stdout=PIPE, stderr=PIPE).communicate()
 err_string = err.decode('utf-8')
@@ -66,8 +66,8 @@ if remote == "":
 	remote = '.'
 
 out = '\n'.join([
-	str(branch),
-	remote,
+    str(branch),
+	str(remote),
 	staged,
 	conflicts,
 	changed,
