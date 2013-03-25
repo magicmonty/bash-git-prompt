@@ -1,4 +1,7 @@
-__GIT_PROMPT_DIR=~/.bash
+if [ "x$__GIT_PROMPT_DIR" == "x" ]
+then
+  __GIT_PROMPT_DIR=~/.bash
+fi
 
 # Colors
 # Reset
