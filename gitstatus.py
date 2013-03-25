@@ -46,27 +46,31 @@ else:
 	remote_name = Popen(['git','config','branch.%s.remote' % branch], stdout=PIPE).communicate()[0].strip()
 	if remote_name:
 		merge_name = Popen(['git','config','branch.%s.merge' % branch], stdout=PIPE).communicate()[0].strip()
-		if remote_name == '.': # local
-			remote_ref = merge_name
-		else:
-			remote_ref = 'refs/remotes/%s/%s' % (remote_name, merge_name[11:])
-		revgit = Popen(['git', 'rev-list', '--left-right', '%s...HEAD' % remote_ref],stdout=PIPE, stderr=PIPE)
-		revlist = revgit.communicate()[0]
-		if revgit.poll(): # fallback to local
-			revlist = Popen(['git', 'rev-list', '--left-right', '%s...HEAD' % merge_name],stdout=PIPE, stderr=PIPE).communicate()[0]
-		behead = revlist.splitlines()
-		ahead = len([x for x in behead if x[0]=='>'])
-		behind = len(behead) - ahead
-		if behind:
-			remote += '%s%s' % (symbols['behind'], behind)
-		if ahead:
-			remote += '%s%s' % (symbols['ahead of'], ahead)
+	else:
+		remote_name = "origin"
+		merge_name = "refs/heads/%s" % branch
+
+	if remote_name == '.': # local
+		remote_ref = merge_name
+	else:
+		remote_ref = 'refs/remotes/%s/%s' % (remote_name, merge_name[11:])
+	revgit = Popen(['git', 'rev-list', '--left-right', '%s...HEAD' % remote_ref],stdout=PIPE, stderr=PIPE)
+	revlist = revgit.communicate()[0]
+	if revgit.poll(): # fallback to local
+		revlist = Popen(['git', 'rev-list', '--left-right', '%s...HEAD' % merge_name],stdout=PIPE, stderr=PIPE).communicate()[0]
+	behead = revlist.splitlines()
+	ahead = len([x for x in behead if x[0]=='>'])
+	behind = len(behead) - ahead
+	if behind:
+		remote += '%s%s' % (symbols['behind'], behind)
+	if ahead:
+		remote += '%s%s' % (symbols['ahead of'], ahead)
 
 if remote == "":
 	remote = '.'
 
 out = '\n'.join([
-    str(branch),
+	str(branch),
 	str(remote),
 	staged,
 	conflicts,
