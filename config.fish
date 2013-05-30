@@ -1,15 +1,3 @@
-set -x TERM xterm-256color
-
-set BROWSER open
-set TERM xterm-256color
-
-set -g -x fish_greeting ''
-set -g -x EDITOR nano
-
-if status --is-interactive
-    command fortune -s | cowsay
-end
-
 if set -q $__GIT_PROMPT_DIR
   set __GIT_PROMPT_DIR ~/.bash
 end
@@ -35,7 +23,6 @@ set Magenta (set_color purple)      # Purple
 
 # Various variables you might want for your PS1 prompt instead
 set Time (date +%X)
-set PathShort (pwd|sed "s=$HOME=~=")
 
 # Default values for the appearance of the prompt. Configure at will.
 set GIT_PROMPT_PREFIX "("
@@ -51,7 +38,7 @@ set GIT_PROMPT_CLEAN "$BGreen✔"
 
 #Not applied two lines conention from https://github.com/magicmonty/bash-git-prompt/pull/5/files
 
-set PROMPT_END " \$ "
+set PROMPT_END " % "
 
 function fish_prompt
     set -e __CURRENT_GIT_STATUS
