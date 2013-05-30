@@ -50,25 +50,29 @@ set GIT_PROMPT_UNTRACKED "…"
 set GIT_PROMPT_CLEAN "$BGreen✔"
 
 #Not applied two lines conention from https://github.com/magicmonty/bash-git-prompt/pull/5/files
-set PROMPT_START "$IBlack$Time $ResetColor$Yellow$PathShort$ResetColor"
+
 set PROMPT_END " \$ "
 
 function fish_prompt
     set -e __CURRENT_GIT_STATUS
     set gitstatus "$__GIT_PROMPT_DIR/gitstatus.py"
 
+    set PROMPT_START "$IBlack$Time $ResetColor$Yellow"
+
     set _GIT_STATUS (python $gitstatus)
     set __CURRENT_GIT_STATUS $_GIT_STATUS
     set GIT_BRANCH $__CURRENT_GIT_STATUS[1]
-    set GIT_REMOTE "$__CURRENT_GIT_STATUS[2]"
-    if test "." -eq $GIT_REMOTE
-        set -e GIT_REMOTE
+
+    set __CURRENT_GIT_STATUS_PARAM_COUNT (count $__CURRENT_GIT_STATUS)
+
+    if not test "0" -eq $__CURRENT_GIT_STATUS_PARAM_COUNT
+        set GIT_REMOTE "$__CURRENT_GIT_STATUS[2]"
+        set GIT_STAGED $__CURRENT_GIT_STATUS[3]
+        set GIT_CONFLICTS $__CURRENT_GIT_STATUS[4]
+        set GIT_CHANGED $__CURRENT_GIT_STATUS[5]
+        set GIT_UNTRACKED $__CURRENT_GIT_STATUS[6]
+        set GIT_CLEAN $__CURRENT_GIT_STATUS[7]
     end
-    set GIT_STAGED $__CURRENT_GIT_STATUS[3]
-    set GIT_CONFLICTS $__CURRENT_GIT_STATUS[4]
-    set GIT_CHANGED $__CURRENT_GIT_STATUS[5]
-    set GIT_UNTRACKED $__CURRENT_GIT_STATUS[6]
-    set GIT_CLEAN $__CURRENT_GIT_STATUS[7]
 
 	if test -n "$__CURRENT_GIT_STATUS"
         set STATUS " $GIT_PROMPT_PREFIX$GIT_PROMPT_BRANCH$GIT_BRANCH$ResetColor"
@@ -100,9 +104,10 @@ function fish_prompt
         end
 
         set STATUS "$STATUS$ResetColor$GIT_PROMPT_SUFFIX"
-        set PS1 "$PROMPT_START$STATUS$PROMPT_END"
+
+        set PS1 "$PROMPT_START"(prompt_pwd)"$STATUS$PROMPT_END"
 	else
-        set PS1 "$PROMPT_START$PROMPT_END"
+        set PS1 "$PROMPT_START"(prompt_pwd)"$ResetColor$PROMPT_END"
 	end
     echo -e $PS1
 end
