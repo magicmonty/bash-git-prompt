@@ -48,13 +48,12 @@ function fish_prompt
 
     set _GIT_STATUS (python $gitstatus)
     set __CURRENT_GIT_STATUS $_GIT_STATUS
-    set GIT_BRANCH $__CURRENT_GIT_STATUS[1]
 
     set __CURRENT_GIT_STATUS_PARAM_COUNT (count $__CURRENT_GIT_STATUS)
 
     if not test "0" -eq $__CURRENT_GIT_STATUS_PARAM_COUNT
+        set GIT_BRANCH $__CURRENT_GIT_STATUS[1]
         set GIT_REMOTE "$__CURRENT_GIT_STATUS[2]"
-        echo "-$GIT_REMOTE-"
         if [ "." = "$GIT_REMOTE" ]
             set -e GIT_REMOTE
         end
