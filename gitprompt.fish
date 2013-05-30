@@ -4,25 +4,22 @@ end
 
 # Colors
 # Reset
-set ResetColor (set_color normal)   # Text Reset
+set ResetColor (set_color normal)       # Text Reset
 
 # Regular Colors
-set Red (set_color red)             # Red
-set Yellow (set_color yellow);      # Yellow
-set Blue (set_color blue)           # Blue
+set Red (set_color red)                 # Red
+set Yellow (set_color yellow);          # Yellow
+set Blue (set_color blue)               # Blue
 set WHITE (set_color white)
 
 # Bold
-set BGreen (set_color -o green)        # Green
+set BGreen (set_color -o green)         # Green
 
 # High Intensty
-set IBlack (set_color -o black)        # Black
+set IBlack (set_color -o black)         # Black
 
 # Bold High Intensty
-set Magenta (set_color -o purple)      # Purple
-
-# Various variables you might want for your PS1 prompt instead
-set Time (date +%R)
+set Magenta (set_color -o purple)       # Purple
 
 # Default values for the appearance of the prompt. Configure at will.
 set GIT_PROMPT_PREFIX "["
@@ -36,15 +33,17 @@ set GIT_PROMPT_REMOTE " "
 set GIT_PROMPT_UNTRACKED "…"
 set GIT_PROMPT_CLEAN "$BGreen✔"
 
-#Not applied two lines conention from https://github.com/magicmonty/bash-git-prompt/pull/5/files
-
-set PROMPT_END " \n$WHITE$Time$ResetColor  \$ "
-
 function fish_prompt
+
+    # Various variables you might want for your PS1 prompt instead
+    set Time (date +%R)
+    set PathShort (pwd|sed "s=$HOME=~=")
+
+    set PROMPT_START "$Yellow$PathShort$ResetColor"
+    set PROMPT_END " \n$WHITE$Time$ResetColor  \$ "
+
     set -e __CURRENT_GIT_STATUS
     set gitstatus "$__GIT_PROMPT_DIR/gitstatus.py"
-
-    set PROMPT_START "$Yellow"
 
     set _GIT_STATUS (python $gitstatus)
     set __CURRENT_GIT_STATUS $_GIT_STATUS
@@ -95,11 +94,13 @@ function fish_prompt
 
         set STATUS "$STATUS$ResetColor$GIT_PROMPT_SUFFIX"
 
-        set PS1 "$PROMPT_START"(pwd|sed "s=$HOME=~=")"$ResetColor$STATUS$PROMPT_END"
+        set PS1 "$PROMPT_START$STATUS$PROMPT_END"
 	else
-        set PS1 "$PROMPT_START"(pwd|sed "s=$HOME=~=")"$ResetColor$PROMPT_END"
+        set PS1 "$PROMPT_START$PROMPT_END"
 	end
+
     echo -e $PS1
+
 end
 
 
