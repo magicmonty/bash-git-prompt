@@ -1,5 +1,5 @@
-if set -q $__GIT_PROMPT_DIR
-  set __GIT_PROMPT_DIR ~/.bash
+if not set -q __GIT_PROMPT_DIR
+    set __GIT_PROMPT_DIR ~/.bash
 end
 
 # Colors
