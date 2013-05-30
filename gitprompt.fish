@@ -29,10 +29,10 @@ set GIT_PROMPT_PREFIX "["
 set GIT_PROMPT_SUFFIX "]"
 set GIT_PROMPT_SEPARATOR "|"
 set GIT_PROMPT_BRANCH "$Magenta"
-set GIT_PROMPT_STAGED "$Red}● "
+set GIT_PROMPT_STAGED "$Red● "
 set GIT_PROMPT_CONFLICTS "$Red✖ "
 set GIT_PROMPT_CHANGED "$Blue✚ "
-set GIT_PROMPT_REMOTE ""
+set GIT_PROMPT_REMOTE " "
 set GIT_PROMPT_UNTRACKED "…"
 set GIT_PROMPT_CLEAN "$BGreen✔"
 
@@ -53,8 +53,8 @@ function fish_prompt
 
     if not test "0" -eq $__CURRENT_GIT_STATUS_PARAM_COUNT
         set GIT_BRANCH $__CURRENT_GIT_STATUS[1]
-        set GIT_REMOTE "$GIT_PROMPT_REMOTE$__CURRENT_GIT_STATUS[2]"
-        if [ "." = "$GIT_REMOTE" ]
+        set GIT_REMOTE "$__CURRENT_GIT_STATUS[2]"
+        if contains "." "$GIT_REMOTE"
             set -e GIT_REMOTE
         end
         set GIT_STAGED $__CURRENT_GIT_STATUS[3]
@@ -67,8 +67,8 @@ function fish_prompt
 	if test -n "$__CURRENT_GIT_STATUS"
         set STATUS " $GIT_PROMPT_PREFIX$GIT_PROMPT_BRANCH$GIT_BRANCH$ResetColor"
 
-        if set -q $GIT_REMOTE
-            set STATUS "$STATUS$GIT_REMOTE$ResetColor"
+        if set -q GIT_REMOTE
+            set STATUS "$STATUS$GIT_PROMPT_REMOTE$GIT_REMOTE$ResetColor"
         end
 
         set STATUS "$STATUS$GIT_PROMPT_SEPARATOR"
@@ -95,7 +95,7 @@ function fish_prompt
 
         set STATUS "$STATUS$ResetColor$GIT_PROMPT_SUFFIX"
 
-        set PS1 "$PROMPT_START"(pwd|sed "s=$HOME=~=")"$STATUS$PROMPT_END"
+        set PS1 "$PROMPT_START"(pwd|sed "s=$HOME=~=")"$ResetColor$STATUS$PROMPT_END"
 	else
         set PS1 "$PROMPT_START"(pwd|sed "s=$HOME=~=")"$ResetColor$PROMPT_END"
 	end
