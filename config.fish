@@ -16,26 +16,26 @@ end
 
 # Colors
 # Reset
-set ResetColor (set_color normal)       # Text Reset
+set ResetColor (set_color normal)   # Text Reset
 
 # Regular Colors
-set Red (set_color red)     # Red
+set Red (set_color red)             # Red
 set Yellow (set_color yellow);      # Yellow
-set Blue (set_color blue)         # Blue
+set Blue (set_color blue)           # Blue
 set WHITE (set_color white)
 
 # Bold
-set BGreen (set_color green)       # Green
+set BGreen (set_color green)        # Green
 
 # High Intensty
-set IBlack (set_color black)       # Black
+set IBlack (set_color black)        # Black
 
 # Bold High Intensty
-set Magenta (set_color purple)     # Purple
+set Magenta (set_color purple)      # Purple
 
 # Various variables you might want for your PS1 prompt instead
 set Time (date +%X)
-set PathShort (pwd|sed "s=$HOME=~=")  #(prompt_pwd)
+set PathShort (pwd|sed "s=$HOME=~=")
 
 # Default values for the appearance of the prompt. Configure at will.
 set GIT_PROMPT_PREFIX "("
@@ -60,7 +60,7 @@ function fish_prompt
     set _GIT_STATUS (python $gitstatus)
     set __CURRENT_GIT_STATUS $_GIT_STATUS
     set GIT_BRANCH $__CURRENT_GIT_STATUS[1]
-    set GIT_REMOTE $__CURRENT_GIT_STATUS[2]
+    set GIT_REMOTE "$__CURRENT_GIT_STATUS[2]"
     if test "." -eq $GIT_REMOTE
         set -e GIT_REMOTE
     end
