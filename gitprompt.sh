@@ -1,6 +1,14 @@
-if [ "x$__GIT_PROMPT_DIR" == "x" ]
-then
-  __GIT_PROMPT_DIR=~/.bash
+#!/bin/bash
+# assume the gitstatus.py is in the same directory as this script
+# code thanks to http://stackoverflow.com/questions/59895
+if [ -z "$__GIT_PROMPT_DIR" ] ; then
+  SOURCE="${BASH_SOURCE[0]}"
+  while [ -h "$SOURCE" ] ; do
+    DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+    SOURCE="$(readlink "$SOURCE")"
+    [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+  done
+  __GIT_PROMPT_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 fi
 
 # Colors
