@@ -1,4 +1,4 @@
-# Informative git prompt for bash
+# Informative git prompt for bash and fish
 
 This prompt is a port of the "Informative git prompt for zsh" which you can find [here](https://github.com/olivierverdier/zsh-git-prompt)
 
