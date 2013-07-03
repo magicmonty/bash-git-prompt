@@ -31,7 +31,8 @@ IBlack="\[\033[0;90m\]"       # Black
 Magenta="\[\033[1;95m\]"     # Purple
 
 # Various variables you might want for your PS1 prompt instead
-Time12a="\@"
+#Time12a="\@"
+Time12a="(\$(date +%H:%M:%S))"
 PathShort="\w"
 
 # Default values for the appearance of the prompt. Configure at will.
