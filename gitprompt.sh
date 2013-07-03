@@ -50,13 +50,22 @@ function git_prompt_config()
   # local Time12a="(\$(date +%H:%M:%S))"
   # local Time12a="(\@))"
   local PathShort="\w"
-  
-  PROMPT_START="${Yellow}${PathShort}${ResetColor}"
-  PROMPT_END=" \n${White}${Time12a}${ResetColor} $ "
+
+  if [ "x${GIT_PROMPT_START}" == "x" ]; then
+    PROMPT_START="${Yellow}${PathShort}${ResetColor}"
+  else
+    PROMPT_START="${GIT_PROMPT_START}"
+  fi
+
+  if [ "x${GIT_PROMPT_END}" == "x" ]; then
+    PROMPT_END=" \n${White}${Time12a}${ResetColor} $ "
+  else
+    PROMPT_END="${GIT_PROMPT_END}"
+  fi
 
   EMPTY_PROMPT="${PROMPT_START}${PROMPT_END}"
 
-  # fetch remote revisions every other $GIT_PROMPT_FETCH_TIMEOUT (default 5) minutes 
+  # fetch remote revisions every other $GIT_PROMPT_FETCH_TIMEOUT (default 5) minutes
   GIT_PROMPT_FETCH_TIMEOUT=${1-5}
   if [ "x$__GIT_STATUS_CMD" == "x" ]
   then
@@ -91,7 +100,7 @@ function setGitPrompt() {
         PS1="${EMPTY_PROMPT}"
         return
 	fi
- 
+
 	local FETCH_HEAD="${repo}/.git/FETCH_HEAD"
 	# Fech repo if local is stale for more than $GIT_FETCH_TIMEOUT minutes
 	if [[ ! -e "${FETCH_HEAD}"  ||  -e `find ${FETCH_HEAD} -mmin +${GIT_PROMPT_FETCH_TIMEOUT}` ]]
@@ -101,7 +110,7 @@ function setGitPrompt() {
 
   local -a GitStatus
   GitStatus=($("${__GIT_STATUS_CMD}" 2>/dev/null))
-  
+
   local GIT_BRANCH=${GitStatus[0]}
   local GIT_REMOTE=${GitStatus[1]}
   if [[ "." == "$GIT_REMOTE" ]]; then
