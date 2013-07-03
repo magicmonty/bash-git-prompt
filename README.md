@@ -11,6 +11,8 @@ In particular the branch name, difference with remote branch, number of files st
 
 The prompt may look like the following: 
 
+![Example prompt](gitprompt.png)
+
 * ``(master↑3|✚1)``: on branch ``master``, ahead of remote by 3 commits, 1 file changed but not staged
 * ``(status|●2)``: on branch ``status``, 2 files staged
 * ``(master|✚7…)``: on branch ``master``, 7 files changed, some files untracked
