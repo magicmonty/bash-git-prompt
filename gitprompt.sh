@@ -1,5 +1,17 @@
 #!/bin/sh
 
+# assume the gitstatus.py is in the same directory as this script
+# code thanks to http://stackoverflow.com/questions/59895
+if [ -z "${__GIT_PROMPT_DIR}" ]; then
+  SOURCE="${BASH_SOURCE[0]}"
+  while [ -h "${SOURCE}" ]; do
+    DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
+    SOURCE="$(readlink "${SOURCE}")"
+    [[ $SOURCE != /* ]] && SOURCE="${DIR}/${SOURCE}"
+  done
+  __GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
+fi
+
 function git_prompt_config()
 {
   # Colors
@@ -34,7 +46,9 @@ function git_prompt_config()
   GIT_PROMPT_CLEAN="${BoldGreen}✔"
 
   # Various variables you might want for your PS1 prompt instead
-  local Time12a="\@"
+  local Time12a="\$(date +%H:%M)"
+  # local Time12a="(\$(date +%H:%M:%S))"
+  # local Time12a="(\@))"
   local PathShort="\w"
   
   PROMPT_START="${Yellow}${PathShort}${ResetColor}"
