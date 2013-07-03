@@ -7,6 +7,9 @@ fi
 # Reset
 ResetColor="\[\033[0m\]"       # Text Reset
 
+# fetch remote revisions every other $GIT_PROMPT_FETCH_TIMEOUT (default 5) minutes 
+GIT_PROMPT_FETCH_TIMEOUT=${1-5}
+
 # Regular Colors
 Red="\[\033[0;31m\]"          # Red
 Yellow="\[\033[0;33m\]"       # Yellow
@@ -61,6 +64,18 @@ function update_current_git_vars() {
 }
 
 function setGitPrompt() {
+	repo=`git rev-parse --show-toplevel 2> /dev/null`
+	if [[ ! -e $repo ]]; then
+        PS1="$PROMPT_START$PROMPT_END"
+        return
+	fi
+ 
+	FETCH_HEAD=$repo/.git/FETCH_HEAD
+	# Fech repo if local is stale for more than $GIT_FETCH_TIMEOUT minutes
+	if [[ ! -e $FETCH_HEAD  ||  -e `find $FETCH_HEAD -mmin +$GIT_PROMPT_FETCH_TIMEOUT` ]]
+	then
+        git fetch --quiet
+	fi
 	update_current_git_vars
 	set_virtualenv
 
