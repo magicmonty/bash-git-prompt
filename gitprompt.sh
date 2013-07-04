@@ -159,4 +159,4 @@ function setGitPrompt() {
   fi
 }
 
-PROMPT_COMMAND=setGitPrompt
+PROMPT_COMMAND=$PROMPT_COMMAND;setGitPrompt
