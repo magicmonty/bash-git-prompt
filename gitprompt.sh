@@ -49,7 +49,9 @@ GIT_PROMPT_CLEAN="${BGreen}✔"
 
 PROMPT_START="$Yellow$PathShort$ResetColor"
 PROMPT_END=" \n$WHITE$Time12a$ResetColor $ "
-
+if [ -z "$OLDPROMPT" ] ; then
+  export OLDPROMPT=$PS1
+fi
 
 function update_current_git_vars() {
     unset __CURRENT_GIT_STATUS
@@ -101,7 +103,8 @@ function setGitPrompt() {
 
 	  PS1="$PYTHON_VIRTUALENV$PROMPT_START$STATUS$PROMPT_END"
 	else
-	  PS1="$PROMPT_START$PROMPT_END"
+	  #PS1="$PROMPT_START$PROMPT_END"
+          PS1=$OLDPROMPT
 	fi
 }
 
