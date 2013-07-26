@@ -105,7 +105,7 @@ function setGitPrompt() {
   # Fech repo if local is stale for more than $GIT_FETCH_TIMEOUT minutes
   if [[ ! -e "${FETCH_HEAD}"  ||  -e `find ${FETCH_HEAD} -mmin +${GIT_PROMPT_FETCH_TIMEOUT}` ]]
   then
-    git fetch --quiet
+    [[ -n $(git remote show) ]] && git fetch --quiet
   fi
 
   local -a GitStatus
