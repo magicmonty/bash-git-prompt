@@ -95,18 +95,18 @@ function setGitPrompt() {
 
   git_prompt_config
 
-	local repo=`git rev-parse --show-toplevel 2> /dev/null`
-	if [[ ! -e "${repo}" ]]; then
-        PS1="${EMPTY_PROMPT}"
-        return
-	fi
+  local repo=`git rev-parse --show-toplevel 2> /dev/null`
+  if [[ ! -e "${repo}" ]]; then
+    PS1="${EMPTY_PROMPT}"
+    return
+  fi
 
-	local FETCH_HEAD="${repo}/.git/FETCH_HEAD"
-	# Fech repo if local is stale for more than $GIT_FETCH_TIMEOUT minutes
-	if [[ ! -e "${FETCH_HEAD}"  ||  -e `find ${FETCH_HEAD} -mmin +${GIT_PROMPT_FETCH_TIMEOUT}` ]]
-	then
-        git fetch --quiet
-	fi
+  local FETCH_HEAD="${repo}/.git/FETCH_HEAD"
+  # Fech repo if local is stale for more than $GIT_FETCH_TIMEOUT minutes
+  if [[ ! -e "${FETCH_HEAD}"  ||  -e `find ${FETCH_HEAD} -mmin +${GIT_PROMPT_FETCH_TIMEOUT}` ]]
+  then
+    git fetch --quiet
+  fi
 
   local -a GitStatus
   GitStatus=($("${__GIT_STATUS_CMD}" 2>/dev/null))
@@ -137,15 +137,19 @@ function setGitPrompt() {
     if [ "${GIT_CONFLICTS}" -ne "0" ]; then
       STATUS="${STATUS}${GIT_PROMPT_CONFLICTS}${GIT_CONFLICTS}${ResetColor}"
     fi
+    
     if [ "${GIT_CHANGED}" -ne "0" ]; then
       STATUS="${STATUS}${GIT_PROMPT_CHANGED}${GIT_CHANGED}${ResetColor}"
     fi
+    
     if [ "${GIT_UNTRACKED}" -ne "0" ]; then
       STATUS="${STATUS}${GIT_PROMPT_UNTRACKED}${GIT_UNTRACKED}${ResetColor}"
     fi
+    
     if [ "${GIT_CLEAN}" -eq "1" ]; then
       STATUS="${STATUS}${GIT_PROMPT_CLEAN}"
     fi
+    
     STATUS="${STATUS}${ResetColor}${GIT_PROMPT_SUFFIX}"
 
 
