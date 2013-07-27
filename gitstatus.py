@@ -40,8 +40,13 @@ else:
 
 remote = ''
 
+tag, tag_error = Popen(['git', 'describe', '--exact-match'], stdout=PIPE, stderr=PIPE).communicate()
+
 if not branch: # not on any branch
-	branch = symbols['prehash']+ Popen(['git','rev-parse','--short','HEAD'], stdout=PIPE).communicate()[0][:-1]
+	if tag: # if we are on a tag, print the tag's name
+		branch = tag
+	else:
+		branch = symbols['prehash']+ Popen(['git','rev-parse','--short','HEAD'], stdout=PIPE).communicate()[0][:-1]
 else:
 	remote_name = Popen(['git','config','branch.%s.remote' % branch], stdout=PIPE).communicate()[0].strip()
 	if remote_name:
