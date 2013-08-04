@@ -1,16 +1,19 @@
 #!/bin/sh
 
-# assume the gitstatus.py is in the same directory as this script
-# code thanks to http://stackoverflow.com/questions/59895
-if [ -z "${__GIT_PROMPT_DIR}" ]; then
-  SOURCE="${BASH_SOURCE[0]}"
-  while [ -h "${SOURCE}" ]; do
-    DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
-    SOURCE="$(readlink "${SOURCE}")"
-    [[ $SOURCE != /* ]] && SOURCE="${DIR}/${SOURCE}"
-  done
-  __GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
+function git_prompt_dir()
+{
+  # assume the gitstatus.py is in the same directory as this script
+  # code thanks to http://stackoverflow.com/questions/59895
+  if [ -z "${__GIT_PROMPT_DIR}" ]; then
+    local SOURCE="${BASH_SOURCE[0]}"
+    while [ -h "${SOURCE}" ]; do
+      local DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
+      SOURCE="$(readlink "${SOURCE}")"
+      [[ $SOURCE != /* ]] && SOURCE="${DIR}/${SOURCE}"
+    done
+    __GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 fi
+}
 
 function git_prompt_config()
 {
@@ -31,7 +34,7 @@ function git_prompt_config()
   local Yellow="\[\033[0;33m\]"
   local White='\[\033[37m\]'
   local Red="\[\033[0;31m\]"
-  Blue="\[\033[0;34m\]"
+  local Blue="\[\033[0;34m\]"
 
   # Default values for the appearance of the prompt. Configure at will.
   GIT_PROMPT_PREFIX="["
@@ -69,7 +72,8 @@ function git_prompt_config()
   GIT_PROMPT_FETCH_TIMEOUT=${1-5}
   if [ "x$__GIT_STATUS_CMD" == "x" ]
   then
-    __GIT_STATUS_CMD="${__GIT_PROMPT_DIR:-${HOME}/.bash}/gitstatus.py"
+    git_prompt_dir
+    __GIT_STATUS_CMD="${__GIT_PROMPT_DIR}/gitstatus.py"
   fi
 }
 
