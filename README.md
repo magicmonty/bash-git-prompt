@@ -1,4 +1,4 @@
-# Informative git prompt for bash
+# Informative git prompt for bash and fish
 
 This prompt is a port of the "Informative git prompt for zsh" which you can find [here](https://github.com/olivierverdier/zsh-git-prompt)
 
@@ -10,6 +10,8 @@ In particular the branch name, difference with remote branch, number of files st
 ## Examples
 
 The prompt may look like the following: 
+
+![Example prompt](gitprompt.png)
 
 * ``(master↑3|✚1)``: on branch ``master``, ahead of remote by 3 commits, 1 file changed but not staged
 * ``(status|●2)``: on branch ``status``, 2 files staged
