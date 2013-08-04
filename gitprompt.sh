@@ -98,6 +98,8 @@ function setGitPrompt() {
   local __GIT_STATUS_CMD
 
   git_prompt_config
+  
+  EMPTY_PROMPT=${OLD_GITPROMPT}
 
   local repo=`git rev-parse --show-toplevel 2> /dev/null`
   if [[ ! -e "${repo}" ]]; then
@@ -166,6 +168,10 @@ function setGitPrompt() {
     PS1="${EMPTY_PROMPT}"
   fi
 }
+
+if [ -z "$OLD_GITPROMPT" ]; then
+  OLD_GITPROMPT=$PS1
+fi
 
 if [ -z "$PROMPT_COMMAND" ]; then
   PROMPT_COMMAND=setGitPrompt
