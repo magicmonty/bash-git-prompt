@@ -176,6 +176,8 @@ fi
 if [ -z "$PROMPT_COMMAND" ]; then
   PROMPT_COMMAND=setGitPrompt
 else
+  PROMPT_COMMAND=${PROMPT_COMMAND%% }; # remove trailing spaces
+  PROMPT_COMMAND=${PROMPT_COMMAND%\;}; # remove trailing semi-colon
   PROMPT_COMMAND="$PROMPT_COMMAND;setGitPrompt"
 fi
 
