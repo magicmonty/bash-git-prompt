@@ -1,5 +1,12 @@
 #!/bin/sh
 
+function async_run()
+{
+	{
+		$1 &> /dev/null
+	}&
+}
+
 function git_prompt_dir()
 {
   # assume the gitstatus.py is in the same directory as this script
@@ -79,6 +86,37 @@ function git_prompt_config()
 
 function setGitPrompt() {
 
+  local EMPTY_PROMPT
+  local __GIT_STATUS_CMD
+
+  git_prompt_config
+
+  local repo=`git rev-parse --show-toplevel 2> /dev/null`
+  if [[ ! -e "${repo}" ]]; then
+    PS1="${EMPTY_PROMPT}"
+    return
+  fi
+  
+  checkUpstream
+  updatePrompt
+}
+
+function checkUpstream() {
+  local GIT_PROMPT_FETCH_TIMEOUT
+  git_prompt_config
+
+  local FETCH_HEAD="${repo}/.git/FETCH_HEAD"
+  # Fech repo if local is stale for more than $GIT_FETCH_TIMEOUT minutes
+  if [[ ! -e "${FETCH_HEAD}"  ||  -e `find "${FETCH_HEAD}" -mmin +${GIT_PROMPT_FETCH_TIMEOUT}` ]]
+  then
+    if [[ -n $(git remote show) ]]; then
+  	    async_run "git fetch --quiet"
+	    disown
+    fi
+  fi
+}
+
+function updatePrompt() {
   local GIT_PROMPT_PREFIX
   local GIT_PROMPT_SUFFIX
   local GIT_PROMPT_SEPARATOR
@@ -98,19 +136,6 @@ function setGitPrompt() {
   local __GIT_STATUS_CMD
 
   git_prompt_config
-
-  local repo=`git rev-parse --show-toplevel 2> /dev/null`
-  if [[ ! -e "${repo}" ]]; then
-    PS1="${EMPTY_PROMPT}"
-    return
-  fi
-
-  local FETCH_HEAD="${repo}/.git/FETCH_HEAD"
-  # Fech repo if local is stale for more than $GIT_FETCH_TIMEOUT minutes
-  if [[ ! -e "${FETCH_HEAD}"  ||  -e `find "${FETCH_HEAD}" -mmin +${GIT_PROMPT_FETCH_TIMEOUT}` ]]
-  then
-    [[ -n $(git remote show) ]] && git fetch --quiet
-  fi
 
   local -a GitStatus
   GitStatus=($("${__GIT_STATUS_CMD}" 2>/dev/null))
