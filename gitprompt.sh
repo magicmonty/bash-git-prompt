@@ -2,9 +2,9 @@
 
 function async_run()
 {
-	{
-		$1 &> /dev/null
-	}&
+  {
+    $1 &> /dev/null
+  }&
 }
 
 function git_prompt_dir()
@@ -96,7 +96,7 @@ function setGitPrompt() {
     PS1="${EMPTY_PROMPT}"
     return
   fi
-  
+
   checkUpstream
   updatePrompt
 }
@@ -110,8 +110,8 @@ function checkUpstream() {
   if [[ ! -e "${FETCH_HEAD}"  ||  -e `find "${FETCH_HEAD}" -mmin +${GIT_PROMPT_FETCH_TIMEOUT}` ]]
   then
     if [[ -n $(git remote show) ]]; then
-  	    async_run "git fetch --quiet"
-	    disown
+      async_run "git fetch --quiet"
+      disown
     fi
   fi
 }
