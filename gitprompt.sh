@@ -73,7 +73,7 @@ function git_prompt_config()
     PROMPT_END="${GIT_PROMPT_END}"
   fi
 
-  EMPTY_PROMPT="${PROMPT_START}${PROMPT_END}"
+  EMPTY_PROMPT="${PROMPT_START}$($prompt_callback)${PROMPT_END}"
 
   # fetch remote revisions every other $GIT_PROMPT_FETCH_TIMEOUT (default 5) minutes
   GIT_PROMPT_FETCH_TIMEOUT=${1-5}
@@ -182,7 +182,7 @@ function updatePrompt() {
     STATUS="${STATUS}${ResetColor}${GIT_PROMPT_SUFFIX}"
 
 
-    PS1="${PROMPT_START}${STATUS}${PROMPT_END}"
+    PS1="${PROMPT_START}$($prompt_callback)${STATUS}${PROMPT_END}"
     if [[ -n "${VIRTUAL_ENV}" ]]; then
       PS1="${Blue}($(basename "${VIRTUAL_ENV}"))${ResetColor} ${PS1}"
     fi
@@ -191,6 +191,16 @@ function updatePrompt() {
     PS1="${EMPTY_PROMPT}"
   fi
 }
+
+function prompt_callback_default {
+    return
+}
+
+if [ "`type -t prompt_callback`" = 'function' ]; then
+    prompt_callback="prompt_callback"
+else
+    prompt_callback="prompt_callback_default"
+fi
 
 if [ -z "$OLD_GITPROMPT" ]; then
   OLD_GITPROMPT=$PS1
@@ -203,4 +213,3 @@ else
   PROMPT_COMMAND=${PROMPT_COMMAND%\;}; # remove trailing semi-colon
   PROMPT_COMMAND="$PROMPT_COMMAND;setGitPrompt"
 fi
-
