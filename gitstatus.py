@@ -1,8 +1,38 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from __future__ import print_function
+"""This module defines a Print function to use with python 2.x or 3.x., so we can use the prompt with older versions of Python too
 
+It's interface is that of python 3.0's print. See
+http://docs.python.org/3.0/library/functions.html?highlight=print#print
+
+Shamelessly ripped from http://www.daniweb.com/software-development/python/code/217214/a-print-function-for-different-versions-of-python
+"""
+
+__all__ = ["Print"]
+import sys
+try:
+  Print = eval("print") # python 3.0 case
+except SyntaxError:
+  try:
+    D = dict()
+    exec("from __future__ import print_function\np=print", D)
+    Print = D["p"] # 2.6 case
+    del D
+  except SyntaxError:
+    del D
+    def Print(*args, **kwd): # 2.4, 2.5, define our own Print function
+      fout = kwd.get("file", sys.stdout)
+      w = fout.write
+      if args:
+        w(str(args[0]))
+        sep = kwd.get("sep", " ")
+        for a in args[1:]:
+          w(sep)
+          w(str(a))
+      w(kwd.get("end", "\n"))
+      
+      
 # change those symbols to whatever you prefer
 symbols = {'ahead of': '↑·', 'behind': '↓·', 'prehash':':'}
 
@@ -82,4 +112,4 @@ out = '\n'.join([
 	changed,
 	untracked,
 	clean])
-print(out)
+Print(out)
