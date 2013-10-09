@@ -43,11 +43,25 @@ The symbols are as follows:
 
 ## Install
 
-1. Clone this repository to your homedir e.g. ``git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt``
-1. configure your prompt and source the file ``gitprompt.sh`` from your ``~/.bashrc`` config file
-  * you can use ``GIT_PROMPT_START`` and ``GIT_PROMPT_END`` to tweak your prompt
-  * If you want to tweak the colors, currently you have to tweak it in the ``gitprompt.sh`` 
-1. Go in a git repository and test it!
+1. Clone this repository to your homedir
+   e.g. ``git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt``
+2. Source the file ``gitprompt.sh`` from your ``~/.bashrc`` config file
+3. Go in a git repository and test it!
+
+## Configuration
+
+1. You can use ``GIT_PROMPT_START`` and ``GIT_PROMPT_END`` to tweak your prompt
+2. If you want to tweak the colors,
+   currently you have to tweak it in the ``gitprompt.sh``
+3. You can define ``prompt_callback`` function to tweak your prompt dynamicly
+
+```sh
+function prompt_callback {
+    if [ `jobs | wc -l` -ne 0 ]; then
+        echo -n " jobs:\j"
+    fi
+}
+```
 
 **Enjoy!**
 
