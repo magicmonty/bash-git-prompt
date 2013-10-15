@@ -51,8 +51,10 @@ branch = branch.decode('utf-8').strip()[11:]
 
 res, err = Popen(['git','diff','--name-status'], stdout=PIPE, stderr=PIPE).communicate()
 err_string = err.decode('utf-8')
+
 if 'fatal' in err_string:
 	sys.exit(0)
+
 changed_files = [namestat[0] for namestat in res.splitlines()]
 staged_files = [namestat[0] for namestat in Popen(['git','diff', '--staged','--name-status'], stdout=PIPE).communicate()[0].splitlines()]
 nb_changed = len(changed_files) - changed_files.count('U')
@@ -61,7 +63,9 @@ nb_staged = len(staged_files) - nb_U
 staged = str(nb_staged)
 conflicts = str(nb_U)
 changed = str(nb_changed)
-nb_untracked = len(Popen(['git','ls-files','--others','--exclude-standard'],stdout=PIPE).communicate()[0].splitlines())
+status_lines = Popen(['git','status','-s','-uall'],stdout=PIPE).communicate()[0].splitlines()
+untracked_lines = [a for a in status_lines if a.startswith("??")]
+nb_untracked = len(untracked_lines)
 untracked = str(nb_untracked)
 if not nb_changed and not nb_staged and not nb_U and not nb_untracked:
 	clean = '1'
