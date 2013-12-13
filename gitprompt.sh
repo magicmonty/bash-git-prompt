@@ -111,7 +111,7 @@ function checkUpstream() {
   then
     if [[ -n $(git remote show) ]]; then
       async_run "git fetch --quiet"
-      disown
+      disown -h
     fi
   fi
 }
