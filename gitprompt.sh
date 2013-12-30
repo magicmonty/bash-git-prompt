@@ -53,6 +53,7 @@ function git_prompt_config()
   GIT_PROMPT_CHANGED="${Blue}✚ "
   GIT_PROMPT_REMOTE=" "
   GIT_PROMPT_UNTRACKED="…"
+  GIT_PROMPT_STASHED="⚑ "
   GIT_PROMPT_CLEAN="${BoldGreen}✔"
 
   # Various variables you might want for your PS1 prompt instead
@@ -128,6 +129,7 @@ function updatePrompt() {
   local GIT_PROMPT_CHANGED
   local GIT_PROMPT_REMOTE
   local GIT_PROMPT_UNTRACKED
+  local GIT_PROMPT_STASHED
   local GIT_PROMPT_CLEAN
   local PROMPT_START
   local PROMPT_END
@@ -151,7 +153,8 @@ function updatePrompt() {
   local GIT_CONFLICTS=${GitStatus[3]}
   local GIT_CHANGED=${GitStatus[4]}
   local GIT_UNTRACKED=${GitStatus[5]}
-  local GIT_CLEAN=${GitStatus[6]}
+  local GIT_STASHED=${GitStatus[6]}
+  local GIT_CLEAN=${GitStatus[7]}
 
   if [[ -n "${GitStatus}" ]]; then
     local STATUS=" ${GIT_PROMPT_PREFIX}${GIT_PROMPT_BRANCH}${GIT_BRANCH}${ResetColor}"
@@ -175,6 +178,10 @@ function updatePrompt() {
 
     if [ "${GIT_UNTRACKED}" -ne "0" ]; then
       STATUS="${STATUS}${GIT_PROMPT_UNTRACKED}${GIT_UNTRACKED}${ResetColor}"
+    fi
+
+    if [ "${GIT_STASHED}" -ne "0" ]; then
+      STATUS="${STATUS}${GIT_PROMPT_STASHED}${GIT_STASHED}${ResetColor}"
     fi
 
     if [ "${GIT_CLEAN}" -eq "1" ]; then
