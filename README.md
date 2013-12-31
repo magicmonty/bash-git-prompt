@@ -17,6 +17,7 @@ The prompt may look like the following:
 * ``(status|●2)``: on branch ``status``, 2 files staged
 * ``(master|✚7…)``: on branch ``master``, 7 files changed, some files untracked
 * ``(master|✖2✚3)``: on branch ``master``, 2 conflicts, 3 files changed
+* ``(master|⚑2)``: on branch ``master``, 2 stash entries
 * ``(experimental↓2↑3|✔)``: on branch ``experimental``; your branch has diverged by 3 commits, remote by 2 commits; the repository is otherwise clean
 * ``(:70c2952|✔)``: not on any branch; parent commit has hash ``70c2952``; the repository is otherwise clean
 
@@ -34,6 +35,7 @@ The symbols are as follows:
   - ``✖n``: there are ``n`` unmerged files
   - ``✚n``: there are ``n`` changed but *unstaged* files
   - ``…n``: there are ``n`` untracked files
+  - ``⚑n``: there are ``n`` stash entries
 - Branch Tracking Symbols
   - ``↑n``: ahead of remote by ``n`` commits
   - ``↓n``: behind remote by ``n`` commits

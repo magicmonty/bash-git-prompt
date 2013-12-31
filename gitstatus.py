@@ -31,8 +31,8 @@ except SyntaxError:
           w(sep)
           w(str(a))
       w(kwd.get("end", "\n"))
-      
-      
+
+
 # change those symbols to whatever you prefer
 symbols = {'ahead of': '↑·', 'behind': '↓·', 'prehash':':'}
 
@@ -67,7 +67,11 @@ status_lines = Popen(['git','status','-s','-uall'],stdout=PIPE).communicate()[0]
 untracked_lines = [a for a in status_lines if a.startswith("??")]
 nb_untracked = len(untracked_lines)
 untracked = str(nb_untracked)
-if not nb_changed and not nb_staged and not nb_U and not nb_untracked:
+stashes = Popen(['git','stash','list'],stdout=PIPE).communicate()[0].splitlines()
+nb_stashed = len(stashes)
+stashed = str(nb_stashed)
+
+if not nb_changed and not nb_staged and not nb_U and not nb_untracked and not nb_stashed:
 	clean = '1'
 else:
 	clean = '0'
@@ -115,5 +119,6 @@ out = '\n'.join([
 	conflicts,
 	changed,
 	untracked,
+	stashed,
 	clean])
 Print(out)
