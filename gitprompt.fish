@@ -1,5 +1,5 @@
 if not set -q __GIT_PROMPT_DIR
-    set __GIT_PROMPT_DIR ~/.bash
+    set __GIT_PROMPT_DIR ~/.gitprompt
 end
 
 # Colors
@@ -31,6 +31,7 @@ set GIT_PROMPT_CONFLICTS "$Red✖ "
 set GIT_PROMPT_CHANGED "$Blue✚ "
 set GIT_PROMPT_REMOTE " "
 set GIT_PROMPT_UNTRACKED "…"
+set GIT_PROMPT_STASHED "⚑ "
 set GIT_PROMPT_CLEAN "$BGreen✔"
 
 function fish_prompt
@@ -60,10 +61,11 @@ function fish_prompt
         set GIT_CONFLICTS $__CURRENT_GIT_STATUS[4]
         set GIT_CHANGED $__CURRENT_GIT_STATUS[5]
         set GIT_UNTRACKED $__CURRENT_GIT_STATUS[6]
-        set GIT_CLEAN $__CURRENT_GIT_STATUS[7]
+        set GIT_STASHED $__CURRENT_GIT_STATUS[7]
+        set GIT_CLEAN $__CURRENT_GIT_STATUS[8]
     end
 
-	if test -n "$__CURRENT_GIT_STATUS"
+    if test -n "$__CURRENT_GIT_STATUS"
         set STATUS " $GIT_PROMPT_PREFIX$GIT_PROMPT_BRANCH$GIT_BRANCH$ResetColor"
 
         if set -q GIT_REMOTE
@@ -87,6 +89,10 @@ function fish_prompt
         if [ "$GIT_UNTRACKED" != "0" ]
             set STATUS "$STATUS$GIT_PROMPT_UNTRACKED$GIT_UNTRACKED$ResetColor"
         end
+        
+        if [ "$GIT_STASHED" != "0" ]
+            set STATUS "$STATUS$GIT_PROMPT_STASHED$GIT_STASHED$ResetColor"
+        end
 
         if [ "$GIT_CLEAN" = "1" ]
             set STATUS "$STATUS$GIT_PROMPT_CLEAN"
@@ -95,9 +101,9 @@ function fish_prompt
         set STATUS "$STATUS$ResetColor$GIT_PROMPT_SUFFIX"
 
         set PS1 "$PROMPT_START$STATUS$PROMPT_END"
-	else
+    else
         set PS1 "$PROMPT_START$PROMPT_END"
-	end
+    end
 
     echo -e $PS1
 
