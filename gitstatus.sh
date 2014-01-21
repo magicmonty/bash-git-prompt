@@ -1,5 +1,9 @@
 #/bin/bash
 # -*- coding: UTF-8 -*-
+# gitstatus.sh -- produce the current git repo status on STDOUT
+# Functionally equivalent to 'gitstatus.py', but written in bash (not python).
+#
+# Alan K. Stebbens <aks@stebbens.org> [http://github.com/aks]
 
 # change those symbols to whatever you prefer
 declare -a symbols
