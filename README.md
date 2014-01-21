@@ -56,6 +56,8 @@ The symbols are as follows:
 2. If you want to tweak the colors,
    currently you have to tweak it in the ``gitprompt.sh``
 3. You can define ``prompt_callback`` function to tweak your prompt dynamicly
+4. The current git repo information is obtained by the script `gitstatus.sh` or
+   `gitstatus.py`.  Both scripts do the same thing.
 
 ```sh
 function prompt_callback {
