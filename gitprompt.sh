@@ -81,7 +81,17 @@ function git_prompt_config()
   if [ "x$__GIT_STATUS_CMD" == "x" ]
   then
     git_prompt_dir
-    __GIT_STATUS_CMD="${__GIT_PROMPT_DIR}/gitstatus.py"
+    local sfx file
+    # look first for a '.sh' version, then use the python version
+    for sfx in sh py ; do
+      file="${__GIT_PROMPT_DIR}/gitstatus.$sfx"
+      if [[ -x "$file" ]]; then
+        __GIT_STATUS_CMD="$file"
+        break
+      fi
+    done
+    # The old way
+    #__GIT_STATUS_CMD="${__GIT_PROMPT_DIR}/gitstatus.py"
   fi
 }
 
