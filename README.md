@@ -55,11 +55,12 @@ The symbols are as follows:
 ## Configuration
 
 1. You can use ``GIT_PROMPT_START`` and ``GIT_PROMPT_END`` to tweak your prompt
-2. If you want to tweak the colors,
-   currently you have to tweak it in the ``gitprompt.sh``
+2. If you want to tweak the colors, currently you have to tweak it in the
+   ``gitprompt.sh``.  See the definitions of ``GIT_PROMPT_xxx1``, which include
+   various colors names.
 3. The current git repo information is obtained by the script `gitstatus.sh` or
-   `gitstatus.py`.  Both scripts do the same thing, but the bash script is a tad
-   bit more quick, and is used by default.
+   `gitstatus.py`.  Both scripts do the same thing, but the bash script is a
+   tad bit more quick, and is used by default.
 4. You can define ``prompt_callback`` function to tweak your prompt dynamicaly
 
 ```sh
