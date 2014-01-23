@@ -7,6 +7,8 @@ In particular the branch name, difference with remote branch, number of files st
 
 (an original idea from this [blog post][]).
 
+`gitstatus.sh` added by [AKS](http://github.com/aks).
+
 ## Examples
 
 The prompt may look like the following: 
@@ -53,9 +55,13 @@ The symbols are as follows:
 ## Configuration
 
 1. You can use ``GIT_PROMPT_START`` and ``GIT_PROMPT_END`` to tweak your prompt
-2. If you want to tweak the colors,
-   currently you have to tweak it in the ``gitprompt.sh``
-3. You can define ``prompt_callback`` function to tweak your prompt dynamicly
+2. If you want to tweak the colors, currently you have to tweak it in the
+   ``gitprompt.sh``.  See the definitions of ``GIT_PROMPT_xxx1``, which include
+   various colors names.
+3. The current git repo information is obtained by the script `gitstatus.sh` or
+   `gitstatus.py`.  Both scripts do the same thing, but the bash script is a
+   tad bit more quick, and is used by default.
+4. You can define ``prompt_callback`` function to tweak your prompt dynamicaly
 
 ```sh
 function prompt_callback {
