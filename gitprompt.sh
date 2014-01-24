@@ -60,7 +60,7 @@ function git_prompt_config()
     done
   fi
   # if the envar is defined, source the file for custom colors
-  if [[ -n "$__GIT_PROMPT_COLORS_FILE" ]]; then
+  if [[ -n "$__GIT_PROMPT_COLORS_FILE" && -f "$__GIT_PROMPT_COLORS_FILE" ]]; then
     source "$__GIT_PROMPT_COLORS_FILE"
   else
     # Default values for the appearance of the prompt.  Do not change these
