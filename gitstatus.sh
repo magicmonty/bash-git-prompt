@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 # -*- coding: UTF-8 -*-
 # gitstatus.sh -- produce the current git repo status on STDOUT
 # Functionally equivalent to 'gitstatus.py', but written in bash (not python).

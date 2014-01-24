@@ -44,18 +44,40 @@ function git_prompt_config()
   local Blue="\[\033[0;34m\]"
   local Cyan="\[\033[0;36m\]"
 
-  # Default values for the appearance of the prompt. Configure at will.
-  GIT_PROMPT_PREFIX="["
-  GIT_PROMPT_SUFFIX="]"
-  GIT_PROMPT_SEPARATOR="|"
-  GIT_PROMPT_BRANCH="${Magenta}"
-  GIT_PROMPT_STAGED="${Red}● "
-  GIT_PROMPT_CONFLICTS="${Red}✖ "
-  GIT_PROMPT_CHANGED="${Blue}✚ "
-  GIT_PROMPT_REMOTE=" "
-  GIT_PROMPT_UNTRACKED="${Cyan}…"
-  GIT_PROMPT_STASHED="${BoldBlue}⚑ "
-  GIT_PROMPT_CLEAN="${BoldGreen}✔"
+  # source the user's ~/.git-prompt-colors.sh file, or the one that should be
+  # sitting in the same directory as this script
+
+  if [[ -z "$__GIT_PROMPT_COLORS_FILE" ]]; then
+    local pfx file dir
+    for dir in "$HOME" "$__GIT_PROMPT_DIR" ; do
+      for pfx in '.' '' ; do
+        file="$dir/${pfx}git-prompt-colors.sh"
+        if [[ -f "$file" ]]; then
+          __GIT_PROMPT_COLORS_FILE="$file"
+          break 2
+        fi
+      done
+    done
+  fi
+  # if the envar is defined, source the file for custom colors
+  if [[ -n "$__GIT_PROMPT_COLORS_FILE" && -f "$__GIT_PROMPT_COLORS_FILE" ]]; then
+    source "$__GIT_PROMPT_COLORS_FILE"
+  else
+    # Default values for the appearance of the prompt.  Do not change these
+    # below.  Instead, copy these to `~/.git-prompt-colors.sh` and change them
+    # there.
+    GIT_PROMPT_PREFIX="["
+    GIT_PROMPT_SUFFIX="]"
+    GIT_PROMPT_SEPARATOR="|"
+    GIT_PROMPT_BRANCH="${Magenta}"
+    GIT_PROMPT_STAGED="${Red}●"
+    GIT_PROMPT_CONFLICTS="${Red}✖"
+    GIT_PROMPT_CHANGED="${Blue}✚"
+    GIT_PROMPT_REMOTE=" "
+    GIT_PROMPT_UNTRACKED="${Cyan}…"
+    GIT_PROMPT_STASHED="${BoldBlue}⚑"
+    GIT_PROMPT_CLEAN="${BoldGreen}✔"
+  fi
 
   # Various variables you might want for your PS1 prompt instead
   local Time12a="\$(date +%H:%M)"
@@ -91,8 +113,6 @@ function git_prompt_config()
         break
       fi
     done
-    # The old way
-    #__GIT_STATUS_CMD="${__GIT_PROMPT_DIR}/gitstatus.py"
   fi
 }
 

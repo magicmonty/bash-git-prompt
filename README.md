@@ -1,9 +1,11 @@
 # Informative git prompt for bash and fish
 
-This prompt is a port of the "Informative git prompt for zsh" which you can find [here](https://github.com/olivierverdier/zsh-git-prompt)
+This prompt is a port of the "Informative git prompt for zsh" which you can
+find [here](https://github.com/olivierverdier/zsh-git-prompt)
 
 A ``bash`` prompt that displays information about the current git repository.
-In particular the branch name, difference with remote branch, number of files staged, changed, etc.
+In particular the branch name, difference with remote branch, number of files
+staged, changed, etc.
 
 (an original idea from this [blog post][]).
 
@@ -55,13 +57,19 @@ The symbols are as follows:
 ## Configuration
 
 1. You can use ``GIT_PROMPT_START`` and ``GIT_PROMPT_END`` to tweak your prompt
-2. If you want to tweak the colors, currently you have to tweak it in the
-   ``gitprompt.sh``.  See the definitions of ``GIT_PROMPT_xxx1``, which include
-   various colors names.
+
+2. The default colors are defined within ``gitprompt.sh``, but may be
+   overridden by copying ``git-prompt-colors.sh`` to your home directory at
+   ``~/.git-prompt-colors.sh``.  This file may also be found in the same
+   directory as ``gitprompt.sh``, but without the leading ``.``.
+
 3. The current git repo information is obtained by the script `gitstatus.sh` or
    `gitstatus.py`.  Both scripts do the same thing, but the bash script is a
-   tad bit more quick, and is used by default.
-4. You can define ``prompt_callback`` function to tweak your prompt dynamicaly
+   tad more quick, and is used by default.  If you prefer the python script
+   (possibly because you have enhanced it), simply delete or change the name of
+   ``gitstatus.sh``.
+
+4. You can define ``prompt_callback`` function to tweak your prompt dynamically.
 
 ```sh
 function prompt_callback {
@@ -70,6 +78,9 @@ function prompt_callback {
     fi
 }
 ```
+
+5.  You can get help on the git prompt with the function ``git_prompt_help``.
+    Examples are available with ``git_prompt_examples``.
 
 **Enjoy!**
 
