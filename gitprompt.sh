@@ -253,3 +253,6 @@ else
   PROMPT_COMMAND=${PROMPT_COMMAND%\;}; # remove trailing semi-colon
   PROMPT_COMMAND="$PROMPT_COMMAND;setGitPrompt"
 fi
+
+git_prompt_dir
+source $__GIT_PROMPT_DIR/git-prompt-help.sh

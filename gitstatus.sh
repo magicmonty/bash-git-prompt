@@ -6,10 +6,9 @@
 # Alan K. Stebbens <aks@stebbens.org> [http://github.com/aks]
 
 # change those symbols to whatever you prefer
-declare -a symbols
-symbols['ahead']='↑·'
-symbols['behind']='↓·'
-symbols['prehash']=':'
+symbols_ahead='↑·'
+symbols_behind='↓·'
+symbols_prehash=':'
 
 gitsym=`git symbolic-ref HEAD`
 
@@ -52,7 +51,7 @@ if [[ -z "$branch" ]]; then
   if [[ -n "$tag" ]]; then
     branch="$tag"
   else
-    branch="${symbols['prehash']}`git rev-parse --short HEAD`"
+    branch="${symbols_prehash}`git rev-parse --short HEAD`"
   fi
 else
   remote_name=`git config branch.${branch}.remote`
@@ -73,10 +72,10 @@ else
   num_ahead=`count_lines "^>"`
   num_behind=$(( num_revs - num_ahead ))
   if (( num_behind > 0 )) ; then
-    remote="${remote}${symbols['behind']}${num_behind}"
+    remote="${remote}${symbols_behind}${num_behind}"
   fi
   if (( num_ahead > 0 )) ; then
-    remote="${remote}${symbols['ahead']}${num_ahead}"
+    remote="${remote}${symbols_ahead}${num_ahead}"
   fi
 fi
 if [[ -z "$remote" ]] ; then
