@@ -107,6 +107,7 @@ function git_prompt_config()
   GIT_PROMPT_FETCH_TIMEOUT=${1-5}
   if [ "x$__GIT_STATUS_CMD" == "x" ]
   then
+    git_prompt_dir
     local sfx file
     # look first for a '.sh' version, then use the python version
     for sfx in sh py ; do
@@ -124,6 +125,8 @@ function setGitPrompt() {
   local EMPTY_PROMPT
   local __GIT_STATUS_CMD
 
+  git_prompt_config
+
   local repo=`git rev-parse --show-toplevel 2> /dev/null`
   if [[ ! -e "${repo}" ]]; then
     PS1="${EMPTY_PROMPT}"
@@ -135,6 +138,9 @@ function setGitPrompt() {
 }
 
 function checkUpstream() {
+  local GIT_PROMPT_FETCH_TIMEOUT
+  git_prompt_config
+
   local FETCH_HEAD="${repo}/.git/FETCH_HEAD"
   # Fech repo if local is stale for more than $GIT_FETCH_TIMEOUT minutes
   if [[ ! -e "${FETCH_HEAD}"  ||  -e `find "${FETCH_HEAD}" -mmin +${GIT_PROMPT_FETCH_TIMEOUT}` ]]
@@ -253,5 +259,4 @@ else
 fi
 
 git_prompt_dir
-git_prompt_config
 source $__GIT_PROMPT_DIR/git-prompt-help.sh
