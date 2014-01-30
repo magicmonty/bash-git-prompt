@@ -20,7 +20,7 @@ gitsym=`git symbolic-ref HEAD`
 case "$gitsym" in fatal*) exit 0 ;; esac
 
 # the current branch is the tail end of the symbolic reference
-branch="${gitsym##*/}"    # get the basename after "refs/head/"
+branch="${gitsym##refs/heads/}"    # get the basename after "refs/heads/"
 
 gitstatus=`git diff --name-status 2>&1`
 
