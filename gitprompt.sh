@@ -177,10 +177,10 @@ function updatePrompt() {
   local PROMPT_START
   local PROMPT_END
   local EMPTY_PROMPT
-  local ResetColor
-  local Blue
   local GIT_PROMPT_FETCH_TIMEOUT
   local __GIT_STATUS_CMD
+
+  local Blue="\[\033[0;34m\]"
 
   git_prompt_config
 
