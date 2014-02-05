@@ -105,7 +105,7 @@ function git_prompt_config()
   fi
 
   if [[ -n "${VIRTUAL_ENV}" ]]; then
-    EMPTY_PROMPT="${Blue}($(basename "${VIRTUAL_ENV}"))${ResetColor} ${PROMPT_START}$($prompt_callback)${PROMPT_END}"
+    EMPTY_PROMPT="(${Blue}$(basename "${VIRTUAL_ENV}")${ResetColor}) ${PROMPT_START}$($prompt_callback)${PROMPT_END}"
   else
     EMPTY_PROMPT="${PROMPT_START}$($prompt_callback)${PROMPT_END}"
   fi
@@ -236,7 +236,7 @@ function updatePrompt() {
 
     PS1="${PROMPT_START}$($prompt_callback)${STATUS}${PROMPT_END}"
     if [[ -n "${VIRTUAL_ENV}" ]]; then
-      PS1="${Blue}($(basename "${VIRTUAL_ENV}"))${ResetColor} ${PS1}"
+      PS1="(${Blue}$(basename ${VIRTUAL_ENV})${ResetColor}) ${PS1}"
     fi
 
   else
