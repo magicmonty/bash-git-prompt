@@ -105,7 +105,7 @@ function git_prompt_config()
   fi
 
   if [[ -n "${VIRTUAL_ENV}" ]]; then
-    EMPTY_PROMPT="${Blue}($(basename "${VIRTUAL_ENV}"))${ResetColor} ${PROMPT_START}$($prompt_callback)${PROMPT_END}"
+    EMPTY_PROMPT="(${Blue}$(basename "${VIRTUAL_ENV}")${ResetColor}) ${PROMPT_START}$($prompt_callback)${PROMPT_END}"
   else
     EMPTY_PROMPT="${PROMPT_START}$($prompt_callback)${PROMPT_END}"
   fi
@@ -177,10 +177,10 @@ function updatePrompt() {
   local PROMPT_START
   local PROMPT_END
   local EMPTY_PROMPT
-  local ResetColor
-  local Blue
   local GIT_PROMPT_FETCH_TIMEOUT
   local __GIT_STATUS_CMD
+
+  local Blue="\[\033[0;34m\]"
 
   git_prompt_config
 
@@ -236,7 +236,7 @@ function updatePrompt() {
 
     PS1="${PROMPT_START}$($prompt_callback)${STATUS}${PROMPT_END}"
     if [[ -n "${VIRTUAL_ENV}" ]]; then
-      PS1="${Blue}($(basename "${VIRTUAL_ENV}"))${ResetColor} ${PS1}"
+      PS1="(${Blue}$(basename ${VIRTUAL_ENV})${ResetColor}) ${PS1}"
     fi
 
   else
@@ -267,4 +267,4 @@ else
 fi
 
 git_prompt_dir
-source $__GIT_PROMPT_DIR/git-prompt-help.sh
+source "$__GIT_PROMPT_DIR/git-prompt-help.sh"
