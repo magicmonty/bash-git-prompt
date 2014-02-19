@@ -70,13 +70,13 @@ function git_prompt_config()
     GIT_PROMPT_SUFFIX="]"
     GIT_PROMPT_SEPARATOR="|"
     GIT_PROMPT_BRANCH="${Magenta}"
-    GIT_PROMPT_STAGED="${Red}●"
-    GIT_PROMPT_CONFLICTS="${Red}✖"
-    GIT_PROMPT_CHANGED="${Blue}✚"
+    GIT_PROMPT_STAGED="${Red}● "
+    GIT_PROMPT_CONFLICTS="${Red}✖ "
+    GIT_PROMPT_CHANGED="${Blue}✚ "
     GIT_PROMPT_REMOTE=" "
-    GIT_PROMPT_UNTRACKED="${Cyan}…"
-    GIT_PROMPT_STASHED="${BoldBlue}⚑"
-    GIT_PROMPT_CLEAN="${BoldGreen}✔"
+    GIT_PROMPT_UNTRACKED="${Cyan}… "
+    GIT_PROMPT_STASHED="${BoldBlue}⚑ "
+    GIT_PROMPT_CLEAN="${BoldGreen}✔ "
   fi
 
   # Various variables you might want for your PS1 prompt instead
@@ -92,7 +92,7 @@ function git_prompt_config()
   fi
 
   if [ "x${GIT_PROMPT_END}" == "x" ]; then
-    PROMPT_END=" \n${White}${Time12a}${ResetColor} $ "
+    PROMPT_END=" \n${White}${Time12a}${ResetColor} λ "
   else
     PROMPT_END="${GIT_PROMPT_END}"
   fi
