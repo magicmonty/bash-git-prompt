@@ -104,10 +104,14 @@ function git_prompt_config()
     PROMPT_LEADING_SPACE=" "
   fi
 
-  if [[ -n "${VIRTUAL_ENV}" ]]; then
-    EMPTY_PROMPT="(${Blue}$(basename "${VIRTUAL_ENV}")${ResetColor}) ${PROMPT_START}$($prompt_callback)${PROMPT_END}"
+  if [ "x${GIT_PROMPT_ONLY_IN_REPO}" == "x1" ]; then
+    EMPTY_PROMPT=$OLD_GITPROMPT
   else
-    EMPTY_PROMPT="${PROMPT_START}$($prompt_callback)${PROMPT_END}"
+    if [[ -n "${VIRTUAL_ENV}" ]]; then
+      EMPTY_PROMPT="(${Blue}$(basename "${VIRTUAL_ENV}")${ResetColor}) ${PROMPT_START}$($prompt_callback)${PROMPT_END}"
+    else
+      EMPTY_PROMPT="${PROMPT_START}$($prompt_callback)${PROMPT_END}"
+    fi
   fi
 
   # fetch remote revisions every other $GIT_PROMPT_FETCH_TIMEOUT (default 5) minutes
