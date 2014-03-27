@@ -3,7 +3,7 @@
 # being displayed.
 
 git_prompt_help() {
- cat <<EOF | sed 's/\\\[\\033//g' | sed 's/\\\[//g' | sed 's/\\\]//g' | sed 's/\\\]//g'
+ cat <<EOF | sed 's/\\\[\\033//g' | sed 's/\\\]//g'
 The git prompt format is [<BRANCH><TRACKING>|<LOCALSTATUS>]
 
 BRANCH is a branch name, such as "master" or "stage", a tag name, or commit
@@ -32,7 +32,7 @@ EOF
 help_git_prompt() { git_prompt_help ; }
 
 git_prompt_examples() {
-  cat <<EOF | sed 's/\\\[\\033//g' | sed 's/\\\[//g' | sed 's/\\\]//g' | sed 's/\\\]//g'
+  cat <<EOF | sed 's/\\\[\\033//g' | sed 's/\\\]//g'
 These are examples of the git prompt:
 
   [${GIT_PROMPT_BRANCH}master${ResetColor}${GIT_PROMPT_REMOTE}↑·3${ResetColor}|${GIT_PROMPT_CHANGED}1${ResetColor}]  - on branch "master", ahead of remote by 3 commits, 1
