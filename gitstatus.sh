@@ -56,7 +56,7 @@ if [[ -z "$branch" ]]; then
   fi
 else
   remote_name=`git config branch.${branch}.remote`
-  
+
   if [[ -n "$remote_name" ]]; then
     merge_name=`git config branch.${branch}.merge`
   else
@@ -67,7 +67,7 @@ else
   if [[ "$remote_name" == '.' ]]; then
     remote_ref="$merge_name"
   else
-    remote_ref="refs/remotes/$remote_name/${merge_name##*/}"
+    remote_ref="refs/remotes/$remote_name/${merge_name##refs/heads/}"
   fi
 
   # get the revision list, and count the leading "<" and ">"
