@@ -9,10 +9,51 @@
 count_lines() { echo "$1" | egrep -c "^$2" ; }
 all_lines() { echo "$1" | grep -v "^$" | wc -l ; }
 
+if [ -z "${__GIT_PROMPT_DIR}" ]; then
+  SOURCE="${BASH_SOURCE[0]}"
+  while [ -h "${SOURCE}" ]; do
+    DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
+    SOURCE="$(readlink "${SOURCE}")"
+    [[ $SOURCE != /* ]] && SOURCE="${DIR}/${SOURCE}"
+  done
+  __GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
+fi
+
+if [[ -z "$__GIT_PROMPT_COLORS_FILE" ]]; then
+  for dir in "$HOME" "$__GIT_PROMPT_DIR" ; do
+    for pfx in '.' '' ; do
+      file="$dir/${pfx}git-prompt-colors.sh"
+      if [[ -f "$file" ]]; then
+        __GIT_PROMPT_COLORS_FILE="$file"
+        break 2
+      fi
+    done
+  done
+fi
+
+# if the envar is defined, source the file for custom colors
+if [[ -n "$__GIT_PROMPT_COLORS_FILE" && -f "$__GIT_PROMPT_COLORS_FILE" ]]; then
+  source "$__GIT_PROMPT_COLORS_FILE"
+fi
+
 # change those symbols to whatever you prefer
-symbols_ahead='↑·'
-symbols_behind='↓·'
-symbols_prehash=':'
+if [[ -n "${GIT_PROMPT_SYMBOLS_AHEAD}" ]]; then
+  symbols_ahead="${GIT_PROMPT_SYMBOLS_AHEAD}"
+else
+  symbols_ahead='↑·'
+fi
+
+if [[ -n "${GIT_PROMPT_SYMBOLS_BEHIND}" ]]; then
+  symbols_behind="${GIT_PROMPT_SYMBOLS_BEHIND}"
+else
+  symbols_behind='↓·'
+fi
+
+if [[ -n "${GIT_PROMPT_SYMBOLS_PREHASH}" ]]; then
+  symbols_prehash=':'
+else
+  symbols_prehash="${GIT_PROMPT_SYMBOLS_PREHASH}"
+fi
 
 gitsym=`git symbolic-ref HEAD`
 

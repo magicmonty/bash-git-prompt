@@ -77,6 +77,11 @@ function git_prompt_config()
     GIT_PROMPT_UNTRACKED="${Cyan}…"
     GIT_PROMPT_STASHED="${BoldBlue}⚑"
     GIT_PROMPT_CLEAN="${BoldGreen}✔"
+    
+    # Please do not add colors to these symbols
+    GIT_PROMPT_SYMBOLS_AHEAD="↑·"
+    GIT_PROMPT_SYMBOLS_BEHIND="↓·"
+    GIT_PROMPT_SYMBOLS_PREHASH=":"
   fi
 
   # Various variables you might want for your PS1 prompt instead
