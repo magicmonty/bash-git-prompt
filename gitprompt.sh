@@ -43,6 +43,10 @@ function git_prompt_config()
   local Red="\[\033[0;31m\]"
   local Blue="\[\033[0;34m\]"
   local Cyan="\[\033[0;36m\]"
+  
+  #Checking if root to change output
+  _isroot=false
+  [[ $UID -eq 0 ]] && _isroot=true
 
   # source the user's ~/.git-prompt-colors.sh file, or the one that should be
   # sitting in the same directory as this script
@@ -91,13 +95,23 @@ function git_prompt_config()
   local PathShort="\w"
 
   if [ "x${GIT_PROMPT_START}" == "x" ]; then
-    PROMPT_START="${Yellow}${PathShort}${ResetColor}"
+    #First statment is for non root behavior second for root
+    if ! $_isroot; then
+      PROMPT_START="${Yellow}${PathShort}${ResetColor}"
+    else
+      PROMPT_START="${Yellow}${PathShort}${ResetColor}"
+    fi
   else
     PROMPT_START="${GIT_PROMPT_START}"
   fi
 
   if [ "x${GIT_PROMPT_END}" == "x" ]; then
-    PROMPT_END=" \n${White}${Time12a}${ResetColor} $ "
+    #First statment is for non root behavior second for root
+    if ! $_isroot; then
+      PROMPT_END=" \n${White}${Time12a}${ResetColor} $ "
+    else
+      PROMPT_END=" \n${White}${Time12a}${ResetColor} # "
+    fi
   else
     PROMPT_END="${GIT_PROMPT_END}"
   fi
