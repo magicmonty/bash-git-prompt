@@ -51,17 +51,23 @@ The symbols are as follows:
 
 1. Clone this repository to your homedir
    e.g. ``git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt``
-2. Source the file ``gitprompt.sh`` from your ``~/.bashrc`` config file
+2. Source the file ``gitprompt.sh`` from your ``~/.bashrc`` config file:
+   ```bash
+   # some other config in .bashrc
+
+   # gitprompt configuration
+   source .bash-git-prompt/gitprompt.sh
+   ```
 3. Go in a git repository and test it!
 
 ## Configuration
 
-1. You can use ``GIT_PROMPT_START`` and ``GIT_PROMPT_END`` to tweak your prompt
-
-2. The default colors are defined within ``gitprompt.sh``, but may be
-   overridden by copying ``git-prompt-colors.sh`` to your home directory at
-   ``~/.git-prompt-colors.sh``.  This file may also be found in the same
+1. The default colors and some variables for tweaking the prompt are defined 
+   within ``gitprompt.sh``, but may be overridden by copying ``git-prompt-colors.sh`` 
+   to your home directory at ``~/.git-prompt-colors.sh``.  This file may also be found in the same
    directory as ``gitprompt.sh``, but without the leading ``.``.
+
+2. You can use ``GIT_PROMPT_START_USER``, ``GIT_PROMPT_START_ROOT``, ``GIT_PROMPT_END_USER`` and ``GIT_PROMPT_END_ROOT`` in your ``.git-prompt-colors.sh`` to tweak your prompt. You can also override the start and end of the prompt by setting ``GIT_PROMPT_START`` and ``GIT_PROMPT_END`` before you source the ``gitprompt.sh``
 
 3. The current git repo information is obtained by the script `gitstatus.sh` or
    `gitstatus.py`.  Both scripts do the same thing, but the bash script is a

@@ -63,6 +63,13 @@ function git_prompt_config()
       done
     done
   fi
+
+   # Various variables you might want for your PS1 prompt instead
+  local Time12a="\$(date +%H:%M)"
+  # local Time12a="(\$(date +%H:%M:%S))"
+  # local Time12a="(\@))"
+  local PathShort="\w"
+
   # if the envar is defined, source the file for custom colors
   if [[ -n "$__GIT_PROMPT_COLORS_FILE" && -f "$__GIT_PROMPT_COLORS_FILE" ]]; then
     source "$__GIT_PROMPT_COLORS_FILE"
@@ -82,24 +89,23 @@ function git_prompt_config()
     GIT_PROMPT_STASHED="${BoldBlue}⚑"
     GIT_PROMPT_CLEAN="${BoldGreen}✔"
     
+    GIT_PROMPT_START_USER="${Yellow}${PathShort}${ResetColor}"
+    GIT_PROMPT_START_ROOT="${Yellow}${PathShort}${ResetColor}"
+    GIT_PROMPT_END_USER=" \n${White}${Time12a}${ResetColor} $ "
+    GIT_PROMPT_END_ROOT=" \n${White}${Time12a}${ResetColor} # "
+
     # Please do not add colors to these symbols
     GIT_PROMPT_SYMBOLS_AHEAD="↑·"
     GIT_PROMPT_SYMBOLS_BEHIND="↓·"
     GIT_PROMPT_SYMBOLS_PREHASH=":"
   fi
 
-  # Various variables you might want for your PS1 prompt instead
-  local Time12a="\$(date +%H:%M)"
-  # local Time12a="(\$(date +%H:%M:%S))"
-  # local Time12a="(\@))"
-  local PathShort="\w"
-
   if [ "x${GIT_PROMPT_START}" == "x" ]; then
     #First statment is for non root behavior second for root
-    if ! $_isroot; then
-      PROMPT_START="${Yellow}${PathShort}${ResetColor}"
+    if $_isroot; then
+      PROMPT_START="${GIT_PROMPT_START_ROOT}"
     else
-      PROMPT_START="${Yellow}${PathShort}${ResetColor}"
+      PROMPT_START="${GIT_PROMPT_START_USER}"
     fi
   else
     PROMPT_START="${GIT_PROMPT_START}"
@@ -108,9 +114,9 @@ function git_prompt_config()
   if [ "x${GIT_PROMPT_END}" == "x" ]; then
     #First statment is for non root behavior second for root
     if ! $_isroot; then
-      PROMPT_END=" \n${White}${Time12a}${ResetColor} $ "
+      PROMPT_END="${GIT_PROMPT_END_USER}"
     else
-      PROMPT_END=" \n${White}${Time12a}${ResetColor} # "
+      PROMPT_END="${GIT_PROMPT_END_ROOT}"
     fi
   else
     PROMPT_END="${GIT_PROMPT_END}"
