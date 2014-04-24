@@ -43,7 +43,7 @@ function git_prompt_config()
   local Red="\[\033[0;31m\]"
   local Blue="\[\033[0;34m\]"
   local Cyan="\[\033[0;36m\]"
-  
+
   #Checking if root to change output
   _isroot=false
   [[ $UID -eq 0 ]] && _isroot=true
@@ -88,7 +88,7 @@ function git_prompt_config()
     GIT_PROMPT_UNTRACKED="${Cyan}…"
     GIT_PROMPT_STASHED="${BoldBlue}⚑"
     GIT_PROMPT_CLEAN="${BoldGreen}✔"
-    
+nn
     GIT_PROMPT_START_USER="${Yellow}${PathShort}${ResetColor}"
     GIT_PROMPT_START_ROOT="${Yellow}${PathShort}${ResetColor}"
     GIT_PROMPT_END_USER=" \n${White}${Time12a}${ResetColor} $ "
