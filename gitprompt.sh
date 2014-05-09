@@ -292,7 +292,17 @@ if [ -z "$PROMPT_COMMAND" ]; then
 else
   PROMPT_COMMAND=${PROMPT_COMMAND%% }; # remove trailing spaces
   PROMPT_COMMAND=${PROMPT_COMMAND%\;}; # remove trailing semi-colon
-  PROMPT_COMMAND="$PROMPT_COMMAND;setGitPrompt"
+
+  local new_entry="setGitPrompt"
+  case ";$PROMPT_COMMAND;" in
+    *";$new_entry;"*)
+      # echo "PROMPT_COMMAND already contains: $new_entry"
+      :;;
+    *)
+      PROMPT_COMMAND="$PROMPT_COMMAND;$new_entry"
+      # echo "PROMPT_COMMAND does not contain: $new_entry"
+      ;;
+  esac
 fi
 
 git_prompt_dir
