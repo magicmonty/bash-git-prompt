@@ -277,33 +277,37 @@ function prompt_callback_default {
     return
 }
 
-if [ "`type -t prompt_callback`" = 'function' ]; then
-    prompt_callback="prompt_callback"
-else
-    prompt_callback="prompt_callback_default"
-fi
+function run {
+  if [ "`type -t prompt_callback`" = 'function' ]; then
+      prompt_callback="prompt_callback"
+  else
+      prompt_callback="prompt_callback_default"
+  fi
 
-if [ -z "$OLD_GITPROMPT" ]; then
-  OLD_GITPROMPT=$PS1
-fi
+  if [ -z "$OLD_GITPROMPT" ]; then
+    OLD_GITPROMPT=$PS1
+  fi
 
-if [ -z "$PROMPT_COMMAND" ]; then
-  PROMPT_COMMAND=setGitPrompt
-else
-  PROMPT_COMMAND=${PROMPT_COMMAND%% }; # remove trailing spaces
-  PROMPT_COMMAND=${PROMPT_COMMAND%\;}; # remove trailing semi-colon
+  if [ -z "$PROMPT_COMMAND" ]; then
+    PROMPT_COMMAND=setGitPrompt
+  else
+    PROMPT_COMMAND=${PROMPT_COMMAND%% }; # remove trailing spaces
+    PROMPT_COMMAND=${PROMPT_COMMAND%\;}; # remove trailing semi-colon
 
-  local new_entry="setGitPrompt"
-  case ";$PROMPT_COMMAND;" in
-    *";$new_entry;"*)
-      # echo "PROMPT_COMMAND already contains: $new_entry"
-      :;;
-    *)
-      PROMPT_COMMAND="$PROMPT_COMMAND;$new_entry"
-      # echo "PROMPT_COMMAND does not contain: $new_entry"
-      ;;
-  esac
-fi
+    local new_entry="setGitPrompt"
+    case ";$PROMPT_COMMAND;" in
+      *";$new_entry;"*)
+        # echo "PROMPT_COMMAND already contains: $new_entry"
+        :;;
+      *)
+        PROMPT_COMMAND="$PROMPT_COMMAND;$new_entry"
+        # echo "PROMPT_COMMAND does not contain: $new_entry"
+        ;;
+    esac
+  fi
 
-git_prompt_dir
-source "$__GIT_PROMPT_DIR/git-prompt-help.sh"
+  git_prompt_dir
+  source "$__GIT_PROMPT_DIR/git-prompt-help.sh"
+}
+
+run
