@@ -93,6 +93,9 @@ function prompt_callback {
 
 - If you want to show the git prompt only, if you are in a git repository you can set ``GIT_PROMPT_ONLY_IN_REPO=1`` before sourcing the gitprompt script
 
+- You can show an additional indicator at the start of the prompt, which shows the result of the last executed command by setting ``GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR=1`` before sourcing the gitprompt script
+
+
 -  You can get help on the git prompt with the function ``git_prompt_help``.
     Examples are available with ``git_prompt_examples``.
 
