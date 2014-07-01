@@ -183,12 +183,16 @@ function setGitPrompt() {
     return
   fi
 
-  local FETCH_REMOTE_STATUS=true
+  local FETCH_REMOTE_STATUS=1
+  if [[ "x${GIT_PROMPT_FETCH_REMOTE_STATUS}" == "x0" ]]; then
+    FETCH_REMOTE_STATUS=0
+  fi
+
   if [[ -e "${repo}/.bash-git-rc" ]]; then
   	source "${repo}/.bash-git-rc"
   fi
 
-  if [ "${FETCH_REMOTE_STATUS}" == "true" ]; then
+  if [ "x${FETCH_REMOTE_STATUS}" == "x1" ]; then
   	checkUpstream
   fi
 
