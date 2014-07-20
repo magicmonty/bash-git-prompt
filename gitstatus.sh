@@ -111,6 +111,15 @@ else
     remote_ref="refs/remotes/$remote_name/${merge_name##refs/heads/}"
   fi
 
+  # detect if the local branch have a remote tracking branch
+  cmd_output=$(git rev-parse --abbrev-ref ${branch}@{upstream} 2>&1 >/dev/null)
+
+  if [ `count_lines "$cmd_output" "fatal: No upstream"` == 1 ] ; then
+    has_remote_tracking=0
+  else
+    has_remote_tracking=1
+  fi
+
   # get the revision list, and count the leading "<" and ">"
   revgit=`git rev-list --left-right ${remote_ref}...HEAD`
   num_revs=`all_lines "$revgit"`
@@ -123,9 +132,14 @@ else
     remote="${remote}${symbols_ahead}${num_ahead}"
   fi
 fi
+
 if [[ -z "$remote" ]] ; then
   remote='.'
 fi
+
+if [[ "$has_remote_tracking" == "0" ]] ; then
+  remote='L'
+fi 
 
 for w in "$branch" "$remote" $num_staged $num_conflicts $num_changed $num_untracked $num_stashed $clean ; do
   echo "$w"
