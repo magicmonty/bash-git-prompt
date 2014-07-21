@@ -100,7 +100,7 @@ function git_prompt_config()
     # Please do not add colors to these symbols
     GIT_PROMPT_SYMBOLS_AHEAD="↑·"
     GIT_PROMPT_SYMBOLS_BEHIND="↓·"
-    GIT_PROMPT_SYMBOLS_PREHASH=":"    
+    GIT_PROMPT_SYMBOLS_PREHASH=":"
   fi
 
   if [ "x${GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR}" == "x1" ]; then
