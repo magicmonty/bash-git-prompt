@@ -103,4 +103,50 @@ function prompt_callback {
 
 **Enjoy!**
 
+## Alternative RPM Install
+This project ships an RPM spec to simplify installation on RHEL and
+clones. If you wish to install from RPM, you may first build the RPM
+from scratch by following this procedure:
+* Clone this repository and tag the release with a version number
+
+````sh
+    git tag -a -m "Tag release 1.1" 1.1
+````
+
+* Run the following command to create a tarball:
+
+````sh
+    VER1=$(git describe)
+    # replace dash with underscore to work around
+    # rpmbuild does not allow dash in version string
+    VER=${VER1//\-/_}
+    git archive                                \
+        --format tar                           \
+        --prefix=bash-git-prompt-${VER}/       \
+        HEAD                                   \
+        --  *.sh                               \
+            *.py                               \
+            *.fish                             \
+            README.md                          \
+      > bash-git-prompt-${VER}.tar
+    mkdir -p /tmp/bash-git-prompt-${VER}
+    sed "s/Version:.*/Version:        ${VER}/"          \
+        bash-git-prompt.spec                            \
+      > /tmp/bash-git-prompt-${VER}/bash-git-prompt.spec
+    OLDDIR=$(pwd)
+    cd /tmp
+    tar -uf ${OLDDIR}/bash-git-prompt-${VER}.tar      \
+            bash-git-prompt-${VER}/bash-git-prompt.spec
+    cd ${OLDDIR}
+    gzip bash-git-prompt-${VER}.tar
+    mv bash-git-prompt-${VER}.tar.gz bash-git-prompt-${VER}.tgz
+````
+
+* Log into an RHEL or clones host and run:
+
+````sh
+rpmbuild -ta bash-git-prompt-xxx.tar.gz
+````
+Then you may publish or install the rpm from "~/rpmbuild/RPMS/noarch".
+
 [blog post]: http://sebastiancelis.com/2009/nov/16/zsh-prompt-git-users/
