@@ -9,11 +9,11 @@ staged, changed, etc.
 
 (an original idea from this [blog post][]).
 
-`gitstatus.sh` added by [AKS](http://github.com/aks).
+`gitstatus.sh` and `git-prompt-help.sh` added by [AKS](http://github.com/aks).
 
 ## Examples
 
-The prompt may look like the following: 
+The prompt may look like the following:
 
 ![Example prompt](gitprompt.png)
 
@@ -49,27 +49,32 @@ The symbols are as follows:
 
 ## Install
 
-1. Clone this repository to your homedir
-   e.g. ``git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt``
-2. Source the file ``gitprompt.sh`` from your ``~/.bashrc`` config file
-3. Go in a git repository and test it!
+1. Clone this repository to your home directory.
+
+    git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt
+
+2. Source the file `gitprompt.sh` from `~/.bashrc`
+
+3. `cd` to a git repository and test it!
 
 ## Configuration
 
-1. You can use ``GIT_PROMPT_START`` and ``GIT_PROMPT_END`` to tweak your prompt
+1. You can define `GIT_PROMPT_START` and `GIT_PROMPT_END` to tweak your prompt.
 
-2. The default colors are defined within ``gitprompt.sh``, but may be
-   overridden by copying ``git-prompt-colors.sh`` to your home directory at
-   ``~/.git-prompt-colors.sh``.  This file may also be found in the same
-   directory as ``gitprompt.sh``, but without the leading ``.``.
+2. The default colors are defined within `prompt-colors.sh`, which is sourced
+   by `gitprompt.sh`.  The colors used for various git status are defined in
+   `git-prompt-colors.sh`.  Both of these files may be overridden by copying
+   them to $HOME with a `.` prefix.  They can also be placed in `$HOME/lib`
+   without the leading `.`.  The defaults are the original files in the
+   `~/.bash-git-prompt` directory.
 
 3. The current git repo information is obtained by the script `gitstatus.sh` or
    `gitstatus.py`.  Both scripts do the same thing, but the bash script is a
    tad more quick, and is used by default.  If you prefer the python script
    (possibly because you have enhanced it), simply delete or change the name of
-   ``gitstatus.sh``.
+   `gitstatus.sh`.
 
-4. You can define ``prompt_callback`` function to tweak your prompt dynamically.
+4. You can define `prompt_callback` function to tweak your prompt dynamically.
 
 ```sh
 function prompt_callback {
