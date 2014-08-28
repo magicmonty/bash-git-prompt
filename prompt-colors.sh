@@ -6,7 +6,7 @@
 
 define_color_names() {
 
-  ColorNames=( Black Red Green Yellow Blue Magneta Cyan White )
+  ColorNames=( Black Red Green Yellow Blue Magenta Cyan White )
   FgColors=(    30   31   32    33     34   35      36   37  )
   BgColors=(    40   41   42    43     44   45      46   47  )
 
