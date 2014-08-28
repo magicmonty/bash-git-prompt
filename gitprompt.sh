@@ -93,6 +93,14 @@ function git_prompt_config()
     fi
   fi
 
+  if [ "x${GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR}" == "x1" ]; then
+  	if [ $LAST_COMMAND_STATE = 0 ]; then
+  		LAST_COMMAND_INDICATOR="${GIT_PROMPT_COMMAND_OK}";
+  	else
+  		LAST_COMMAND_INDICATOR="${GIT_PROMPT_COMMAND_FAIL}";
+  	fi
+  fi
+
   # Do this only once to define PROMPT_START and PROMPT_END
 
   if [[ -z "$PROMPT_START" || -z "$PROMPT_END" ]]; then
