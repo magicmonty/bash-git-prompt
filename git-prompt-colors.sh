@@ -1,4 +1,17 @@
   # These are the color definitions used by gitprompt.sh
+
+  declare -g GIT_PROMPT_PREFIX
+  declare -g GIT_PROMPT_SUFFIX
+  declare -g GIT_PROMPT_SEPARATOR
+  declare -g GIT_PROMPT_BRANCH
+  declare -g GIT_PROMPT_STAGED
+  declare -g GIT_PROMPT_CONFLICTS
+  declare -g GIT_PROMPT_CHANGED
+  declare -g GIT_PROMPT_REMOTE
+  declare -g GIT_PROMPT_UNTRACKED
+  declare -g GIT_PROMPT_STASHED
+  declare -g GIT_PROMPT_CLEAN
+
   GIT_PROMPT_PREFIX="["                 # start of the git info string
   GIT_PROMPT_SUFFIX="]"                 # the end of the git info string
   GIT_PROMPT_SEPARATOR="|"              # separates each item
