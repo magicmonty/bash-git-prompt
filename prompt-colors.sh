@@ -76,7 +76,11 @@ define_color_names() {
   _def_color ResetColor   0 0
 
 }
-define_color_names
+
+# do the color definitions only once
+if [[ ${#ColorNames[*]} = 0 || -z "$IntenseBlack" || -z "$ResetColor" ]]; then
+  define_color_names
+fi
 
 # end of prompt-colors.sh
 # vim: set ai sw=2
