@@ -95,9 +95,9 @@ function git_prompt_config()
 
   if [ "$GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR" = 1 ]; then
     if [ $GIT_PROMPT_LAST_COMMAND_STATE = 0 ]; then
-      LAST_COMMAND_INDICATOR="${GIT_PROMPT_COMMAND_OK}";
+      LAST_COMMAND_INDICATOR="$GIT_PROMPT_COMMAND_OK";
     else
-      LAST_COMMAND_INDICATOR="${GIT_PROMPT_COMMAND_FAIL}";
+      LAST_COMMAND_INDICATOR="$GIT_PROMPT_COMMAND_FAIL";
     fi
 
     # replace _LAST_COMMAND_STATE_ token with the actual state
@@ -329,7 +329,7 @@ function gp_install_prompt {
     esac
   fi
 
-  if [ "x${GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR}" == "x1" ]; then
+  if [ "$GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR" = 1 ]; then
     local setLastCommandStateEntry="setLastCommandState"
     case ";$PROMPT_COMMAND;" in
       *";$setLastCommandStateEntry;"*)
