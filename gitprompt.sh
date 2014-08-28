@@ -11,19 +11,20 @@ function git_prompt_dir()
 {
   # assume the gitstatus.py is in the same directory as this script
   # code thanks to http://stackoverflow.com/questions/59895
-  if [ -z "${__GIT_PROMPT_DIR}" ]; then
+  if [ -z "$__GIT_PROMPT_DIR" ]; then
     local SOURCE="${BASH_SOURCE[0]}"
-    while [ -h "${SOURCE}" ]; do
-      local DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
-      SOURCE="$(readlink "${SOURCE}")"
-      [[ $SOURCE != /* ]] && SOURCE="${DIR}/${SOURCE}"
+    while [ -h "$SOURCE" ]; do
+      local DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+      SOURCE="$(readlink "$SOURCE")"
+      [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
     done
-    __GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
+    __GIT_PROMPT_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
   fi
 }
 
 # gp_set_file_var ENVAR SOMEFILE
 #
+# If ENVAR is set, check that it's value exists as a readable file.  Otherwise,
 # Set ENVAR to the path to SOMEFILE, based on $HOME, $__GIT_PROMPT_DIR, and the
 # directory of the current script.  The SOMEFILE can be prefixed with '.', or
 # not.
@@ -33,7 +34,13 @@ function git_prompt_dir()
 function gp_set_file_var() {
   local envar="$1"
   local file="$2"
-  if eval "test -z \"\$$envar\"" ; then
+  if eval "[[ -n \"\$$envar\" && -r \"\$$envar\" ]]" ; then # is envar set to a readable file?
+    local basefile
+    eval "basefile=\"\`basename \\\"\$$envar\\\"\`\""   # assign basefile
+    if [[ "$basefile" = "$file" || "$basefile" = ".$file" ]]; then
+      return 0
+    fi
+  else  # envar is not set, or it's set to a different file than requested
     eval "$envar="      # set empty envar
     gp_maybe_set_envar_to_path "$envar" "$HOME/.$file" "$HOME/$file" "$HOME/lib/$file" && return 0
     git_prompt_dir
@@ -72,34 +79,28 @@ function git_prompt_config()
   #  git-prompt-colors.sh -- sets the GIT_PROMPT color scheme, using names from prompt-colors.sh
 
   if gp_set_file_var __PROMPT_COLORS_SH prompt-colors.sh ; then
-    if [[ -n "${__PROMPT_COLORS_SH}" ]]; then
-      source "${__PROMPT_COLORS_SH}"        # outsource the color defs
-    else
-      echo 1>&2 "Cannot find prompt-colors.sh!"
-    fi
+    source "$__PROMPT_COLORS_SH"        # outsource the color defs
+  else
+    echo 1>&2 "Cannot find prompt-colors.sh!"
   fi
 
   # source the user's ~/.git-prompt-colors.sh file, or the one that should be
   # sitting in the same directory as this script
 
   if gp_set_file_var __GIT_PROMPT_COLORS_FILE git-prompt-colors.sh ; then
-
-    # if the envar is defined, source the file for custom colors
-    if [[ -n "${__GIT_PROMPT_COLORS_FILE}" ]]; then
-      source "${__GIT_PROMPT_COLORS_FILE}"
-    else
-      echo 1>&2 "Cannot find git-prompt-colors.sh!"
-    fi
+    source "$__GIT_PROMPT_COLORS_FILE"
+  else
+    echo 1>&2 "Cannot find git-prompt-colors.sh!"
   fi
 
-  if [ "x${GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR}" == "x1" ]; then
+  if [ "x$GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR" == "x1" ]; then
     if [ $GIT_PROMPT_LAST_COMMAND_STATE = 0 ]; then
-      LAST_COMMAND_INDICATOR="${GIT_PROMPT_COMMAND_OK}";
+      LAST_COMMAND_INDICATOR="$GIT_PROMPT_COMMAND_OK";
     else
-      LAST_COMMAND_INDICATOR="${GIT_PROMPT_COMMAND_FAIL}";
+      LAST_COMMAND_INDICATOR="$GIT_PROMPT_COMMAND_FAIL";
     fi
 
-    LAST_COMMAND_INDICATOR="${LAST_COMMAND_INDICATOR/_LAST_COMMAND_STATE_/${GIT_PROMPT_LAST_COMMAND_STATE}}"
+    LAST_COMMAND_INDICATOR="${LAST_COMMAND_INDICATOR/_LAST_COMMAND_STATE_/$GIT_PROMPT_LAST_COMMAND_STATE}"
   fi
 
   # Do this only once to define PROMPT_START and PROMPT_END
@@ -112,44 +113,44 @@ function git_prompt_config()
     # local Time12a="(\@))"
     local PathShort="\w"
 
-    if [[ -z "${GIT_PROMPT_START}" ]] ; then
+    if [[ -z "$GIT_PROMPT_START" ]] ; then
       if $_isroot; then
         PROMPT_START="$GIT_PROMPT_START_ROOT"
       else
         PROMPT_START="$GIT_PROMPT_START_USER"
       fi
     else
-      PROMPT_START="${GIT_PROMPT_START}"
+      PROMPT_START="$GIT_PROMPT_START"
     fi
 
-    if [[ -z "${GIT_PROMPT_END}" ]] ; then
+    if [[ -z "$GIT_PROMPT_END" ]] ; then
       if $_isroot; then
         PROMPT_END="$GIT_PROMPT_END_ROOT"
       else
         PROMPT_END="$GIT_PROMPT_END_USER"
       fi
     else
-      PROMPT_END="${GIT_PROMPT_END}"
+      PROMPT_END="$GIT_PROMPT_END"
     fi
   fi
 
   # set GIT_PROMPT_LEADING_SPACE to 0 if you want to have no leading space in front of the GIT prompt
-  if [ "x${GIT_PROMPT_LEADING_SPACE}" == "x0" ]; then
+  if [[ "$GIT_PROMPT_LEADING_SPACE" = 0 ]]; then
     PROMPT_LEADING_SPACE=""
   else
     PROMPT_LEADING_SPACE=" "
   fi
 
-  if [ "x${GIT_PROMPT_ONLY_IN_REPO}" == "x1" ]; then
-    EMPTY_PROMPT=$OLD_GITPROMPT
+  if [[ "$GIT_PROMPT_ONLY_IN_REPO" = 1 ]]; then
+    EMPTY_PROMPT="$OLD_GITPROMPT"
   else
-    if [[ -n "${VIRTUAL_ENV}" ]]; then
-      EMPTY_PROMPT="${LAST_COMMAND_INDICATOR}(${Blue}$(basename "${VIRTUAL_ENV}")${ResetColor}) ${PROMPT_START}$($prompt_callback)${PROMPT_END}"
-    elif [[ -n "${CONDA_DEFAULT_ENV}" ]]; then
-      EMPTY_PROMPT="${LAST_COMMAND_INDICATOR}(${Blue}$(basename "${CONDA_DEFAULT_ENV}")${ResetColor}) ${PROMPT_START}$($prompt_callback)${PROMPT_END}"
-    else
-      EMPTY_PROMPT="${LAST_COMMAND_INDICATOR}${PROMPT_START}$($prompt_callback)${PROMPT_END}"
+    local ps="$LAST_COMMAND_INDICATOR"
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+      ps="$ps($Blue$(basename \"$VIRTUAL_ENV\")$ResetColor) "
+    elif [[ -n "$CONDA_DEFAULT_ENV" ]]; then
+      ps="$ps($Blue$(basename \"$CONDA_DEFAULT_ENV\")$ResetColor) "
     fi
+    EMPTY_PROMPT="$ps$PROMPT_START$($prompt_callback)$PROMPT_END"
   fi
 
   # fetch remote revisions every other $GIT_PROMPT_FETCH_TIMEOUT (default 5) minutes
@@ -159,6 +160,7 @@ function git_prompt_config()
     if ! gp_maybe_set_envar_to_path __GIT_STATUS_CMD "$__GIT_PROMPT_DIR/gitstatus.sh" "$__GIT_PROMPT_DIR/gitstatus.py" ; then
       echo 1>&2 "Cannot find gitstatus.sh or gitstatus.py!"
     fi
+    # __GIT_STATUS_CMD defined
   fi
 }
 
@@ -173,21 +175,21 @@ function setGitPrompt() {
   git_prompt_config
 
   local repo=`git rev-parse --show-toplevel 2> /dev/null`
-  if [[ ! -e "${repo}" ]]; then
-    PS1="${EMPTY_PROMPT}"
+  if [[ ! -e "$repo" ]]; then
+    PS1="$EMPTY_PROMPT"
     return
   fi
 
   local FETCH_REMOTE_STATUS=1
-  if [[ "x${GIT_PROMPT_FETCH_REMOTE_STATUS}" == "x0" ]]; then
+  if [[ "$GIT_PROMPT_FETCH_REMOTE_STATUS" = 0 ]]; then
     FETCH_REMOTE_STATUS=0
   fi
 
-  if [[ -e "${repo}/.bash-git-rc" ]]; then
-    source "${repo}/.bash-git-rc"
+  if [[ -e "$repo/.bash-git-rc" ]]; then
+    source "$repo/.bash-git-rc"
   fi
 
-  if [ "x${FETCH_REMOTE_STATUS}" == "x1" ]; then
+  if [ "$FETCH_REMOTE_STATUS" = 1 ]; then
     checkUpstream
   fi
 
@@ -198,9 +200,9 @@ function checkUpstream() {
   local GIT_PROMPT_FETCH_TIMEOUT
   git_prompt_config
 
-  local FETCH_HEAD="${repo}/.git/FETCH_HEAD"
+  local FETCH_HEAD="$repo/.git/FETCH_HEAD"
   # Fech repo if local is stale for more than $GIT_FETCH_TIMEOUT minutes
-  if [[ ! -e "${FETCH_HEAD}"  ||  -e `find "${FETCH_HEAD}" -mmin +${GIT_PROMPT_FETCH_TIMEOUT}` ]]
+  if [[ ! -e "$FETCH_HEAD"  ||  -e `find "$FETCH_HEAD" -mmin +$GIT_PROMPT_FETCH_TIMEOUT` ]]
   then
     if [[ -n $(git remote show) ]]; then
       (
@@ -224,7 +226,7 @@ function updatePrompt() {
   git_prompt_config
 
   local -a GitStatus
-  GitStatus=($("${__GIT_STATUS_CMD}" 2>/dev/null))
+  GitStatus=($("$__GIT_STATUS_CMD" 2>/dev/null))
 
   local GIT_BRANCH=${GitStatus[0]}
   local GIT_REMOTE=${GitStatus[1]}
@@ -238,7 +240,7 @@ function updatePrompt() {
   local GIT_STASHED=${GitStatus[6]}
   local GIT_CLEAN=${GitStatus[7]}
 
-  if [[ -n "${GitStatus}" ]]; then
+  if [[ -n "$GitStatus" ]]; then
     local STATUS="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${GIT_PROMPT_BRANCH}${GIT_BRANCH}${ResetColor}"
 
     # __add_status KIND VALEXPR INSERT
@@ -247,26 +249,26 @@ function updatePrompt() {
     __chk_gitvar_status() {
       local v
       if [[ "x$2" == "x-n" ]] ; then
-        v="$2 \"\${GIT_$1}\""
+        v="$2 \"\$GIT_$1\""
       else
-        v="\${GIT_$1} $2"
+        v="\$GIT_$1 $2"
       fi
       if eval "test $v" ; then
         if [[ $# -lt 2 || "$3" != '-' ]]; then
-          __add_status "\${GIT_PROMPT_$1}\${GIT_$1}\${ResetColor}"
+          __add_status "\$GIT_PROMPT_$1\$GIT_$1\$ResetColor"
         else
-          __add_status "\${GIT_PROMPT_$1}\${ResetColor}"
+          __add_status "\$GIT_PROMPT_$1\$ResetColor"
         fi
       fi
     }
 
     __add_gitvar_status() {
-      __add_status "\${GIT_PROMPT_$1}\${GIT_$1}\${ResetColor}"
+      __add_status "\$GIT_PROMPT_$1\$GIT_$1\$ResetColor"
     }
 
     # __add_status SOMETEXT
     __add_status() {
-      eval "STATUS=\"${STATUS}$1\""
+      eval "STATUS=\"$STATUS$1\""
     }
 
     __chk_gitvar_status 'REMOTE'     '-n'
@@ -277,19 +279,19 @@ function updatePrompt() {
     __chk_gitvar_status 'UNTRACKED'  '-ne 0'
     __chk_gitvar_status 'STASHED'    '-ne 0'
     __chk_gitvar_status 'CLEAN'      '-eq 1'   -
-    __add_status        "${ResetColor}$GIT_PROMPT_SUFFIX"
+    __add_status        "$ResetColor$GIT_PROMPT_SUFFIX"
 
-    PS1="${LAST_COMMAND_INDICATOR}${PROMPT_START}$($prompt_callback)${STATUS}${PROMPT_END}"
-    if [[ -n "${VIRTUAL_ENV}" ]]; then
-      PS1="(${Blue}$(basename ${VIRTUAL_ENV})${ResetColor}) ${PS1}"
+    PS1="$LAST_COMMAND_INDICATOR$PROMPT_START$($prompt_callback)$STATUS$PROMPT_END"
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+      PS1="($Blue$(basename \"$VIRTUAL_ENV\")$ResetColor) $PS1"
     fi
 
-    if [[ -n "${CONDA_DEFAULT_ENV}" ]]; then
-      PS1="(${Blue}$(basename ${CONDA_DEFAULT_ENV})${ResetColor}) ${PS1}"
+    if [[ -n "$CONDA_DEFAULT_ENV" ]]; then
+      PS1="($Blue$(basename \"$CONDA_DEFAULT_ENV\")$ResetColor) $PS1"
     fi
 
   else
-    PS1="${EMPTY_PROMPT}"
+    PS1="$EMPTY_PROMPT"
   fi
 }
 
@@ -326,7 +328,7 @@ function gp_install_prompt {
     esac
   fi
 
-  if [ "x${GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR}" == "x1" ]; then
+  if [ "$GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR" = 1 ]; then
     local setLastCommandStateEntry="setLastCommandState"
     case ";$PROMPT_COMMAND;" in
       *";$setLastCommandStateEntry;"*)
