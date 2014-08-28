@@ -113,7 +113,15 @@ function prompt_callback {
 - You can show an additional indicator at the start of the prompt, which shows
   the result of the last executed command by setting
   ``GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR=1`` before sourcing the gitprompt
-  script
+  script. 
+  If you want to display the exit code too, you can use the placeholder
+  ``_LAST_COMMAND_STATE_`` in ``GIT_PROMPT_COMMAND_OK`` or ``GIT_PROMPT_COMMAND_FAIL``
+  in your ``.git-prompt-colors.sh``:
+
+```sh
+GIT_PROMPT_COMMAND_OK="${Green}✔-_LAST_COMMAND_STATE_ " # displays as ✔-0
+GIT_PROMPT_COMMAND_FAIL="${Red}✘-_LAST_COMMAND_STATE_ " # displays as ✘-1 for exit code 1
+``` 
 
 - It is now possible to disable the fetching of the remote repository either
   globally by setting ``GIT_PROMPT_FETCH_REMOTE_STATUS=0`` in your .bashrc or
