@@ -1,17 +1,5 @@
 # These are the color definitions used by gitprompt.sh
 
-declare -g GIT_PROMPT_PREFIX
-declare -g GIT_PROMPT_SUFFIX
-declare -g GIT_PROMPT_SEPARATOR
-declare -g GIT_PROMPT_BRANCH
-declare -g GIT_PROMPT_STAGED
-declare -g GIT_PROMPT_CONFLICTS
-declare -g GIT_PROMPT_CHANGED
-declare -g GIT_PROMPT_REMOTE
-declare -g GIT_PROMPT_UNTRACKED
-declare -g GIT_PROMPT_STASHED
-declare -g GIT_PROMPT_CLEAN
-
 local Time12a="\$(date +%H:%M)"
 local PathShort="\w"
 
