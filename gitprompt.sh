@@ -69,7 +69,6 @@ function gp_maybe_set_envar_to_path(){
 
 function git_prompt_config()
 {
-
   #Checking if root to change output
   _isroot=false
   [[ $UID -eq 0 ]] && _isroot=true
@@ -92,6 +91,17 @@ function git_prompt_config()
     source "$__GIT_PROMPT_COLORS_FILE"
   else
     echo 1>&2 "Cannot find git-prompt-colors.sh!"
+  fi
+
+  if [ "$GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR" = 1 ]; then
+    if [ $GIT_PROMPT_LAST_COMMAND_STATE = 0 ]; then
+      LAST_COMMAND_INDICATOR="${GIT_PROMPT_COMMAND_OK}";
+    else
+      LAST_COMMAND_INDICATOR="${GIT_PROMPT_COMMAND_FAIL}";
+    fi
+
+    # replace _LAST_COMMAND_STATE_ token with the actual state
+    LAST_COMMAND_INDICATOR="${LAST_COMMAND_INDICATOR/_LAST_COMMAND_STATE_/${GIT_PROMPT_LAST_COMMAND_STATE}}"
   fi
 
   # Do this only once to define PROMPT_START and PROMPT_END
@@ -155,9 +165,11 @@ function git_prompt_config()
   fi
 }
 
-function setGitPrompt() {
-  LAST_COMMAND_STATE=$?
+function setLastCommandState() {
+  GIT_PROMPT_LAST_COMMAND_STATE=$?
+}
 
+function setGitPrompt() {
   local EMPTY_PROMPT
   local __GIT_STATUS_CMD
 
@@ -288,7 +300,7 @@ function prompt_callback_default {
     return
 }
 
-function run {
+function gp_install_prompt {
   if [ "`type -t prompt_callback`" = 'function' ]; then
       prompt_callback="prompt_callback"
   else
@@ -317,8 +329,21 @@ function run {
     esac
   fi
 
+  if [ "x${GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR}" == "x1" ]; then
+    local setLastCommandStateEntry="setLastCommandState"
+    case ";$PROMPT_COMMAND;" in
+      *";$setLastCommandStateEntry;"*)
+        # echo "PROMPT_COMMAND already contains: $setLastCommandStateEntry"
+        :;;
+      *)
+        PROMPT_COMMAND="$setLastCommandStateEntry;$PROMPT_COMMAND"
+        # echo "PROMPT_COMMAND does not contain: $setLastCommandStateEntry"
+        ;;
+    esac
+  fi
+
   git_prompt_dir
   source "$__GIT_PROMPT_DIR/git-prompt-help.sh"
 }
 
-run
+gp_install_prompt
