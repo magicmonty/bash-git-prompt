@@ -128,8 +128,16 @@ GIT_PROMPT_COMMAND_FAIL="${Red}✘-_LAST_COMMAND_STATE_ " # displays as ✘-1 fo
   on a per repository basis by creating a file named ``.bash-git-rc`` with the
   content ``FETCH_REMOTE_STATUS=0`` in the root of your git repository.
 
--  You can get help on the git prompt with the function ``git_prompt_help``.
-   Examples are available with ``git_prompt_examples``.
+- You can get help on the git prompt with the function ``git_prompt_help``.
+  Examples are available with ``git_prompt_examples``.
+
+- If you make any changes to any file that is sourced by `gitprompt.sh`, you
+  should run this command, so that the next prompt update will find all the
+  files and source them anew.
+
+```sh
+git_prompt_reset
+```
 
 **Enjoy!**
 
