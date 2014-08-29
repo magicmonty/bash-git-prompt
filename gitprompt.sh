@@ -67,6 +67,18 @@ function gp_maybe_set_envar_to_path(){
   return 1
 }
 
+# git_prompt_reset
+#
+# unsets selected GIT_PROMPT variables, causing the next prompt callback to
+# recalculate them from scratch.
+
+git_prompt_reset() {
+  local var
+  for var in GIT_PROMPT_DIR __GIT_PROMPT_COLORS_FILE __PROMPT_COLORS_FILE __GIT_STATUS_CMD ; do
+    unset $var
+  done
+}
+
 function git_prompt_config()
 {
   #Checking if root to change output
@@ -78,8 +90,8 @@ function git_prompt_config()
   #  prompt-colors.sh -- sets generic color names suitable for bash `PS1` prompt
   #  git-prompt-colors.sh -- sets the GIT_PROMPT color scheme, using names from prompt-colors.sh
 
-  if gp_set_file_var __PROMPT_COLORS_SH prompt-colors.sh ; then
-    source "$__PROMPT_COLORS_SH"        # outsource the color defs
+  if gp_set_file_var __PROMPT_COLORS_FILE prompt-colors.sh ; then
+    source "$__PROMPT_COLORS_FILE"        # outsource the color defs
   else
     echo 1>&2 "Cannot find prompt-colors.sh!"
   fi
@@ -93,14 +105,15 @@ function git_prompt_config()
     echo 1>&2 "Cannot find git-prompt-colors.sh!"
   fi
 
-  if [ "x$GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR" == "x1" ]; then
+  if [ "$GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR" = 1 ]; then
     if [ $GIT_PROMPT_LAST_COMMAND_STATE = 0 ]; then
       LAST_COMMAND_INDICATOR="$GIT_PROMPT_COMMAND_OK";
     else
       LAST_COMMAND_INDICATOR="$GIT_PROMPT_COMMAND_FAIL";
     fi
 
-    LAST_COMMAND_INDICATOR="${LAST_COMMAND_INDICATOR/_LAST_COMMAND_STATE_/$GIT_PROMPT_LAST_COMMAND_STATE}"
+    # replace _LAST_COMMAND_STATE_ token with the actual state
+    LAST_COMMAND_INDICATOR="${LAST_COMMAND_INDICATOR/_LAST_COMMAND_STATE_/${GIT_PROMPT_LAST_COMMAND_STATE}}"
   fi
 
   # Do this only once to define PROMPT_START and PROMPT_END
@@ -219,8 +232,6 @@ function updatePrompt() {
   local PROMPT_START
   local PROMPT_END
   local EMPTY_PROMPT
-  local GIT_PROMPT_FETCH_TIMEOUT
-  local __GIT_STATUS_CMD
   local Blue="\[\033[0;34m\]"
 
   git_prompt_config

@@ -42,4 +42,3 @@ define_git_prompt_colors() {
 if [[ -z "$GIT_PROMPT_SEPARATOR" || -z "$GIT_PROMPT_COMMAND_OK" ]]; then
   define_git_prompt_colors
 fi
-
