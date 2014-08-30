@@ -11,6 +11,13 @@ staged, changed, etc.
 
 `gitstatus.sh` and `git-prompt-help.sh` added by [AKS](http://github.com/aks).
 
+# ATTENTION! Breaking changes!
+
+**If you use this prompt already, please update your ``.git-prompt-colors.sh``, 
+if you have one. It now contains a function named ``define_git_prompt_colors()``!**
+
+**Please see the updated ``git-prompt-colors.sh`` in the installation directory!**
+
 ## Examples
 
 The prompt may look like the following:
