@@ -196,3 +196,18 @@ rpmbuild -ta bash-git-prompt-xxx.tar.gz
 Then you may publish or install the rpm from "~/rpmbuild/RPMS/noarch".
 
 [blog post]: http://sebastiancelis.com/2009/nov/16/zsh-prompt-git-users/
+
+## License
+This code is under the [BSD 2 Clause (NetBSD) license][license].
+
+## Who Are You?
+The current maintainer of the original bash-git-prompt is [Martin Gondermann][magicmonty].
+
+## Donations
+I accept tips through [Gittip][tip].
+
+[![Gittip](https://img.shields.io/gittip/magicmonty.svg?style=flat)](https://www.gittip.com/magicmonty/)
+
+[tip]:https://www.gittip.com/magicmonty/
+[magicmonty]: http://blog.pagansoft.de/pages/about.html
+[license]:https://github.com/magicmonty/bash-git-prompt/tree/master/LICENSE.txt
