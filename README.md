@@ -204,10 +204,12 @@ This code is under the [BSD 2 Clause (NetBSD) license][license].
 The current maintainer of the original bash-git-prompt is [Martin Gondermann][magicmonty].
 
 ## Donations
-I accept tips through [Gittip][tip].
+I accept tips through [Gittip][tip] and [Flattr][flattr].
 
 [![Gittip](https://img.shields.io/gittip/magicmonty.svg?style=flat)](https://www.gittip.com/magicmonty/)
+[![Flattr](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=magicmonty&url=https%3A%2F%2Fgithub.com%2Fmagicmonty%2Fbash-git-prompt)
 
 [tip]:https://www.gittip.com/magicmonty/
 [magicmonty]: http://blog.pagansoft.de/pages/about.html
 [license]:https://github.com/magicmonty/bash-git-prompt/tree/master/LICENSE.txt
+[flattr]: https://flattr.com/submit/auto?user_id=magicmonty&url=https%3A%2F%2Fgithub.com%2Fmagicmonty%2Fbash-git-prompt
