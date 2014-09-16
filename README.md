@@ -54,15 +54,37 @@ The symbols are as follows:
 - Branch Symbol:<br />
   	When the branch name starts with a colon ``:``, it means it's actually a hash, not a branch (although it should be pretty clear, unless you name your branches like hashes :-)
 
-## Install
+## Installation
 
-1. Clone this repository to your home directory.
+### via [Homebrew][homebrew] on Mac OS X
 
-    git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt
+- Run `brew update`
 
-2. Source the file `gitprompt.sh` from `~/.bashrc`
+- Run `brew install bash-git-prompt` for the last stable release or `brew install --HEAD bash-git-prompt` for the 
+   latest version directly from the repository
 
-3. `cd` to a git repository and test it!
+- After installing Homebrew should output something like this
+
+```
+==> Caveats
+You should add the following to your .bashrc (or equivalent):
+  source /usr/local/opt/bash-git-prompt/share/gitprompt.sh   
+```
+
+- Now you can source the file above (`/usr/local/opt/bash-git-prompt/share/gitprompt.sh` in this case) from your `~/.bashrc`
+
+### via Git clone
+
+- Clone this repository to your home directory.
+
+```sh
+cd ~
+git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt
+```
+
+- Source the file `gitprompt.sh` from `~/.bashrc`
+
+### Configuration
 
 ```sh
    # some other config in .bashrc
@@ -71,7 +93,10 @@ The symbols are as follows:
 
    # Set config variables first
    GIT_PROMPT_ONLY_IN_REPO=1
-
+   
+   # GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR=1   # uncomment if you want to show 
+                                                # the exit code of the last command 
+                                                # in your prompt
    # GIT_PROMPT_FETCH_REMOTE_STATUS=0   # uncomment to avoid fetching remote status
 
    # GIT_PROMPT_START=...    # uncomment for custom prompt start sequence
@@ -81,7 +106,7 @@ The symbols are as follows:
    source ~/.bash-git-prompt/gitprompt.sh
 ```
 
-- Go in a git repository and test it!
+- `cd` to a git repository and test it!
 
 - You can define `GIT_PROMPT_START` and `GIT_PROMPT_END` to tweak your prompt.
 
@@ -195,8 +220,6 @@ rpmbuild -ta bash-git-prompt-xxx.tar.gz
 ````
 Then you may publish or install the rpm from "~/rpmbuild/RPMS/noarch".
 
-[blog post]: http://sebastiancelis.com/2009/nov/16/zsh-prompt-git-users/
-
 ## License
 This code is under the [BSD 2 Clause (NetBSD) license][license].
 
@@ -209,7 +232,9 @@ I accept tips through [Gittip][tip] and [Flattr][flattr].
 [![Gittip](https://img.shields.io/gittip/magicmonty.svg?style=flat)](https://www.gittip.com/magicmonty/)
 [![Flattr](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=magicmonty&url=https%3A%2F%2Fgithub.com%2Fmagicmonty%2Fbash-git-prompt)
 
+[blog post]: http://sebastiancelis.com/2009/nov/16/zsh-prompt-git-users/
 [tip]:https://www.gittip.com/magicmonty/
 [magicmonty]: http://blog.pagansoft.de/pages/about.html
 [license]:https://github.com/magicmonty/bash-git-prompt/tree/master/LICENSE.txt
 [flattr]: https://flattr.com/submit/auto?user_id=magicmonty&url=https%3A%2F%2Fgithub.com%2Fmagicmonty%2Fbash-git-prompt
+[homebrew]: http://brew.sh/
