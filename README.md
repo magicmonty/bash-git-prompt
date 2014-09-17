@@ -63,15 +63,13 @@ The symbols are as follows:
 - Run `brew install bash-git-prompt` for the last stable release or `brew install --HEAD bash-git-prompt` for the 
    latest version directly from the repository
 
-- After installing Homebrew should output something like this
+- Now you can source the file in your `~/.bashrc` as follows:
 
+```sh
+if [ -f "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh" ]; then
+    source "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh"
+fi
 ```
-==> Caveats
-You should add the following to your .bashrc (or equivalent):
-  source /usr/local/opt/bash-git-prompt/share/gitprompt.sh   
-```
-
-- Now you can source the file above (`/usr/local/opt/bash-git-prompt/share/gitprompt.sh` in this case) from your `~/.bashrc`
 
 ### via Git clone
 
