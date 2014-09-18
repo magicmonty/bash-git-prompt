@@ -58,3 +58,18 @@ These are examples of the git prompt:
 EOF
 }
 
+git_prompt_color_samples() {
+  
+  showColor() {
+    local color=$(eval echo "\${$1}")
+    echo -e "${color}$1${ResetColor}" | sed 's/\\\]//g'  | sed 's/\\\[//g'
+  }
+
+  while (( x < 8 )) ; do
+    showColor ${ColorNames[x]}
+    showColor "Dim${ColorNames[x]}"
+    showColor "Bold${ColorNames[x]}"
+    showColor "Bright${ColorNames[x]}"
+    (( x++ ))
+  done
+}

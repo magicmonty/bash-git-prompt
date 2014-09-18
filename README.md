@@ -162,6 +162,7 @@ GIT_PROMPT_COMMAND_FAIL="${Red}✘-_LAST_COMMAND_STATE_ " # displays as ✘-1 fo
 
 - You can get help on the git prompt with the function ``git_prompt_help``.
   Examples are available with ``git_prompt_examples``.
+  A list of all available named colors is available with `git_prompt_color_samples`
 
 - If you make any changes to any file that is sourced by `gitprompt.sh`, you
   should run this command, so that the next prompt update will find all the
