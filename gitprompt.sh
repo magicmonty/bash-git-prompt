@@ -159,9 +159,12 @@ function git_prompt_config()
   else
     local ps="$LAST_COMMAND_INDICATOR"
     if [[ -n "$VIRTUAL_ENV" ]]; then
-      ps="$ps($Blue$(basename \"$VIRTUAL_ENV\")$ResetColor) "
-    elif [[ -n "$CONDA_DEFAULT_ENV" ]]; then
-      ps="$ps($Blue$(basename \"$CONDA_DEFAULT_ENV\")$ResetColor) "
+      VENV=$(basename "${VIRTUAL_ENV}")
+      ps="${ps}${GIT_PROMPT_VIRTUALENV/_VIRTUALENV_/${VENV}}"
+    fi
+    if [[ -n "$CONDA_DEFAULT_ENV" ]]; then
+      VENV=$(basename "${CONDA_DEFAULT_ENV}")
+      ps="${ps}${GIT_PROMPT_VIRTUALENV/_VIRTUALENV_/${VENV}}"
     fi
     EMPTY_PROMPT="$ps$PROMPT_START$($prompt_callback)$PROMPT_END"
   fi
@@ -251,6 +254,7 @@ function updatePrompt() {
   local GIT_STASHED=${GitStatus[6]}
   local GIT_CLEAN=${GitStatus[7]}
 
+  local NEW_PROMPT="$EMPTY_PROMPT"
   if [[ -n "$GitStatus" ]]; then
     local STATUS="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${GIT_PROMPT_BRANCH}${GIT_BRANCH}${ResetColor}"
 
@@ -292,18 +296,23 @@ function updatePrompt() {
     __chk_gitvar_status 'CLEAN'      '-eq 1'   -
     __add_status        "$ResetColor$GIT_PROMPT_SUFFIX"
 
-    PS1="$LAST_COMMAND_INDICATOR$PROMPT_START$($prompt_callback)$STATUS$PROMPT_END"
+    NEW_PROMPT="$LAST_COMMAND_INDICATOR"
     if [[ -n "$VIRTUAL_ENV" ]]; then
-      PS1="($Blue$(basename \"$VIRTUAL_ENV\")$ResetColor) $PS1"
+      VENV=$(basename "${VIRTUAL_ENV}")
+      NEW_PROMPT="$NEW_PROMPT${GIT_PROMPT_VIRTUALENV/_VIRTUALENV_/${VENV}}"
     fi
 
     if [[ -n "$CONDA_DEFAULT_ENV" ]]; then
-      PS1="($Blue$(basename \"$CONDA_DEFAULT_ENV\")$ResetColor) $PS1"
+      VENV=$(basename "${CONDA_DEFAULT_ENV}")
+      NEW_PROMPT="$NEW_PROMPT${GIT_PROMPT_VIRTUALENV/_VIRTUALENV_/${VENV}}"
     fi
 
+    NEW_PROMPT="$NEW_PROMPT$PROMPT_START$($prompt_callback)$STATUS$PROMPT_END"
   else
-    PS1="$EMPTY_PROMPT"
+    NEW_PROMPT="$EMPTY_PROMPT"
   fi
+
+  PS1="$NEW_PROMPT"
 }
 
 function prompt_callback_default {
