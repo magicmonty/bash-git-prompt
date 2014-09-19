@@ -347,18 +347,16 @@ function gp_install_prompt {
     esac
   fi
 
-  if [ "$GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR" = 1 ]; then
-    local setLastCommandStateEntry="setLastCommandState"
-    case ";$PROMPT_COMMAND;" in
-      *";$setLastCommandStateEntry;"*)
-        # echo "PROMPT_COMMAND already contains: $setLastCommandStateEntry"
-        :;;
-      *)
-        PROMPT_COMMAND="$setLastCommandStateEntry;$PROMPT_COMMAND"
-        # echo "PROMPT_COMMAND does not contain: $setLastCommandStateEntry"
-        ;;
-    esac
-  fi
+  local setLastCommandStateEntry="setLastCommandState"
+  case ";$PROMPT_COMMAND;" in
+    *";$setLastCommandStateEntry;"*)
+      # echo "PROMPT_COMMAND already contains: $setLastCommandStateEntry"
+      :;;
+    *)
+      PROMPT_COMMAND="$setLastCommandStateEntry;$PROMPT_COMMAND"
+      # echo "PROMPT_COMMAND does not contain: $setLastCommandStateEntry"
+      ;;
+  esac
 
   git_prompt_dir
   source "$__GIT_PROMPT_DIR/git-prompt-help.sh"
