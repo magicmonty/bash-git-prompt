@@ -105,16 +105,14 @@ function git_prompt_config()
     echo 1>&2 "Cannot find git-prompt-colors.sh!"
   fi
 
-  if [ "$GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR" = 1 ]; then
-    if [ $GIT_PROMPT_LAST_COMMAND_STATE = 0 ]; then
-      LAST_COMMAND_INDICATOR="$GIT_PROMPT_COMMAND_OK";
-    else
-      LAST_COMMAND_INDICATOR="$GIT_PROMPT_COMMAND_FAIL";
-    fi
-
-    # replace _LAST_COMMAND_STATE_ token with the actual state
-    LAST_COMMAND_INDICATOR="${LAST_COMMAND_INDICATOR/_LAST_COMMAND_STATE_/${GIT_PROMPT_LAST_COMMAND_STATE}}"
+  if [ $GIT_PROMPT_LAST_COMMAND_STATE = 0 ]; then
+    LAST_COMMAND_INDICATOR="$GIT_PROMPT_COMMAND_OK";
+  else
+    LAST_COMMAND_INDICATOR="$GIT_PROMPT_COMMAND_FAIL";
   fi
+
+  # replace _LAST_COMMAND_STATE_ token with the actual state
+  LAST_COMMAND_INDICATOR="${LAST_COMMAND_INDICATOR/_LAST_COMMAND_STATE_/${GIT_PROMPT_LAST_COMMAND_STATE}}"
 
   # Do this only once to define PROMPT_START and PROMPT_END
 
@@ -157,7 +155,7 @@ function git_prompt_config()
   if [[ "$GIT_PROMPT_ONLY_IN_REPO" = 1 ]]; then
     EMPTY_PROMPT="$OLD_GITPROMPT"
   else
-    local ps="$LAST_COMMAND_INDICATOR"
+    local ps=""
     if [[ -n "$VIRTUAL_ENV" ]]; then
       VENV=$(basename "${VIRTUAL_ENV}")
       ps="${ps}${GIT_PROMPT_VIRTUALENV/_VIRTUALENV_/${VENV}}"
@@ -166,7 +164,8 @@ function git_prompt_config()
       VENV=$(basename "${CONDA_DEFAULT_ENV}")
       ps="${ps}${GIT_PROMPT_VIRTUALENV/_VIRTUALENV_/${VENV}}"
     fi
-    EMPTY_PROMPT="$ps$PROMPT_START$($prompt_callback)$PROMPT_END"
+    ps="$ps$PROMPT_START$($prompt_callback)$PROMPT_END"
+    EMPTY_PROMPT="${ps/_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
   fi
 
   # fetch remote revisions every other $GIT_PROMPT_FETCH_TIMEOUT (default 5) minutes
@@ -296,7 +295,7 @@ function updatePrompt() {
     __chk_gitvar_status 'CLEAN'      '-eq 1'   -
     __add_status        "$ResetColor$GIT_PROMPT_SUFFIX"
 
-    NEW_PROMPT="$LAST_COMMAND_INDICATOR"
+    NEW_PROMPT=""
     if [[ -n "$VIRTUAL_ENV" ]]; then
       VENV=$(basename "${VIRTUAL_ENV}")
       NEW_PROMPT="$NEW_PROMPT${GIT_PROMPT_VIRTUALENV/_VIRTUALENV_/${VENV}}"
@@ -312,7 +311,7 @@ function updatePrompt() {
     NEW_PROMPT="$EMPTY_PROMPT"
   fi
 
-  PS1="$NEW_PROMPT"
+  PS1="${NEW_PROMPT/_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
 }
 
 function prompt_callback_default {

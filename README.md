@@ -18,6 +18,11 @@ if you have one. It now contains a function named ``define_git_prompt_colors()``
 
 **Please see the updated ``git-prompt-colors.sh`` in the installation directory!**
 
+---
+
+**The variable `GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR` was replaced with a more general placeholder 
+named ``_LAST_COMMAND_INDICATOR_``, which is replaced by the state of the last executed command. It is now activated by default.**
+
 ## Examples
 
 The prompt may look like the following:
@@ -92,9 +97,6 @@ git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt
    # Set config variables first
    GIT_PROMPT_ONLY_IN_REPO=1
    
-   # GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR=1   # uncomment if you want to show 
-                                                # the exit code of the last command 
-                                                # in your prompt
    # GIT_PROMPT_FETCH_REMOTE_STATUS=0   # uncomment to avoid fetching remote status
 
    # GIT_PROMPT_START=...    # uncomment for custom prompt start sequence
@@ -140,10 +142,16 @@ function prompt_callback {
 - If you want to show the git prompt only if you are in a git repository you
   can set ``GIT_PROMPT_ONLY_IN_REPO=1`` before sourcing the gitprompt script
 
-- You can show an additional indicator at the start of the prompt, which shows
-  the result of the last executed command by setting
-  ``GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR=1`` before sourcing the gitprompt
-  script. 
+- There is an indicator at the start of the prompt, which shows
+  the result of the last executed command by if you put the placeholder
+  `_LAST_COMMAND_INDICATOR_` in any of the prompt templates. 
+  It is now by default activated in the default `git-prompt-colors.sh`:
+
+```sh
+  GIT_PROMPT_START_USER="_LAST_COMMAND_INDICATOR_ ${Yellow}${PathShort}${ResetColor}"
+  GIT_PROMPT_START_ROOT="_LAST_COMMAND_INDICATOR_ ${GIT_PROMPT_START_USER}"
+```
+
   If you want to display the exit code too, you can use the placeholder
   ``_LAST_COMMAND_STATE_`` in ``GIT_PROMPT_COMMAND_OK`` or ``GIT_PROMPT_COMMAND_FAIL``
   in your ``.git-prompt-colors.sh``:
