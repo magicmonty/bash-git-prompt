@@ -1,4 +1,4 @@
-# These are the color definitions used by gitprompt.sh
+# This is the default theme for gitprompt.sh without the indicator of the last command state
 
 define_git_prompt_colors() {
   Time12a="\$(date +%H:%M)"
