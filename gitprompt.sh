@@ -84,6 +84,30 @@ function git_prompt_list_themes()
   fi
 }
 
+function git_prompt_make_custom_theme() {
+  if [[ -r "${HOME}/.git-prompt-colors.sh" ]]; then
+    echoc ${Red} "You alread have created a custom theme!"
+  else
+    git_prompt_dir
+
+    local base="Default"
+    if [[ -n $1 && -r "${__GIT_PROMPT_DIR}/themes/${1}.bgptheme" ]]; then
+      base=$1
+      echoc ${Green} "Using theme ${Magenta}\"${base}\"${Green} as base theme!"
+    else
+      echoc ${Green} "Using theme ${Magenta}\"Default\"${Green} as base theme!"
+    fi
+
+    if [[ "${base}" = "Custom" ]]; then
+      echoc ${Red} "You cannot use the custom theme as base"
+    else
+      echoc ${Green} "Creating new cutom theme in \"${HOME}/.git-prompt-colors.sh\""
+      echoc ${DimYellow} "Please add ${Magenta}\"GIT_PROMPT_THEME=Custom\"${DimYellow} to your .bashrc to use this theme"
+      cp "${__GIT_PROMPT_DIR}/themes/${base}.bgptheme" "${HOME}/.git-prompt-colors.sh"
+    fi
+  fi
+}
+
 # gp_set_file_var ENVAR SOMEFILE
 #
 # If ENVAR is set, check that it's value exists as a readable file.  Otherwise,
