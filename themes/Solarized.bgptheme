@@ -1,4 +1,4 @@
-# This theme for gitprompt.sh is optimized for the "Solarized Dark" color scheme
+# This theme for gitprompt.sh is optimized for the "Solarized Dark" and "Solarized Light" color schemes
 
 define_git_prompt_colors() {
   Time12a="\$(date +%H:%M)"
