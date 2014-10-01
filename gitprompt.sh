@@ -200,11 +200,18 @@ function setGitPrompt() {
     FETCH_REMOTE_STATUS=0
   fi
 
+  unset GIT_PROMPT_IGNORE
+
   if [[ -e "$repo/.bash-git-rc" ]]; then
     source "$repo/.bash-git-rc"
   fi
 
-  if [ "$FETCH_REMOTE_STATUS" = 1 ]; then
+  if [[ "$GIT_PROMPT_IGNORE" = 1 ]]; then
+    PS1="$EMPTY_PROMPT"
+    return
+  fi
+
+  if [[ "$FETCH_REMOTE_STATUS" = 1 ]]; then
     checkUpstream
   fi
 

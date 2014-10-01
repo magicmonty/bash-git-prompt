@@ -166,6 +166,9 @@ GIT_PROMPT_COMMAND_FAIL="${Red}✘-_LAST_COMMAND_STATE_ " # displays as ✘-1 fo
   on a per repository basis by creating a file named ``.bash-git-rc`` with the
   content ``FETCH_REMOTE_STATUS=0`` in the root of your git repository.
 
+- You can also ignore a repository completely by creating a file named ``.bash-git-rc`` with the
+  content ``GIT_PROMPT_IGNORE=1`` in the root of your git repository.
+
 - You can get help on the git prompt with the function ``git_prompt_help``.
   Examples are available with ``git_prompt_examples``.
   A list of all available named colors is available with `git_prompt_color_samples`
