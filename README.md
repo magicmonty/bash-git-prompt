@@ -103,10 +103,33 @@ git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt
    # GIT_PROMPT_END=...      # uncomment for custom prompt end sequence
 
    # as last entry source the gitprompt script
+   # GIT_PROMPT_THEME=Custom # use custom .git-prompt-colors.sh
+   # GIT_PROMPT_THEME=Solarized # use theme optimized for solarized color scheme
    source ~/.bash-git-prompt/gitprompt.sh
 ```
 
 - `cd` to a git repository and test it!
+
+#### Themes
+
+The most settings are now stored in theme files. To select a theme, set the variable `GIT_PROMPT_THEME` to the name
+of the theme located in `<INSTALLDIR>/themes` without the extension `.bgptheme` like this:
+
+```sh
+GIT_PROMPT_THEME=Solarized
+```
+
+If you set `GIT_PROMPT_THEME` to `Custom`, then the `.git-prompt-colors.sh` in the home directory will be used.
+This file can now be generated with the command `git_prompt_make_custom_theme [<Name of base theme>]`. If the name of 
+the base theme is ommitted or the theme file is not found, then the Default theme is used. If you have already a custom
+`.git-prompt-colors.sh` in your home directory, a error message will be shown.
+
+You can display a list of available themes with `git_prompt_list_themes` (the current theme is highlighted)
+
+**If you omit the `GIT_PROMPT_THEME` variable, the Default theme is used or, if you have a custom `.git-prompt-colors.sh`
+in your home directory, then the Custom theme is used.**
+
+#### Further customizations
 
 - You can define `GIT_PROMPT_START` and `GIT_PROMPT_END` to tweak your prompt.
 
