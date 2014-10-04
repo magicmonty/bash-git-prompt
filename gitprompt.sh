@@ -28,16 +28,25 @@ function echoc() {
 
 function get_theme()
 {
+  local CUSTOM_THEME_FILE="${HOME}/.git-prompt-colors.sh"
+  local DEFAULT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
+
   if [[ -z ${GIT_PROMPT_THEME} ]]; then
-    GIT_PROMPT_THEME="Default"
-    __GIT_PROMPT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
+    if [[ -r $CUSTOM_THEME_FILE ]]; then
+      GIT_PROMPT_THEME="Custom"
+      __GIT_PROMPT_THEME_FILE=$CUSTOM_THEME_FILE
+    else
+      GIT_PROMPT_THEME="Default"
+      __GIT_PROMPT_THEME_FILE=$DEFAULT_THEME_FILE
+    fi
   else
     if [[ "${GIT_PROMPT_THEME}" = "Custom" ]]; then
       GIT_PROMPT_THEME="Custom"
-      __GIT_PROMPT_THEME_FILE="${HOME}/.git-prompt-colors.sh"
+      __GIT_PROMPT_THEME_FILE=$CUSTOM_THEME_FILE
+      
       if [[ !(-r $__GIT_PROMPT_THEME_FILE) ]]; then
         GIT_PROMPT_THEME="Default"
-        __GIT_PROMPT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
+        __GIT_PROMPT_THEME_FILE=$DEFAULT_THEME_FILE
       fi
     else
       local theme=""
@@ -56,7 +65,6 @@ function get_theme()
       __GIT_PROMPT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/${GIT_PROMPT_THEME}.bgptheme"
     fi
   fi
-
 }
 
 function git_prompt_list_themes() 
