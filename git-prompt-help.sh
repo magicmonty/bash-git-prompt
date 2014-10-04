@@ -3,8 +3,8 @@
 # being displayed.
 
 git_prompt_help() {
-  source prompt-colors.sh
-  source git-prompt-colors.sh
+  source ${__GIT_PROMPT_DIR}/prompt-colors.sh
+  source themes/Default.bgptheme
  cat <<EOF | sed 's/\\\[\\033//g' | sed 's/\\\]//g'
 The git prompt format is [<BRANCH><TRACKING>|<LOCALSTATUS>]
 

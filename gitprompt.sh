@@ -22,6 +22,100 @@ function git_prompt_dir()
   fi
 }
 
+function echoc() {
+    echo -e "${1}$2${ResetColor}" | sed 's/\\\]//g'  | sed 's/\\\[//g'
+}
+
+function get_theme()
+{
+  local CUSTOM_THEME_FILE="${HOME}/.git-prompt-colors.sh"
+  local DEFAULT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
+
+  if [[ -z ${GIT_PROMPT_THEME} ]]; then
+    if [[ -r $CUSTOM_THEME_FILE ]]; then
+      GIT_PROMPT_THEME="Custom"
+      __GIT_PROMPT_THEME_FILE=$CUSTOM_THEME_FILE
+    else
+      GIT_PROMPT_THEME="Default"
+      __GIT_PROMPT_THEME_FILE=$DEFAULT_THEME_FILE
+    fi
+  else
+    if [[ "${GIT_PROMPT_THEME}" = "Custom" ]]; then
+      GIT_PROMPT_THEME="Custom"
+      __GIT_PROMPT_THEME_FILE=$CUSTOM_THEME_FILE
+      
+      if [[ !(-r $__GIT_PROMPT_THEME_FILE) ]]; then
+        GIT_PROMPT_THEME="Default"
+        __GIT_PROMPT_THEME_FILE=$DEFAULT_THEME_FILE
+      fi
+    else
+      local theme=""
+      
+      # use default theme, if theme was not found
+      for themefile in `ls $__GIT_PROMPT_DIR/themes`; do
+        if [[ "${themefile}" = "${GIT_PROMPT_THEME}.bgptheme" ]]; then
+          theme=$GIT_PROMPT_THEME
+        fi
+      done
+
+      if [[ "${theme}" = "" ]]; then
+        GIT_PROMPT_THEME="Default"
+      fi 
+
+      __GIT_PROMPT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/${GIT_PROMPT_THEME}.bgptheme"
+    fi
+  fi
+}
+
+function git_prompt_list_themes() 
+{
+  local oldTheme
+  local oldThemeFile
+
+  git_prompt_dir
+  get_theme
+
+  for themefile in `ls $__GIT_PROMPT_DIR/themes`; do
+    local theme="$(basename $themefile .bgptheme)"
+
+    if [[ "${GIT_PROMPT_THEME}" = "${theme}" ]]; then
+      echoc ${Red} "*${theme}"
+    else
+      echo $theme 
+    fi
+  done
+
+  if [[ "${GIT_PROMPT_THEME}" = "Custom" ]]; then
+    echoc ${Magenta} "*Custom"
+  else
+    echoc ${Blue} "Custom"
+  fi
+}
+
+function git_prompt_make_custom_theme() {
+  if [[ -r "${HOME}/.git-prompt-colors.sh" ]]; then
+    echoc ${Red} "You alread have created a custom theme!"
+  else
+    git_prompt_dir
+
+    local base="Default"
+    if [[ -n $1 && -r "${__GIT_PROMPT_DIR}/themes/${1}.bgptheme" ]]; then
+      base=$1
+      echoc ${Green} "Using theme ${Magenta}\"${base}\"${Green} as base theme!"
+    else
+      echoc ${Green} "Using theme ${Magenta}\"Default\"${Green} as base theme!"
+    fi
+
+    if [[ "${base}" = "Custom" ]]; then
+      echoc ${Red} "You cannot use the custom theme as base"
+    else
+      echoc ${Green} "Creating new cutom theme in \"${HOME}/.git-prompt-colors.sh\""
+      echoc ${DimYellow} "Please add ${Magenta}\"GIT_PROMPT_THEME=Custom\"${DimYellow} to your .bashrc to use this theme"
+      cp "${__GIT_PROMPT_DIR}/themes/${base}.bgptheme" "${HOME}/.git-prompt-colors.sh"
+    fi
+  fi
+}
+
 # gp_set_file_var ENVAR SOMEFILE
 #
 # If ENVAR is set, check that it's value exists as a readable file.  Otherwise,
@@ -99,11 +193,8 @@ function git_prompt_config()
   # source the user's ~/.git-prompt-colors.sh file, or the one that should be
   # sitting in the same directory as this script
 
-  if gp_set_file_var __GIT_PROMPT_COLORS_FILE git-prompt-colors.sh ; then
-    source "$__GIT_PROMPT_COLORS_FILE"
-  else
-    echo 1>&2 "Cannot find git-prompt-colors.sh!"
-  fi
+  get_theme
+  source "$__GIT_PROMPT_THEME_FILE"
 
   if [ $GIT_PROMPT_LAST_COMMAND_STATE = 0 ]; then
     LAST_COMMAND_INDICATOR="$GIT_PROMPT_COMMAND_OK";
