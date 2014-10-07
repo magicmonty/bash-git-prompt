@@ -326,6 +326,14 @@ function checkUpstream() {
   fi
 }
 
+function replaceSymbols()
+{
+	local VALUE=${1/_AHEAD_/${GIT_PROMPT_SYMBOLS_AHEAD}}
+	local VALUE1=${VALUE/_BEHIND_/${GIT_PROMPT_SYMBOLS_BEHIND}}
+	
+	echo ${VALUE1/_PREHASH_/${GIT_PROMPT_SYMBOLS_PREHASH}}
+}
+
 function updatePrompt() {
   local LAST_COMMAND_INDICATOR
   local PROMPT_LEADING_SPACE
@@ -339,8 +347,8 @@ function updatePrompt() {
   local -a GitStatus
   GitStatus=($("$__GIT_STATUS_CMD" 2>/dev/null))
 
-  local GIT_BRANCH=${GitStatus[0]}
-  local GIT_REMOTE=${GitStatus[1]}
+  local GIT_BRANCH=$(replaceSymbols ${GitStatus[0]})
+  local GIT_REMOTE="$(replaceSymbols ${GitStatus[1]})"
   if [[ "." == "$GIT_REMOTE" ]]; then
     unset GIT_REMOTE
   fi

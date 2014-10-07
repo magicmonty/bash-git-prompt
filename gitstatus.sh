@@ -19,42 +19,6 @@ if [ -z "${__GIT_PROMPT_DIR}" ]; then
   __GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 fi
 
-if [[ -z "$__GIT_PROMPT_COLORS_FILE" ]]; then
-  for dir in "$HOME" "$__GIT_PROMPT_DIR" ; do
-    for pfx in '.' '' ; do
-      file="$dir/${pfx}git-prompt-colors.sh"
-      if [[ -f "$file" ]]; then
-        __GIT_PROMPT_COLORS_FILE="$file"
-        break 2
-      fi
-    done
-  done
-fi
-
-# if the envar is defined, source the file for custom colors
-if [[ -n "$__GIT_PROMPT_COLORS_FILE" && -f "$__GIT_PROMPT_COLORS_FILE" ]]; then
-  source "$__GIT_PROMPT_COLORS_FILE"
-fi
-
-# change those symbols to whatever you prefer
-if [[ -n "${GIT_PROMPT_SYMBOLS_AHEAD}" ]]; then
-  symbols_ahead="${GIT_PROMPT_SYMBOLS_AHEAD}"
-else
-  symbols_ahead='↑·'
-fi
-
-if [[ -n "${GIT_PROMPT_SYMBOLS_BEHIND}" ]]; then
-  symbols_behind="${GIT_PROMPT_SYMBOLS_BEHIND}"
-else
-  symbols_behind='↓·'
-fi
-
-if [[ -n "${GIT_PROMPT_SYMBOLS_PREHASH}" ]]; then
-  symbols_prehash=':'
-else
-  symbols_prehash="${GIT_PROMPT_SYMBOLS_PREHASH}"
-fi
-
 gitsym=`git symbolic-ref HEAD`
 
 # if "fatal: Not a git repo .., then exit
@@ -93,7 +57,7 @@ if [[ -z "$branch" ]]; then
   if [[ -n "$tag" ]]; then
     branch="$tag"
   else
-    branch="${symbols_prehash}`git rev-parse --short HEAD`"
+    branch="_PREHASH_`git rev-parse --short HEAD`"
   fi
 else
   remote_name=`git config branch.${branch}.remote`
@@ -126,10 +90,10 @@ else
   num_ahead=`count_lines "$revgit" "^>"`
   num_behind=$(( num_revs - num_ahead ))
   if (( num_behind > 0 )) ; then
-    remote="${remote}${symbols_behind}${num_behind}"
+    remote="${remote}_BEHIND_${num_behind}"
   fi
   if (( num_ahead > 0 )) ; then
-    remote="${remote}${symbols_ahead}${num_ahead}"
+    remote="${remote}_AHEAD_${num_ahead}"
   fi
 fi
 
