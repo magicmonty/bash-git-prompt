@@ -44,7 +44,7 @@ function get_theme()
       GIT_PROMPT_THEME="Custom"
       __GIT_PROMPT_THEME_FILE=$CUSTOM_THEME_FILE
       
-      if [[ !(-r $__GIT_PROMPT_THEME_FILE) ]]; then
+      if [[ ! (-r $__GIT_PROMPT_THEME_FILE) ]]; then
         GIT_PROMPT_THEME="Default"
         __GIT_PROMPT_THEME_FILE=$DEFAULT_THEME_FILE
       fi
