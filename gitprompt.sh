@@ -209,12 +209,6 @@ function git_prompt_config()
 
   if [[ -z "$PROMPT_START" || -z "$PROMPT_END" ]]; then
 
-    # Various variables you might want for your PS1 prompt instead
-    local Time12a="\$(date +%H:%M)"
-    # local Time12a="(\$(date +%H:%M:%S))"
-    # local Time12a="(\@))"
-    local PathShort="\w"
-
     if [[ -z "$GIT_PROMPT_START" ]] ; then
       if $_isroot; then
         PROMPT_START="$GIT_PROMPT_START_ROOT"
