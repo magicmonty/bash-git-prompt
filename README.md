@@ -135,7 +135,7 @@ in your home directory, then the Custom theme is used.**
 
 - The default colors are defined within `prompt-colors.sh`, which is sourced by
   `gitprompt.sh`.  The colors used for various git status are defined in
-  `git-prompt-colors.sh`.  Both of these files may be overridden by copying
+  `themes/Default.bgptheme`.  Both of these files may be overridden by copying
   them to $HOME with a `.` prefix.  They can also be placed in `$HOME/lib`
   without the leading `.`.  The defaults are the original files in the
   `~/.bash-git-prompt` directory.
@@ -168,7 +168,7 @@ function prompt_callback {
 - There is an indicator at the start of the prompt, which shows
   the result of the last executed command by if you put the placeholder
   `_LAST_COMMAND_INDICATOR_` in any of the prompt templates. 
-  It is now by default activated in the default `git-prompt-colors.sh`:
+  It is now by default activated in the default theme:
 
 ```sh
   GIT_PROMPT_START_USER="_LAST_COMMAND_INDICATOR_ ${Yellow}${PathShort}${ResetColor}"
@@ -180,7 +180,7 @@ function prompt_callback {
   in your ``.git-prompt-colors.sh``:
 
 ```sh
-GIT_PROMPT_COMMAND_OK="${Green}✔-_LAST_COMMAND_STATE_ " # displays as ✔-0
+GIT_PROMPT_COMMAND_OK="${Green}✔ " # displays as ✔
 GIT_PROMPT_COMMAND_FAIL="${Red}✘-_LAST_COMMAND_STATE_ " # displays as ✘-1 for exit code 1
 ``` 
 
