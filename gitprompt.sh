@@ -9,7 +9,7 @@ function async_run()
 
 function git_prompt_dir()
 {
-  # assume the gitstatus.py is in the same directory as this script
+  # assume the gitstatus.sh is in the same directory as this script
   # code thanks to http://stackoverflow.com/questions/59895
   if [ -z "$__GIT_PROMPT_DIR" ]; then
     local SOURCE="${BASH_SOURCE[0]}"
@@ -67,6 +67,14 @@ function get_theme()
   fi
 }
 
+function git_prompt_load_theme()
+{
+  get_theme
+  local DEFAULT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
+  source "${DEFAULT_THEME_FILE}"
+  source "${__GIT_PROMPT_THEME_FILE}"
+}
+
 function git_prompt_list_themes() 
 {
   local oldTheme
@@ -111,7 +119,11 @@ function git_prompt_make_custom_theme() {
     else
       echoc ${Green} "Creating new cutom theme in \"${HOME}/.git-prompt-colors.sh\""
       echoc ${DimYellow} "Please add ${Magenta}\"GIT_PROMPT_THEME=Custom\"${DimYellow} to your .bashrc to use this theme"
-      cp "${__GIT_PROMPT_DIR}/themes/${base}.bgptheme" "${HOME}/.git-prompt-colors.sh"
+      if [[ "${base}" == "Default" ]]; then
+        cp "${__GIT_PROMPT_DIR}/themes/Custom.bgptemplate" "${HOME}/.git-prompt-colors.sh"
+      else
+        cp "${__GIT_PROMPT_DIR}/themes/${base}.bgptheme" "${HOME}/.git-prompt-colors.sh"
+      fi
     fi
   fi
 }
@@ -168,7 +180,7 @@ function gp_maybe_set_envar_to_path(){
 
 git_prompt_reset() {
   local var
-  for var in GIT_PROMPT_DIR __GIT_PROMPT_COLORS_FILE __PROMPT_COLORS_FILE __GIT_STATUS_CMD ; do
+  for var in GIT_PROMPT_DIR __GIT_PROMPT_COLORS_FILE __PROMPT_COLORS_FILE __GIT_STATUS_CMD GIT_PROMPT_THEME_NAME; do
     unset $var
   done
 }
@@ -193,8 +205,7 @@ function git_prompt_config()
   # source the user's ~/.git-prompt-colors.sh file, or the one that should be
   # sitting in the same directory as this script
 
-  get_theme
-  source "$__GIT_PROMPT_THEME_FILE"
+  git_prompt_load_theme
 
   if [ $GIT_PROMPT_LAST_COMMAND_STATE = 0 ]; then
     LAST_COMMAND_INDICATOR="$GIT_PROMPT_COMMAND_OK";
@@ -257,8 +268,8 @@ function git_prompt_config()
   GIT_PROMPT_FETCH_TIMEOUT=${1-5}
   if [[ -z "$__GIT_STATUS_CMD" ]] ; then          # if GIT_STATUS_CMD not defined..
     git_prompt_dir
-    if ! gp_maybe_set_envar_to_path __GIT_STATUS_CMD "$__GIT_PROMPT_DIR/gitstatus.sh" "$__GIT_PROMPT_DIR/gitstatus.py" ; then
-      echo 1>&2 "Cannot find gitstatus.sh or gitstatus.py!"
+    if ! gp_maybe_set_envar_to_path __GIT_STATUS_CMD "$__GIT_PROMPT_DIR/gitstatus.sh" ; then
+      echo 1>&2 "Cannot find gitstatus.sh!"
     fi
     # __GIT_STATUS_CMD defined
   fi
@@ -322,10 +333,15 @@ function checkUpstream() {
 
 function replaceSymbols()
 {
+  if [[ -z ${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING} ]]; then
+    GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING=L
+  fi
+
 	local VALUE=${1/_AHEAD_/${GIT_PROMPT_SYMBOLS_AHEAD}}
 	local VALUE1=${VALUE/_BEHIND_/${GIT_PROMPT_SYMBOLS_BEHIND}}
+  local VALUE2=${VALUE1/_NO_REMOTE_TRACKING_/${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING}}
 	
-	echo ${VALUE1/_PREHASH_/${GIT_PROMPT_SYMBOLS_PREHASH}}
+	echo ${VALUE2/_PREHASH_/${GIT_PROMPT_SYMBOLS_PREHASH}}
 }
 
 function updatePrompt() {

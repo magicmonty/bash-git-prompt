@@ -102,7 +102,7 @@ if [[ -z "$remote" ]] ; then
 fi
 
 if [[ "$has_remote_tracking" == "0" ]] ; then
-  remote='L'
+  remote='_NO_REMOTE_TRACKING_'
 fi 
 
 for w in "$branch" "$remote" $num_staged $num_conflicts $num_changed $num_untracked $num_stashed $clean ; do
