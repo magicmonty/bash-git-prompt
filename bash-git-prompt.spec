@@ -34,6 +34,8 @@ install -pm 755 *.sh %{buildroot}%{_datadir}/%{name}
 install -pm 755 *.py %{buildroot}%{_datadir}/%{name}
 install -pm 755 *.fish %{buildroot}%{_datadir}/%{name}
 install -pm 644 README.md %{buildroot}%{_datadir}/%{name}
+install -d 755 %{buildroot}%{_datadir}/%{name}/themes
+install -pm 644 themes/*.bgptheme %{buildroot}%{_datadir}/%{name}/themes
 
 # never include compiled Python program
 rm -fr  %{buildroot}%{_datadir}/%{name}/*.pyo
