@@ -260,10 +260,10 @@ from scratch by following this procedure:
 * Run the following command to create a tarball:
 
 ````sh
-    VER1=$(git describe)
+    VER=$(git describe)
     # replace dash with underscore to work around
     # rpmbuild does not allow dash in version string
-    VER=${VER1//\-/_}
+    VER=${VER//\-/_}
     git archive                                \
         --format tar                           \
         --prefix=bash-git-prompt-${VER}/       \
@@ -272,6 +272,7 @@ from scratch by following this procedure:
             *.py                               \
             *.fish                             \
             README.md                          \
+            themes                             \
       > bash-git-prompt-${VER}.tar
     mkdir -p /tmp/bash-git-prompt-${VER}
     sed "s/Version:.*/Version:        ${VER}/"          \
