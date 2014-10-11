@@ -13,10 +13,27 @@ staged, changed, etc.
 
 # ATTENTION! Breaking changes!
 
-**If you use this prompt already, please update your ``.git-prompt-colors.sh``, 
-if you have one. It now contains a function named ``define_git_prompt_colors()``!**
+**If you use this prompt already, please update your `.git-prompt-colors.sh`, 
+if you have one. It now contains a function named `define_git_prompt_colors()` or `override_git_prompt_colors()`!**
 
-**Please see the updated ``Default.bgptheme`` in the ``themes`` subdirectory of the installation directory!**
+**Please see the ``Custom.bgptemplate`` in the ``themes`` subdirectory of the installation directory!**
+
+**You can now also use the function `override_git_prompt_colors()`. It should define the variable `GIT_PROMPT_THEME_NAME`
+and call the function `reload_git_prompt_colors <ThemeName>` like follows:**
+
+```sh
+override_git_prompt_colors() {
+  GIT_PROMPT_THEME_NAME="Custom" # needed for reload optimization, should be unique
+  
+  # Place your overrides here
+  ...
+}
+
+# load the theme
+reload_git_prompt_colors "Custom"
+```
+
+The advantage of this approach is, that you only need to specify the parts, that are different to the Default theme.
 
 ---
 
@@ -128,6 +145,29 @@ You can display a list of available themes with `git_prompt_list_themes` (the cu
 
 **If you omit the `GIT_PROMPT_THEME` variable, the Default theme is used or, if you have a custom `.git-prompt-colors.sh`
 in your home directory, then the Custom theme is used.**
+
+##### Theme structure
+
+Please see the ``Custom.bgptemplate`` in the ``themes`` subdirectory of the installation directory!
+
+A theme consists of a function `override_git_prompt_colors()` which defines at least the variable `GIT_PROMPT_THEME_NAME`
+ with a unique theme identifier and a call to the function `reload_git_prompt_colors <ThemeName>` like follows:
+
+```sh
+override_git_prompt_colors() {
+  GIT_PROMPT_THEME_NAME="Custom" # needed for reload optimization, should be unique
+  
+  # Place your overrides here
+  ...
+}
+
+# load the theme
+reload_git_prompt_colors "Custom"
+```
+
+The advantage of this approach is, that you only need to specify the parts, that are different to the Default theme.
+
+If you use a custom theme in `.git-prompt-colors.sh`, please set `GIT_PROMPT_THEME_NAME="Custom"`.
 
 #### Further customizations
 
@@ -259,6 +299,12 @@ This code is under the [BSD 2 Clause (NetBSD) license][license].
 ## Who Are You?
 The current maintainer of the original bash-git-prompt is [Martin Gondermann][magicmonty].
 
+## Contributing
+If you want to contribute you can look for issues with the label [up-for-grabs][upforgrabs].
+Please leave a comment on the issue, that you want to fix it, so others know, the labels are "taken".
+
+Pull requests are welcome. I will check them and merge them, if I think they help the project.
+
 ## Donations
 I accept tips through [Gittip][tip] and [Flattr][flattr].
 
@@ -271,3 +317,4 @@ I accept tips through [Gittip][tip] and [Flattr][flattr].
 [license]:https://github.com/magicmonty/bash-git-prompt/tree/master/LICENSE.txt
 [flattr]: https://flattr.com/submit/auto?user_id=magicmonty&url=https%3A%2F%2Fgithub.com%2Fmagicmonty%2Fbash-git-prompt
 [homebrew]: http://brew.sh/
+[upforgrabs]: https://github.com/magicmonty/bash-git-prompt/labels/up-for-grabs
