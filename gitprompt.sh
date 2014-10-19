@@ -279,13 +279,37 @@ function setLastCommandState() {
   GIT_PROMPT_LAST_COMMAND_STATE=$?
 }
 
+function we_are_on_repo() {
+  if [[ -e "$(git rev-parse --git-dir 2> /dev/null)" ]]; then
+    echo 1
+  fi
+  echo 0
+}
+
+function update_old_git_prompt() {
+  local in_repo=$(we_are_on_repo)
+  if [[ $GIT_PROMPT_OLD_DIR_WAS_GIT = 0 ]]; then
+    OLD_GITPROMPT=$PS1
+  fi
+  
+  GIT_PROMPT_OLD_DIR_WAS_GIT=$in_repo
+}
+
 function setGitPrompt() {
+  update_old_git_prompt
+  
+  local repo=`git rev-parse --show-toplevel 2> /dev/null`
+  if [[ ! -e "$repo" ]] && [[ "$GIT_PROMPT_ONLY_IN_REPO" = 1 ]]; then
+    # we do not permit bash-git-prompt outside git repos, so nothing to do
+    PS1="$OLD_GITPROMPT"
+    return
+  fi
+  
   local EMPTY_PROMPT
   local __GIT_STATUS_CMD
 
   git_prompt_config
 
-  local repo=`git rev-parse --show-toplevel 2> /dev/null`
   if [[ ! -e "$repo" ]]; then
     PS1="$EMPTY_PROMPT"
     return
@@ -440,9 +464,13 @@ function gp_install_prompt {
   else
       prompt_callback="prompt_callback_default"
   fi
-
+  
   if [ -z "$OLD_GITPROMPT" ]; then
     OLD_GITPROMPT=$PS1
+  fi
+  
+  if [ -z "$GIT_PROMPT_OLD_DIR_WAS_GIT" ]; then
+    GIT_PROMPT_OLD_DIR_WAS_GIT=$(we_are_on_repo)
   fi
 
   if [ -z "$PROMPT_COMMAND" ]; then
