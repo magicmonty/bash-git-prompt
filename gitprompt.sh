@@ -1,4 +1,13 @@
 #!/bin/sh
+PS1="\[\033[0;33m\]\w\[\033[0m\] \[\033[37m\]$(date +%H:%M)\[\033[0m\]"
+GIT_PROMPT_FETCH_REMOTE_STATUS=0   # uncomment to avoid fetching remote status
+GIT_PROMPT_START=${PS1}    # uncomment for custom prompt start sequence
+GIT_PROMPT_END_ROOT=' # '
+GIT_PROMPT_END_USER=' $ '
+# GIT_PROMPT_END=' '      # uncomment for custom prompt end sequence
+# as last entry source the gitprompt script
+# GIT_PROMPT_THEME=Custom # use custom .git-prompt-colors.sh
+GIT_PROMPT_THEME=Solarized # use theme optimized for solarized color scheme
 
 function async_run()
 {
