@@ -214,7 +214,7 @@ function git_prompt_config()
   fi
 
   # replace _LAST_COMMAND_STATE_ token with the actual state
-  LAST_COMMAND_INDICATOR="${LAST_COMMAND_INDICATOR/_LAST_COMMAND_STATE_/${GIT_PROMPT_LAST_COMMAND_STATE}}"
+  LAST_COMMAND_INDICATOR="${LAST_COMMAND_INDICATOR//_LAST_COMMAND_STATE_/${GIT_PROMPT_LAST_COMMAND_STATE}}"
 
   # Do this only once to define PROMPT_START and PROMPT_END
 
@@ -254,14 +254,14 @@ function git_prompt_config()
     local ps=""
     if [[ -n "$VIRTUAL_ENV" ]]; then
       VENV=$(basename "${VIRTUAL_ENV}")
-      ps="${ps}${GIT_PROMPT_VIRTUALENV/_VIRTUALENV_/${VENV}}"
+      ps="${ps}${GIT_PROMPT_VIRTUALENV//_VIRTUALENV_/${VENV}}"
     fi
     if [[ -n "$CONDA_DEFAULT_ENV" ]]; then
       VENV=$(basename "${CONDA_DEFAULT_ENV}")
-      ps="${ps}${GIT_PROMPT_VIRTUALENV/_VIRTUALENV_/${VENV}}"
+      ps="${ps}${GIT_PROMPT_VIRTUALENV//_VIRTUALENV_/${VENV}}"
     fi
     ps="$ps$PROMPT_START$($prompt_callback)$PROMPT_END"
-    EMPTY_PROMPT="${ps/_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
+    EMPTY_PROMPT="${ps//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
   fi
 
   # fetch remote revisions every other $GIT_PROMPT_FETCH_TIMEOUT (default 5) minutes
@@ -361,11 +361,11 @@ function replaceSymbols()
     GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING=L
   fi
 
-	local VALUE=${1/_AHEAD_/${GIT_PROMPT_SYMBOLS_AHEAD}}
-	local VALUE1=${VALUE/_BEHIND_/${GIT_PROMPT_SYMBOLS_BEHIND}}
-  local VALUE2=${VALUE1/_NO_REMOTE_TRACKING_/${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING}}
+	local VALUE=${1//_AHEAD_/${GIT_PROMPT_SYMBOLS_AHEAD}}
+	local VALUE1=${VALUE//_BEHIND_/${GIT_PROMPT_SYMBOLS_BEHIND}}
+  local VALUE2=${VALUE1//_NO_REMOTE_TRACKING_/${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING}}
 	
-	echo ${VALUE2/_PREHASH_/${GIT_PROMPT_SYMBOLS_PREHASH}}
+	echo ${VALUE2//_PREHASH_/${GIT_PROMPT_SYMBOLS_PREHASH}}
 }
 
 function updatePrompt() {
@@ -438,12 +438,12 @@ function updatePrompt() {
     NEW_PROMPT=""
     if [[ -n "$VIRTUAL_ENV" ]]; then
       VENV=$(basename "${VIRTUAL_ENV}")
-      NEW_PROMPT="$NEW_PROMPT${GIT_PROMPT_VIRTUALENV/_VIRTUALENV_/${VENV}}"
+      NEW_PROMPT="$NEW_PROMPT${GIT_PROMPT_VIRTUALENV//_VIRTUALENV_/${VENV}}"
     fi
 
     if [[ -n "$CONDA_DEFAULT_ENV" ]]; then
       VENV=$(basename "${CONDA_DEFAULT_ENV}")
-      NEW_PROMPT="$NEW_PROMPT${GIT_PROMPT_VIRTUALENV/_VIRTUALENV_/${VENV}}"
+      NEW_PROMPT="$NEW_PROMPT${GIT_PROMPT_VIRTUALENV//_VIRTUALENV_/${VENV}}"
     fi
 
     NEW_PROMPT="$NEW_PROMPT$PROMPT_START$($prompt_callback)$STATUS$PROMPT_END"
@@ -451,7 +451,7 @@ function updatePrompt() {
     NEW_PROMPT="$EMPTY_PROMPT"
   fi
 
-  PS1="${NEW_PROMPT/_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
+  PS1="${NEW_PROMPT//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
 }
 
 function prompt_callback_default {
