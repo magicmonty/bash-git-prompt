@@ -73,6 +73,7 @@ The symbols are as follows:
   - ``↑n``: ahead of remote by ``n`` commits
   - ``↓n``: behind remote by ``n`` commits
   - ``↓m↑n``: branches diverged, other by ``m`` commits, yours by ``n`` commits
+  - ``L``: local branch, not remotely tracked
 - Branch Symbol:<br />
   	When the branch name starts with a colon ``:``, it means it's actually a hash, not a branch (although it should be pretty clear, unless you name your branches like hashes :-)
 
