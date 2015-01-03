@@ -39,7 +39,7 @@ num_changed=$(( `all_lines "$gitstatus"` - `count_lines "$gitstatus" U` ))
 num_conflicts=`count_lines "$staged_files" U`
 num_staged=$(( `all_lines "$staged_files"` - num_conflicts ))
 num_untracked=`git ls-files --others --exclude-standard | wc -l`
-if [[ -n "$GIT_PROMPT_IGNORE_STASH" ]]; then
+if [[ "$__GIT_PROMPT_IGNORE_STASH" = "1" ]]; then
   num_stashed=0
 else	
   num_stashed=`git stash list | wc -l`

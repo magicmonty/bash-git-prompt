@@ -378,6 +378,7 @@ function updatePrompt() {
 
   git_prompt_config
 
+  export __GIT_PROMPT_IGNORE_STASH=${GIT_PROMPT_IGNORE_STASH}
   local -a GitStatus
   GitStatus=($("$__GIT_STATUS_CMD" 2>/dev/null))
 
