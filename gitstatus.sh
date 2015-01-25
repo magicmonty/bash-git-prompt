@@ -38,7 +38,7 @@ staged_files=`git diff --staged --name-status`
 num_changed=$(( `all_lines "$gitstatus"` - `count_lines "$gitstatus" U` ))
 num_conflicts=`count_lines "$staged_files" U`
 num_staged=$(( `all_lines "$staged_files"` - num_conflicts ))
-num_untracked=`git ls-files --others --exclude-standard | wc -l`
+num_untracked=`git ls-files --others --exclude-standard $(git rev-parse --show-cdup) | wc -l`
 if [[ "$__GIT_PROMPT_IGNORE_STASH" = "1" ]]; then
   num_stashed=0
 else	
