@@ -3,6 +3,8 @@
 # being displayed.
 
 git_prompt_help() {
+  source ${__GIT_PROMPT_DIR}/prompt-colors.sh
+  source themes/Default.bgptheme
  cat <<EOF | sed 's/\\\[\\033//g' | sed 's/\\\]//g'
 The git prompt format is [<BRANCH><TRACKING>|<LOCALSTATUS>]
 
@@ -18,12 +20,12 @@ remote branch.  It can be empty, or one of:
 
 LOCALSTATUS is one of the following:
 
-    ${GIT_PROMPT_CLEAN}${ResetColor}   - repository clean
-    ${GIT_PROMPT_STAGED}N${ResetColor}  - N staged files
-    ${GIT_PROMPT_CONFLICTS}N${ResetColor}  - N conflicted files
-    ${GIT_PROMPT_CHANGED}N${ResetColor}  - N changed but *unstaged* files
-    ${GIT_PROMPT_UNTRACKED}N${ResetColor}  - N untracked files
-    ${GIT_PROMPT_STASHED}N${ResetColor}  - N stash entries
+    ${GIT_PROMPT_CLEAN}${ResetColor}    - repository clean
+    ${GIT_PROMPT_STAGED} N${ResetColor}  - N staged files
+    ${GIT_PROMPT_CONFLICTS} N${ResetColor}  - N conflicted files
+    ${GIT_PROMPT_CHANGED} N${ResetColor}  - N changed but *unstaged* files
+    ${GIT_PROMPT_UNTRACKED} N${ResetColor}  - N untracked files
+    ${GIT_PROMPT_STASHED} N${ResetColor}  - N stash entries
 
 See "git_prompt_examples" for examples.
 EOF
@@ -56,3 +58,18 @@ These are examples of the git prompt:
 EOF
 }
 
+git_prompt_color_samples() {
+  
+  showColor() {
+    local color=$(eval echo "\${$1}")
+    echo -e "${color}$1${ResetColor}" | sed 's/\\\]//g'  | sed 's/\\\[//g'
+  }
+
+  while (( x < 8 )) ; do
+    showColor ${ColorNames[x]}
+    showColor "Dim${ColorNames[x]}"
+    showColor "Bold${ColorNames[x]}"
+    showColor "Bright${ColorNames[x]}"
+    (( x++ ))
+  done
+}
