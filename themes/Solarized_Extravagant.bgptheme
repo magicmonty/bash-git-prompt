@@ -25,8 +25,13 @@ override_git_prompt_colors() {
   
 GIT_PROMPT_START_USER="_LAST_COMMAND_INDICATOR_ ${BoldBlueFg}${Time12a} ${Green}${KERNEL_PROMPT} ${Cyan}${RUBY_PROMPT} ${Yellow}${PathShort}"
   GIT_PROMPT_START_ROOT="${GIT_PROMPT_START_USER}"
-  GIT_PROMPT_END_USER="\n${BoldBlue} ➭ ${ResetColor}"
-  GIT_PROMPT_END_ROOT="\n${BoldRed} # ${ResetColor}"
+  if [ -n "$SSH_CLIENT" ]; then
+    GIT_PROMPT_END_USER="\n${BoldRed} ➤ ${ResetColor}"
+    GIT_PROMPT_END_ROOT="\n${BoldRed} » ${ResetColor}"
+  else
+    GIT_PROMPT_END_USER="\n${BoldBlue} ➭ ${ResetColor}"
+    GIT_PROMPT_END_ROOT="\n${BoldRed} # ${ResetColor}"
+  fi
   GIT_PROMPT_LEADING_SPACE=1
   GIT_PROMPT_PREFIX="${Cyan}["
   GIT_PROMPT_SUFFIX="${Cyan}]" 
