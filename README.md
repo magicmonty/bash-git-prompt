@@ -261,7 +261,7 @@ from scratch by following this procedure:
 * Run the following command to create a tarball:
 
 ````sh
-    VER=$(git describe)
+    VER=$(git describe --tags)
     # replace dash with underscore to work around
     # rpmbuild does not allow dash in version string
     VER=${VER//\-/_}
@@ -271,6 +271,7 @@ from scratch by following this procedure:
         HEAD                                   \
         --  *.sh                               \
             *.py                               \
+            *.rb                               \
             *.fish                             \
             README.md                          \
             themes                             \

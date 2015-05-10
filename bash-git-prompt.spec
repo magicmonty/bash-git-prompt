@@ -60,7 +60,8 @@ if [ -f %{_datadir}/%{name}/gitprompt.sh ]; then
     # Set config variables first
 
     GIT_PROMPT_ONLY_IN_REPO=1
-    GIT_PROMPT_THEME=Default
+    GIT_PROMPT_THEME=Solarized_Git
+    GIT_PROMPT_FETCH_REMOTE_STATUS=0
     source %{_datadir}/%{name}/gitprompt.sh
 fi
 %{END_TOKEN}
@@ -72,5 +73,7 @@ sed -i -e '/^%{START_TOKEN}/, /^%{END_TOKEN}/{d}' /etc/bashrc
 
 
 %changelog
-* Fri Aug 08 2014 Justin Zhang <schnell18@gmail.com - 1.0.1-1
+* Fri Nov 21 2014 Justin Zhang <schnell18@gmail.com> - 2.3.4-1
+- Add custom theme Solarized Git to show colors in Git way
+* Fri Aug 08 2014 Justin Zhang <schnell18@gmail.com> - 1.0.1-1
 - Initial version of package
