@@ -43,12 +43,12 @@ define_undefined_git_prompt_colors() {
 
   if [[ -z ${GIT_PROMPT_BRANCH} ]]; then GIT_PROMPT_BRANCH="${Magenta}"; fi        # the git branch that is active in the current directory
   if [[ -z ${GIT_PROMPT_STAGED} ]]; then GIT_PROMPT_STAGED="${Red}●"; fi           # the number of staged files/directories
-  if [[ -z ${GIT_PROMPT_CONFLICTS} ]]; then GIT_PROMPT_CONFLICTS="${Red}✖ "; fi       # the number of files in conflict
-  if [[ -z ${GIT_PROMPT_CHANGED} ]]; then GIT_PROMPT_CHANGED="${Blue}✚ "; fi        # the number of changed files
+  if [[ -z ${GIT_PROMPT_CONFLICTS} ]]; then GIT_PROMPT_CONFLICTS="${Red}✖"; fi       # the number of files in conflict
+  if [[ -z ${GIT_PROMPT_CHANGED} ]]; then GIT_PROMPT_CHANGED="${Blue}✚"; fi        # the number of changed files
 
   if [[ -z ${GIT_PROMPT_REMOTE} ]]; then GIT_PROMPT_REMOTE=" "; fi                 # the remote branch name (if any) and the symbols for ahead and behind
   if [[ -z ${GIT_PROMPT_UNTRACKED} ]]; then GIT_PROMPT_UNTRACKED="${Cyan}…"; fi       # the number of untracked files/dirs
-  if [[ -z ${GIT_PROMPT_STASHED} ]]; then GIT_PROMPT_STASHED="${BoldBlue}⚑ "; fi    # the number of stashed files/dir
+  if [[ -z ${GIT_PROMPT_STASHED} ]]; then GIT_PROMPT_STASHED="${BoldBlue}⚑"; fi    # the number of stashed files/dir
   if [[ -z ${GIT_PROMPT_CLEAN} ]]; then GIT_PROMPT_CLEAN="${BoldGreen}✔"; fi      # a colored flag indicating a "clean" repo
 
   # For the command indicator, the placeholder _LAST_COMMAND_STATE_ 
