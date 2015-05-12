@@ -72,8 +72,8 @@ define_undefined_git_prompt_colors() {
   if [[ -z ${GIT_PROMPT_END_ROOT} ]]; then GIT_PROMPT_END_ROOT=" \n${White}${Time12a}${ResetColor} # "; fi
 
   # Please do not add colors to these symbols
-  if [[ -z ${GIT_PROMPT_SYMBOLS_AHEAD} ]]; then GIT_PROMPT_SYMBOLS_AHEAD="↑"; fi             # The symbol for "n versions ahead of origin"
-  if [[ -z ${GIT_PROMPT_SYMBOLS_BEHIND} ]]; then GIT_PROMPT_SYMBOLS_BEHIND="↓"; fi            # The symbol for "n versions behind of origin"
+  if [[ -z ${GIT_PROMPT_SYMBOLS_AHEAD} ]]; then GIT_PROMPT_SYMBOLS_AHEAD="↑·"; fi             # The symbol for "n versions ahead of origin"
+  if [[ -z ${GIT_PROMPT_SYMBOLS_BEHIND} ]]; then GIT_PROMPT_SYMBOLS_BEHIND="↓·"; fi            # The symbol for "n versions behind of origin"
   if [[ -z ${GIT_PROMPT_SYMBOLS_PREHASH} ]]; then GIT_PROMPT_SYMBOLS_PREHASH=":"; fi            # Written before hash of commit, if no name could be found
   if [[ -z ${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING} ]]; then GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING="L"; fi # This symbol is written after the branch, if the branch is not tracked 
 }
