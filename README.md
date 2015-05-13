@@ -187,12 +187,7 @@ If you use a custom theme in `.git-prompt-colors.sh`, please set `GIT_PROMPT_THE
   and end of the prompt by setting `GIT_PROMPT_START` and `GIT_PROMPT_END`
   before you source the `gitprompt.sh`.
 
-- The current git repo information is obtained by the script `gitstatus.sh` or
-  `gitstatus.py`.  Both scripts do the same thing, but the bash script is a tad
-  more quick, and is used by default.  If you prefer the python script
-  (possibly because you have enhanced it), simply delete or change the name of
-  `gitstatus.sh`.
-
+- The current git repo information is obtained by the script `gitstatus.sh`.  
 - You can define `prompt_callback` function to tweak your prompt dynamically.
 
 ```sh
@@ -270,7 +265,6 @@ from scratch by following this procedure:
         --prefix=bash-git-prompt-${VER}/       \
         HEAD                                   \
         --  *.sh                               \
-            *.py                               \
             *.fish                             \
             README.md                          \
             themes                             \
