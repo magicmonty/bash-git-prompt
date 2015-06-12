@@ -5,7 +5,7 @@ override_git_prompt_colors() {
   if [ -e ~/.rvm/bin/rvm-prompt ]; then
     RUBY_PROMPT='{$(~/.rvm/bin/rvm-prompt i v)}'
   else
-    if which rbenv &> /dev/null; then
+    if command -v rbenv > /dev/null; then
       RUBY_PROMPT='{$(rbenv version | sed -e "s/ (set.*$//")}'
     fi
   fi
