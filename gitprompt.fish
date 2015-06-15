@@ -44,9 +44,9 @@ function fish_prompt
     set PROMPT_END " \n$WHITE$Time$ResetColor  \$ "
 
     set -e __CURRENT_GIT_STATUS
-    set gitstatus "$__GIT_PROMPT_DIR/gitstatus.py"
+    set gitstatus "$__GIT_PROMPT_DIR/gitstatus.sh"
 
-    set _GIT_STATUS (python $gitstatus)
+    set _GIT_STATUS (sh $gitstatus)
     set __CURRENT_GIT_STATUS $_GIT_STATUS
 
     set __CURRENT_GIT_STATUS_PARAM_COUNT (count $__CURRENT_GIT_STATUS)
