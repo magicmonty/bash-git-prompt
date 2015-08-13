@@ -52,7 +52,7 @@ function get_theme()
       local theme=""
       
       # use default theme, if theme was not found
-      for themefile in `ls "$__GIT_PROMPT_DIR/themes"`; do
+      for themefile in $(cd "$__GIT_PROMPT_DIR/themes" && echo *); do
         if [[ "${themefile}" = "${GIT_PROMPT_THEME}.bgptheme" ]]; then
           theme=$GIT_PROMPT_THEME
         fi
