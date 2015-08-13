@@ -19,10 +19,13 @@ if [ -z "${__GIT_PROMPT_DIR}" ]; then
   __GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 fi
 
-branch=`git symbolic-ref HEAD --short`
+gitsym=`git symbolic-ref HEAD`
 
 # if "fatal: Not a git repo .., then exit
-case "$branch" in fatal*) exit 0 ;; esac
+case "$gitsym" in fatal*) exit 0 ;; esac
+
+# the current branch is the tail end of the symbolic reference
+branch="${gitsym##refs/heads/}"    # get the basename after "refs/heads/"
 
 gitstatus=`git diff --name-status 2>&1`
 
