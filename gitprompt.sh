@@ -43,14 +43,14 @@ function get_theme()
     if [[ "${GIT_PROMPT_THEME}" = "Custom" ]]; then
       GIT_PROMPT_THEME="Custom"
       __GIT_PROMPT_THEME_FILE=$CUSTOM_THEME_FILE
-      
+
       if [[ ! (-r $__GIT_PROMPT_THEME_FILE) ]]; then
         GIT_PROMPT_THEME="Default"
         __GIT_PROMPT_THEME_FILE=$DEFAULT_THEME_FILE
       fi
     else
       local theme=""
-      
+
       # use default theme, if theme was not found
       for themefile in `ls "$__GIT_PROMPT_DIR/themes"`; do
         if [[ "${themefile}" = "${GIT_PROMPT_THEME}.bgptheme" ]]; then
@@ -60,7 +60,7 @@ function get_theme()
 
       if [[ "${theme}" = "" ]]; then
         GIT_PROMPT_THEME="Default"
-      fi 
+      fi
 
       __GIT_PROMPT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/${GIT_PROMPT_THEME}.bgptheme"
     fi
@@ -75,7 +75,7 @@ function git_prompt_load_theme()
   source "${__GIT_PROMPT_THEME_FILE}"
 }
 
-function git_prompt_list_themes() 
+function git_prompt_list_themes()
 {
   local oldTheme
   local oldThemeFile
@@ -89,7 +89,7 @@ function git_prompt_list_themes()
     if [[ "${GIT_PROMPT_THEME}" = "${theme}" ]]; then
       echoc ${Red} "*${theme}"
     else
-      echo $theme 
+      echo $theme
     fi
   done
 
@@ -187,13 +187,13 @@ git_prompt_reset() {
 
 # gp_format_exit_status RETVAL
 #
-# echos the symbolic signal name represented by RETVAL if the process was 
+# echos the symbolic signal name represented by RETVAL if the process was
 # signalled, otherwise echos the original value of RETVAL
 
 gp_format_exit_status() {
     local RETVAL="$1"
     local SIGNAL
-    # Suppress STDERR in case RETVAL is not an integer (in such cases, RETVAL 
+    # Suppress STDERR in case RETVAL is not an integer (in such cases, RETVAL
     # is echoed verbatim)
     if [ "${RETVAL}" -gt 128 ] 2>/dev/null; then
         SIGNAL=$(( ${RETVAL} - 128 ))
@@ -284,7 +284,9 @@ function git_prompt_config()
   fi
 
   # fetch remote revisions every other $GIT_PROMPT_FETCH_TIMEOUT (default 5) minutes
-  GIT_PROMPT_FETCH_TIMEOUT=${1-5}
+  if [[ -z "$GIT_PROMPT_FETCH_TIMEOUT" ]]; then
+    GIT_PROMPT_FETCH_TIMEOUT="5"
+  fi
   if [[ -z "$__GIT_STATUS_CMD" ]] ; then          # if GIT_STATUS_CMD not defined..
     git_prompt_dir
     if ! gp_maybe_set_envar_to_path __GIT_STATUS_CMD "$__GIT_PROMPT_DIR/gitstatus.sh" ; then
@@ -310,20 +312,20 @@ function update_old_git_prompt() {
   if [[ $GIT_PROMPT_OLD_DIR_WAS_GIT = 0 ]]; then
     OLD_GITPROMPT=$PS1
   fi
-  
+
   GIT_PROMPT_OLD_DIR_WAS_GIT=$in_repo
 }
 
 function setGitPrompt() {
   update_old_git_prompt
-  
+
   local repo=`git rev-parse --show-toplevel 2> /dev/null`
   if [[ ! -e "$repo" ]] && [[ "$GIT_PROMPT_ONLY_IN_REPO" = 1 ]]; then
     # we do not permit bash-git-prompt outside git repos, so nothing to do
     PS1="$OLD_GITPROMPT"
     return
   fi
-  
+
   local EMPTY_PROMPT
   local __GIT_STATUS_CMD
 
@@ -425,7 +427,7 @@ function replaceSymbols()
 	local VALUE=${1//_AHEAD_/${GIT_PROMPT_SYMBOLS_AHEAD}}
 	local VALUE1=${VALUE//_BEHIND_/${GIT_PROMPT_SYMBOLS_BEHIND}}
   local VALUE2=${VALUE1//_NO_REMOTE_TRACKING_/${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING}}
-	
+
 	echo ${VALUE2//_PREHASH_/${GIT_PROMPT_SYMBOLS_PREHASH}}
 }
 
@@ -526,11 +528,11 @@ function gp_install_prompt {
   else
       prompt_callback="prompt_callback_default"
   fi
-  
+
   if [ -z "$OLD_GITPROMPT" ]; then
     OLD_GITPROMPT=$PS1
   fi
-  
+
   if [ -z "$GIT_PROMPT_OLD_DIR_WAS_GIT" ]; then
     GIT_PROMPT_OLD_DIR_WAS_GIT=$(we_are_on_repo)
   fi
