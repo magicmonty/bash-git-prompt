@@ -1,0 +1,11 @@
+# This is the default theme for gitprompt.sh 
+# without the indicator of the last command state
+
+override_git_prompt_colors() {
+  GIT_PROMPT_THEME_NAME="Default NoExitState"
+  GIT_PROMPT_COMMAND_FAIL="${Red}✘"    # indicator if the last command returned with an exit code of other than 0
+  GIT_PROMPT_START_USER="${Yellow}${PathShort}${ResetColor}"
+  GIT_PROMPT_START_ROOT="${GIT_PROMPT_START_USER}"
+}
+
+reload_git_prompt_colors "Default NoExitState"
