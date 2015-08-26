@@ -1,5 +1,7 @@
 # Informative git prompt for bash and fish
 
+[![Join the chat at https://gitter.im/magicmonty/bash-git-prompt](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/magicmonty/bash-git-prompt?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This prompt is a port of the "Informative git prompt for zsh" which you can
 find [here](https://github.com/olivierverdier/zsh-git-prompt)
 
