@@ -1,5 +1,7 @@
 # Informative git prompt for bash and fish
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/magicmonty/bash-git-prompt?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 This prompt is a port of the "Informative git prompt for zsh" which you can
 find [here](https://github.com/olivierverdier/zsh-git-prompt)
 
@@ -302,9 +304,8 @@ Please leave a comment on the issue, that you want to fix it, so others know, th
 Pull requests are welcome. I will check them and merge them, if I think they help the project.
 
 ## Donations
-I accept tips through [Gittip][tip] and [Flattr][flattr].
+I accept tips through [Flattr][flattr].
 
-[![Gittip](https://img.shields.io/gittip/magicmonty.svg?style=flat)](https://www.gittip.com/magicmonty/)
 [![Flattr](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=magicmonty&url=https%3A%2F%2Fgithub.com%2Fmagicmonty%2Fbash-git-prompt)
 
 [blog post]: http://sebastiancelis.com/2009/nov/16/zsh-prompt-git-users/
