@@ -225,6 +225,12 @@ function git_prompt_config()
 
   git_prompt_load_theme
 
+  if [ "`type -t prompt_callback`" = 'function' ]; then
+      prompt_callback="prompt_callback"
+  else
+      prompt_callback="prompt_callback_default"
+  fi
+
   if [ $GIT_PROMPT_LAST_COMMAND_STATE = 0 ]; then
     LAST_COMMAND_INDICATOR="$GIT_PROMPT_COMMAND_OK";
   else
@@ -523,12 +529,6 @@ function prompt_callback_default {
 }
 
 function gp_install_prompt {
-  if [ "`type -t prompt_callback`" = 'function' ]; then
-      prompt_callback="prompt_callback"
-  else
-      prompt_callback="prompt_callback_default"
-  fi
-
   if [ -z "$OLD_GITPROMPT" ]; then
     OLD_GITPROMPT=$PS1
   fi
