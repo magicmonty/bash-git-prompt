@@ -117,7 +117,7 @@ function git_prompt_make_custom_theme() {
     if [[ "${base}" = "Custom" ]]; then
       echoc ${Red} "You cannot use the custom theme as base"
     else
-      echoc ${Green} "Creating new cutom theme in \"${HOME}/.git-prompt-colors.sh\""
+      echoc ${Green} "Creating new custom theme in \"${HOME}/.git-prompt-colors.sh\""
       echoc ${DimYellow} "Please add ${Magenta}\"GIT_PROMPT_THEME=Custom\"${DimYellow} to your .bashrc to use this theme"
       if [[ "${base}" == "Default" ]]; then
         cp "${__GIT_PROMPT_DIR}/themes/Custom.bgptemplate" "${HOME}/.git-prompt-colors.sh"
