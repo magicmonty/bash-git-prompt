@@ -14,7 +14,7 @@
 #
 # Example usage:
 # if [ -f ~/.bash-git-prompt/gitprompt.sh ]; then
-#   GIT_PROMPT_THEME=Default_TruncatedPwd_WindowTitle
+#   GIT_PROMPT_THEME=TruncatedPwd_WindowTitle
 #   source ~/.bash-git-prompt/gitprompt.sh
 # fi
 #
