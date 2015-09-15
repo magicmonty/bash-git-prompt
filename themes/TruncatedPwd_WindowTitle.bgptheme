@@ -1,13 +1,13 @@
 ##############################################################################
 # Changes the prompt to a Debian-style one that truncates pwd to a max length
-# depending on the terminal column width. Also uses the prompt_callback 
-# function of bash-git-prompt to set the window title to almost the same 
+# depending on the terminal column width. Also uses the prompt_callback
+# function of bash-git-prompt to set the window title to almost the same
 # Debian-style.
 #
 # The prompt will use a Debian-style on the form
 #
 # [user@host: <truncated PWD>] [bash-git-prompt-info] <exit status>
-# HH:MM $ 
+# HH:MM $
 #
 # The window title will have the form
 # user@host: <truncated PWD>
@@ -44,7 +44,7 @@ override_git_prompt_colors() {
   }
 
   Time12a="\$(date +%H:%M)"
-  
+
   GIT_PROMPT_START_USER="${Yellow}"
   GIT_PROMPT_START_ROOT="${GIT_PROMPT_START_USER}"
   GIT_PROMPT_END_USER=" _LAST_COMMAND_INDICATOR_\n${White}${Time12a}${ResetColor} $ "
