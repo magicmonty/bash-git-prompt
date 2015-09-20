@@ -46,7 +46,7 @@ fi
 
 remote=
 
-branch_line=`echo $gitstatus | grep "^##"`
+branch_line=`echo "$gitstatus" | grep "^##"`
 IFS="." read -ra line <<< "${branch_line/\#\# }"
 branch="${line[0]}"
 
