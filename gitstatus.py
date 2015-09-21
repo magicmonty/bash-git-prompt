@@ -119,7 +119,8 @@ for st in status:
         elif st[0] != ' ':
             staged.append(st)
 
-if not changed and not staged and not conflicts and not untracked:
+stashed=get_stash()
+if not changed and not staged and not conflicts and not untracked and not stashed:
     clean = 1
 else:
     clean = 0
@@ -134,7 +135,7 @@ out = '\n'.join([
     str(len(conflicts)),
     str(len(changed)),
     str(len(untracked)),
-    str(get_stash()),
+    str(stashed),
     str(clean)
 ])
 Print(out)
