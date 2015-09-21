@@ -65,11 +65,11 @@ elif [[ "$branch" == *"no branch"* ]]; then
 else
   IFS="[]" read -ra remote_line <<< "${line[3]}"
   if [[ "${remote_line[1]}" == *ahead* ]]; then
-    num_ahead=`echo "${remote_line[1]}" | cut -c 7-`
+    num_ahead=${remote_line[1]:6}
     remote="${remote}_AHEAD_${num_ahead}"
   fi
   if [[ "${remote_line[1]}" == *behind* ]]; then
-    num_behind=`echo "${remote_line[1]}" | cut -c 9-`
+    num_behind=${remote_line[1]:9}
     remote="${remote}_BEHIND_${num_behind}"
   fi
 fi
