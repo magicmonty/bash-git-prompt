@@ -88,8 +88,13 @@ if [[ -z "$remote" ]] ; then
   remote='.'
 fi
 
-for w in "$branch" "$remote" $num_staged $num_conflicts $num_changed $num_untracked $num_stashed $clean ; do
-  echo "$w"
-done
+printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
+  "$branch" \
+  "$remote" \
+  $num_staged \
+  $num_conflicts \
+  $num_changed \
+  $num_untracked \
+  $num_stashed $clean
 
 exit
