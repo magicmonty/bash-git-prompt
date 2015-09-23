@@ -74,7 +74,7 @@ def get_stash():
 
 # `git status --porcelain --branch` can collect all information
 # branch, remote_branch, untracked, staged, changed, conflicts, ahead, behind
-po = Popen(['git', 'status', '--porcelain', '--branch'], env={'LC_ALL': 'C'}, 
+po = Popen(['git', 'status', '--porcelain', '--branch'], env={'LC_ALL': 'C'},
            stdout=PIPE, stderr=PIPE)
 stdout, sterr = po.communicate()
 if po.returncode != 0:
