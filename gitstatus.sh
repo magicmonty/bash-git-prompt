@@ -18,7 +18,7 @@ if [ -z "${__GIT_PROMPT_DIR}" ]; then
   __GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 fi
 
-gitstatus=`git status --porcelain --branch`
+gitstatus=`LC_ALL=C git status --porcelain --branch`
 
 # if the status is fatal, exit now
 [[ "$?" -ne 0 ]] && exit 0
