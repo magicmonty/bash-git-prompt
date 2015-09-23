@@ -50,6 +50,10 @@ branch_line=`echo "$gitstatus" | grep "^##"`
 IFS="." read -ra line <<< "${branch_line/\#\# }"
 branch="${line[0]}"
 
+if [[ "${#line[@]}" -eq 1 ]]; then
+  remote="_NO_REMOTE_TRACKING_"
+fi
+
 if [[ -z "$branch" ]]; then
   tag=`git describe --exact-match`
   if [[ -n "$tag" ]]; then
