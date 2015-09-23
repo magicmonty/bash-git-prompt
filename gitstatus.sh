@@ -78,10 +78,10 @@ else
   # detect if the local branch have a remote tracking branch
   cmd_output=$(git rev-parse --abbrev-ref ${branch}@{upstream} 2>&1 >/dev/null)
 
-  if [ `count_lines "$cmd_output" "fatal: no upstream"` == 1 ] ; then
-    has_remote_tracking=0
-  else
+  if [[ $? == 0 ]]; then
     has_remote_tracking=1
+  else
+    has_remote_tracking=0
   fi
 
   # get the revision list, and count the leading "<" and ">"
