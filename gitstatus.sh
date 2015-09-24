@@ -15,7 +15,7 @@ if [ -z "${__GIT_PROMPT_DIR}" ]; then
   __GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 fi
 
-gitstatus=`LC_ALL=C git status --porcelain --branch`
+gitstatus=$( LC_ALL=C git status --porcelain --branch )
 
 # if the status is fatal, exit now
 [[ "$?" -ne 0 ]] && exit 0
@@ -38,9 +38,9 @@ done <<< "$gitstatus"
 if [[ "$__GIT_PROMPT_IGNORE_STASH" = "1" ]]; then
   num_stashed=0
 else
-  stash_file="`git rev-parse --git-dir`/logs/refs/stash"
+  stash_file="$( git rev-parse --git-dir )/logs/refs/stash"
   if [[ -e "${stash_file}" ]]; then
-    num_stashed=`wc -l "${stash_file}" | cut -d' ' -f1`
+    num_stashed=$( wc -l "${stash_file}" | cut -d' ' -f1 )
   else
     num_stashed=0
   fi
@@ -62,17 +62,17 @@ if [[ "${#line[@]}" -eq 1 ]]; then
 fi
 
 if [[ -z "$branch" ]]; then
-  tag=`git describe --exact-match`
+  tag=$( git describe --exact-match )
   if [[ -n "$tag" ]]; then
     branch="$tag"
   else
-    branch="_PREHASH_`git rev-parse --short HEAD`"
+    branch="_PREHASH_$( git rev-parse --short HEAD )"
   fi
 elif [[ "$branch" == *"Initial commit on"* ]]; then
   IFS=" " read -ra branch_line <<< "$branch"
   branch=${branch_line[-1]}
 elif [[ "$branch" == *"no branch"* ]]; then
-  branch="_PREHASH_`git rev-parse --short HEAD`"
+  branch="_PREHASH_$( git rev-parse --short HEAD )"
 else
   IFS="[,]" read -ra remote_line <<< "${line[3]}"
   for rline in "${remote_line[@]}"; do
