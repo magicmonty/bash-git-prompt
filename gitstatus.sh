@@ -79,7 +79,7 @@ else
     remote="${remote}_AHEAD_${num_ahead}"
   fi
   if [[ "${remote_line[1]}" == *behind* ]]; then
-    num_behind=${remote_line[1]:8}
+    num_behind=${remote_line[1]:7}
     remote="${remote}_BEHIND_${num_behind}"
   fi
 fi
