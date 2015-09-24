@@ -73,15 +73,17 @@ elif [[ "$branch" == *"Initial commit on"* ]]; then
 elif [[ "$branch" == *"no branch"* ]]; then
   branch="_PREHASH_`git rev-parse --short HEAD`"
 else
-  IFS="[]" read -ra remote_line <<< "${line[3]}"
-  if [[ "${remote_line[1]}" == *ahead* ]]; then
-    num_ahead=${remote_line[1]:6}
-    remote="${remote}_AHEAD_${num_ahead}"
-  fi
-  if [[ "${remote_line[1]}" == *behind* ]]; then
-    num_behind=${remote_line[1]:7}
-    remote="${remote}_BEHIND_${num_behind}"
-  fi
+  IFS="[,]" read -ra remote_line <<< "${line[3]}"
+  for rline in "${remote_line[@]}"; do
+    if [[ "$rline" == *ahead* ]]; then
+      num_ahead=${rline:6}
+      remote="${remote}_AHEAD_${num_ahead}"
+    fi
+    if [[ "$rline" == *behind* ]]; then
+      num_behind=${rline:7}
+      remote="${remote}_BEHIND_${num_behind# }"
+    fi
+  done
 fi
 
 if [[ -z "$remote" ]] ; then
