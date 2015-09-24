@@ -77,13 +77,14 @@ else
   for rline in "${remote_line[@]}"; do
     if [[ "$rline" == *ahead* ]]; then
       num_ahead=${rline:6}
-      remote="${remote}_AHEAD_${num_ahead}"
+      ahead="_AHEAD_${num_ahead}"
     fi
     if [[ "$rline" == *behind* ]]; then
       num_behind=${rline:7}
-      remote="${remote}_BEHIND_${num_behind# }"
+      behind="_BEHIND_${num_behind# }"
     fi
   done
+  remote="${behind}${ahead}"
 fi
 
 if [[ -z "$remote" ]] ; then
