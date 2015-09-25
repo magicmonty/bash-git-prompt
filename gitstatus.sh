@@ -51,10 +51,9 @@ if (( num_changed == 0 && num_staged == 0 && num_untracked == 0 && num_stashed =
   clean=1
 fi
 
-remote=
-
 IFS="." read -ra line <<< "${branch_line/\#\# }"
 branch="${line[0]}"
+remote=
 
 if [[ "$branch" == *"Initial commit on"* ]]; then
   IFS=" " read -ra branch_line <<< "$branch"
