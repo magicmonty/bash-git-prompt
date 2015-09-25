@@ -56,18 +56,16 @@ remote=
 IFS="." read -ra line <<< "${branch_line/\#\# }"
 branch="${line[0]}"
 
-if [[ -z "$branch" ]]; then
+if [[ "$branch" == *"Initial commit on"* ]]; then
+  IFS=" " read -ra branch_line <<< "$branch"
+  branch=${branch_line[-1]}
+elif [[ "$branch" == *"no branch"* ]]; then
   tag=$( git describe --exact-match )
   if [[ -n "$tag" ]]; then
     branch="$tag"
   else
     branch="_PREHASH_$( git rev-parse --short HEAD )"
   fi
-elif [[ "$branch" == *"Initial commit on"* ]]; then
-  IFS=" " read -ra branch_line <<< "$branch"
-  branch=${branch_line[-1]}
-elif [[ "$branch" == *"no branch"* ]]; then
-  branch="_PREHASH_$( git rev-parse --short HEAD )"
 else
   if [[ "${#line[@]}" -eq 1 ]]; then
     remote="_NO_REMOTE_TRACKING_"
