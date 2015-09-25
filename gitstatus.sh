@@ -56,10 +56,6 @@ remote=
 IFS="." read -ra line <<< "${branch_line/\#\# }"
 branch="${line[0]}"
 
-if [[ "${#line[@]}" -eq 1 ]]; then
-  remote="_NO_REMOTE_TRACKING_"
-fi
-
 if [[ -z "$branch" ]]; then
   tag=$( git describe --exact-match )
   if [[ -n "$tag" ]]; then
@@ -73,18 +69,22 @@ elif [[ "$branch" == *"Initial commit on"* ]]; then
 elif [[ "$branch" == *"no branch"* ]]; then
   branch="_PREHASH_$( git rev-parse --short HEAD )"
 else
-  IFS="[,]" read -ra remote_line <<< "${line[3]}"
-  for rline in "${remote_line[@]}"; do
-    if [[ "$rline" == *ahead* ]]; then
-      num_ahead=${rline:6}
-      ahead="_AHEAD_${num_ahead}"
-    fi
-    if [[ "$rline" == *behind* ]]; then
-      num_behind=${rline:7}
-      behind="_BEHIND_${num_behind# }"
-    fi
-  done
-  remote="${behind}${ahead}"
+  if [[ "${#line[@]}" -eq 1 ]]; then
+    remote="_NO_REMOTE_TRACKING_"
+  else
+    IFS="[,]" read -ra remote_line <<< "${line[3]}"
+    for rline in "${remote_line[@]}"; do
+      if [[ "$rline" == *ahead* ]]; then
+        num_ahead=${rline:6}
+        ahead="_AHEAD_${num_ahead}"
+      fi
+      if [[ "$rline" == *behind* ]]; then
+        num_behind=${rline:7}
+        behind="_BEHIND_${num_behind# }"
+      fi
+    done
+    remote="${behind}${ahead}"
+  fi
 fi
 
 if [[ -z "$remote" ]] ; then
