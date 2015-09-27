@@ -35,15 +35,13 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
   esac
 done <<< "$gitstatus"
 
-if [[ "$__GIT_PROMPT_IGNORE_STASH" = "1" ]]; then
-  num_stashed=0
-else
+num_stashed=0
+if [[ "$__GIT_PROMPT_IGNORE_STASH" != "1" ]]; then
   stash_file="$( git rev-parse --git-dir )/logs/refs/stash"
   if [[ -e "${stash_file}" ]]; then
-    wc_output=$( wc -l < "${stash_file}" )
-    num_stashed=${wc_output//[[:space:]]/}
-  else
-    num_stashed=0
+    while IFS='' read -r wcline || [[ -n "$wcline" ]]; do
+      ((num_stashed++))
+    done < ${stash_file}
   fi
 fi
 
