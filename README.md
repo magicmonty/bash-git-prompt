@@ -48,12 +48,12 @@ The prompt may look like the following:
 
 ![Example prompt](gitprompt.png)
 
-* ``(master↑3|✚1)``: on branch ``master``, ahead of remote by 3 commits, 1 file changed but not staged
-* ``(status|●2)``: on branch ``status``, 2 files staged
-* ``(master|✚7…)``: on branch ``master``, 7 files changed, some files untracked
-* ``(master|✖2✚3)``: on branch ``master``, 2 conflicts, 3 files changed
-* ``(master|⚑2)``: on branch ``master``, 2 stash entries
-* ``(experimental↓2↑3|✔)``: on branch ``experimental``; your branch has diverged by 3 commits, remote by 2 commits; the repository is otherwise clean
+* ``(master↑ 3|✚ 1)``: on branch ``master``, ahead of remote by 3 commits, 1 file changed but not staged
+* ``(status|● 2)``: on branch ``status``, 2 files staged
+* ``(master|✚ 7…)``: on branch ``master``, 7 files changed, some files untracked
+* ``(master|✖ 2 ✚ 3)``: on branch ``master``, 2 conflicts, 3 files changed
+* ``(master|⚑ 2)``: on branch ``master``, 2 stash entries
+* ``(experimental↓ 2 ↑ 3|✔)``: on branch ``experimental``; your branch has diverged by 3 commits, remote by 2 commits; the repository is otherwise clean
 * ``(:70c2952|✔)``: not on any branch; parent commit has hash ``70c2952``; the repository is otherwise clean
 
 ##  Prompt Structure
@@ -66,15 +66,15 @@ The symbols are as follows:
 
 - Local Status Symbols
   - ``✔``: repository clean
-  - ``●n``: there are ``n`` staged files
-  - ``✖n``: there are ``n`` files with merge conflict(s)
-  - ``✚n``: there are ``n`` changed but *unstaged* files
+  - ``● n``: there are ``n`` staged files
+  - ``✖ n``: there are ``n`` files with merge conflict(s)
+  - ``✚ n``: there are ``n`` changed but *unstaged* files
   - ``…n``: there are ``n`` untracked files
-  - ``⚑n``: there are ``n`` stash entries
+  - ``⚑ n``: there are ``n`` stash entries
 - Branch Tracking Symbols
-  - ``↑n``: ahead of remote by ``n`` commits
-  - ``↓n``: behind remote by ``n`` commits
-  - ``↓m↑n``: branches diverged, other by ``m`` commits, yours by ``n`` commits
+  - ``↑ n``: ahead of remote by ``n`` commits
+  - ``↓ n``: behind remote by ``n`` commits
+  - ``↓ m ↑ n``: branches diverged, other by ``m`` commits, yours by ``n`` commits
   - ``L``: local branch, not remotely tracked
 - Branch Symbol:<br />
   	When the branch name starts with a colon ``:``, it means it's actually a hash, not a branch (although it should be pretty clear, unless you name your branches like hashes :-)
