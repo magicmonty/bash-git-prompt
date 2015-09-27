@@ -32,93 +32,111 @@ except SyntaxError:
           w(str(a))
       w(kwd.get("end", "\n"))
 
-
 # change those symbols to whatever you prefer
 symbols = {'ahead of': '↑·', 'behind': '↓·', 'prehash':':'}
 
-from subprocess import Popen, PIPE
-
 import sys
-gitsym = Popen(['git', 'symbolic-ref', 'HEAD'], stdout=PIPE, stderr=PIPE)
-branch, error = gitsym.communicate()
+import re
+import shlex
+from subprocess import Popen, PIPE, check_output
 
-error_string = error.decode('utf-8')
 
-if 'fatal: Not a git repository' in error_string:
-	sys.exit(0)
+def get_tagname_or_hash():
+    """return tagname if exists else hash"""
+    cmd = 'git log -1 --format="%h%d"'
+    output = check_output(shlex.split(cmd)).decode('utf-8').strip()
+    hash_, tagname = None, None
+    # get hash
+    m = re.search('\(.*\)$', output)
+    if m:
+        hash_ = output[:m.start()-1]
+    # get tagname
+    m = re.search('tag: .*[,\)]', output)
+    if m:
+        tagname = 'tags/' + output[m.start()+len('tag: '): m.end()-1]
 
-branch = branch.decode('utf-8').strip()[11:]
+    if tagname:
+        return tagname
+    elif hash_:
+        return hash_
+    return None
 
-res, err = Popen(['git','diff','--name-status'], stdout=PIPE, stderr=PIPE).communicate()
-err_string = err.decode('utf-8')
+def get_stash():
+    cmd = Popen(['git', 'rev-parse', '--git-dir'], stdout=PIPE, stderr=PIPE)
+    so, se = cmd.communicate()
+    stashFile = '%s%s' % (so.decode('utf-8').rstrip(),'/logs/refs/stash')
 
-if 'fatal' in err_string:
-	sys.exit(0)
+    try:
+        with open(stashFile) as f:
+            return sum(1 for _ in f)
+    except IOError:
+        return 0
 
-changed_files = [namestat[0] for namestat in res.splitlines()]
-staged_files = [namestat[0] for namestat in Popen(['git','diff', '--staged','--name-status'], stdout=PIPE).communicate()[0].splitlines()]
-nb_changed = len(changed_files) - changed_files.count('U')
-nb_U = staged_files.count('U')
-nb_staged = len(staged_files) - nb_U
-staged = str(nb_staged)
-conflicts = str(nb_U)
-changed = str(nb_changed)
-status_lines = Popen(['git','status','-s','-uall'],stdout=PIPE).communicate()[0].splitlines()
-untracked_lines = [a for a in map(lambda s: s.decode('utf-8'), status_lines) if a.startswith("??")]
-nb_untracked = len(untracked_lines)
-untracked = str(nb_untracked)
-stashes = Popen(['git','stash','list'],stdout=PIPE).communicate()[0].splitlines()
-nb_stashed = len(stashes)
-stashed = str(nb_stashed)
+# `git status --porcelain --branch` can collect all information
+# branch, remote_branch, untracked, staged, changed, conflicts, ahead, behind
+po = Popen(['git', 'status', '--porcelain', '--branch'], env={'LC_ALL': 'C'},
+           stdout=PIPE, stderr=PIPE)
+stdout, sterr = po.communicate()
+if po.returncode != 0:
+    sys.exit(0)  # Not a git repository
 
-if not nb_changed and not nb_staged and not nb_U and not nb_untracked and not nb_stashed:
-	clean = '1'
-else:
-	clean = '0'
-
+# collect git status information
+untracked, staged, changed, conflicts = [], [], [], []
+ahead, behind = 0, 0
 remote = ''
+status = [(line[0], line[1], line[2:]) for line in stdout.decode('utf-8').splitlines()]
+for st in status:
+    if st[0] == '#' and st[1] == '#':
+        if re.search('Initial commit on', st[2]):
+            branch = st[2].split(' ')[-1]
+        elif re.search('no branch', st[2]):  # detached status
+            branch = get_tagname_or_hash()
+        elif len(st[2].strip().split('...')) == 1:
+            branch = st[2].strip()
+        else:
+            # current and remote branch info
+            branch, rest = st[2].strip().split('...')
+            if len(rest.split(' ')) == 1:
+                # remote_branch = rest.split(' ')[0]
+                pass
+            else:
+                # ahead or behind
+                divergence = ' '.join(rest.split(' ')[1:])
+                divergence = divergence.lstrip('[').rstrip(']')
+                for div in divergence.split(', '):
+                    if 'ahead' in div:
+                        ahead = int(div[len('ahead '):].strip())
+                        remote += '%s%s' % (symbols['ahead of'], ahead)
+                    elif 'behind' in div:
+                        behind = int(div[len('behind '):].strip())
+                        remote += '%s%s' % (symbols['behind'], behind)
+    elif st[0] == '?' and st[1] == '?':
+        untracked.append(st)
+    else:
+        if st[1] == 'M':
+            changed.append(st)
+        if st[0] == 'U':
+            conflicts.append(st)
+        elif st[0] != ' ':
+            staged.append(st)
 
-tag, tag_error = Popen(['git', 'describe', '--exact-match'], stdout=PIPE, stderr=PIPE).communicate()
-
-if not branch: # not on any branch
-	if tag: # if we are on a tag, print the tag's name
-		branch = tag
-	else:
-		branch = symbols['prehash']+ Popen(['git','rev-parse','--short','HEAD'], stdout=PIPE).communicate()[0].decode('utf-8')[:-1]
+stashed=get_stash()
+if not changed and not staged and not conflicts and not untracked and not stashed:
+    clean = 1
 else:
-	remote_name = Popen(['git','config','branch.%s.remote' % branch], stdout=PIPE).communicate()[0].strip()
-	if remote_name:
-		merge_name = Popen(['git','config','branch.%s.merge' % branch], stdout=PIPE).communicate()[0].strip()
-	else:
-		remote_name = "origin"
-		merge_name = "refs/heads/%s" % branch
-
-	if remote_name == '.': # local
-		remote_ref = merge_name
-	else:
-		remote_ref = 'refs/remotes/%s/%s' % (remote_name, merge_name[11:])
-	revgit = Popen(['git', 'rev-list', '--left-right', '%s...HEAD' % remote_ref],stdout=PIPE, stderr=PIPE)
-	revlist = revgit.communicate()[0]
-	if revgit.poll(): # fallback to local
-		revlist = Popen(['git', 'rev-list', '--left-right', '%s...HEAD' % merge_name],stdout=PIPE, stderr=PIPE).communicate()[0]
-	behead = revlist.splitlines()
-	ahead = len([x for x in behead if x[0]=='>'])
-	behind = len(behead) - ahead
-	if behind:
-		remote += '%s%s' % (symbols['behind'], behind)
-	if ahead:
-		remote += '%s%s' % (symbols['ahead of'], ahead)
+    clean = 0
 
 if remote == "":
-	remote = '.'
+    remote = '.'
 
 out = '\n'.join([
-	str(branch),
-	str(remote),
-	staged,
-	conflicts,
-	changed,
-	untracked,
-	stashed,
-	clean])
+    branch,
+    remote.decode('utf-8'),
+    str(len(staged)),
+    str(len(conflicts)),
+    str(len(changed)),
+    str(len(untracked)),
+    str(stashed),
+    str(clean)
+])
 Print(out)
