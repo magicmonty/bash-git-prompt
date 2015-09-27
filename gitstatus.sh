@@ -40,7 +40,8 @@ if [[ "$__GIT_PROMPT_IGNORE_STASH" = "1" ]]; then
 else
   stash_file="$( git rev-parse --git-dir )/logs/refs/stash"
   if [[ -e "${stash_file}" ]]; then
-    num_stashed=$( wc -l < "${stash_file}" | tr -s ' ' | cut -d ' ' -f2 )
+    wc_output=$( wc -l < "${stash_file}" )
+    num_stashed=${wc_output// /}
   else
     num_stashed=0
   fi
