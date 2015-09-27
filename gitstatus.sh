@@ -41,7 +41,7 @@ else
   stash_file="$( git rev-parse --git-dir )/logs/refs/stash"
   if [[ -e "${stash_file}" ]]; then
     wc_output=$( wc -l < "${stash_file}" )
-    num_stashed=${wc_output// /}
+    num_stashed=${wc_output//[[:space:]]/}
   else
     num_stashed=0
   fi
