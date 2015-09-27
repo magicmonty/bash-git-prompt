@@ -56,7 +56,7 @@ remote=
 
 if [[ "$branch" == *"Initial commit on"* ]]; then
   IFS=" " read -ra branch_line <<< "$branch"
-  branch=${branch_line[-1]}
+  branch="${branch_line[3]}"
   remote="_NO_REMOTE_TRACKING_"
 elif [[ "$branch" == *"no branch"* ]]; then
   tag=$( git describe --exact-match )
