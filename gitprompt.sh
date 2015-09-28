@@ -1,14 +1,12 @@
 #!/bin/sh
 
-function async_run()
-{
+function async_run() {
   {
     eval "$@" &> /dev/null
   }&
 }
 
-function git_prompt_dir()
-{
+function git_prompt_dir() {
   # assume the gitstatus.sh is in the same directory as this script
   # code thanks to http://stackoverflow.com/questions/59895
   if [ -z "$__GIT_PROMPT_DIR" ]; then
@@ -23,11 +21,10 @@ function git_prompt_dir()
 }
 
 function echoc() {
-    echo -e "${1}$2${ResetColor}" | sed 's/\\\]//g'  | sed 's/\\\[//g'
+  echo -e "${1}$2${ResetColor}" | sed 's/\\\]//g'  | sed 's/\\\[//g'
 }
 
-function get_theme()
-{
+function get_theme() {
   local CUSTOM_THEME_FILE="${HOME}/.git-prompt-colors.sh"
   local DEFAULT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
 
@@ -67,16 +64,14 @@ function get_theme()
   fi
 }
 
-function git_prompt_load_theme()
-{
+function git_prompt_load_theme() {
   get_theme
   local DEFAULT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
   source "${DEFAULT_THEME_FILE}"
   source "${__GIT_PROMPT_THEME_FILE}"
 }
 
-function git_prompt_list_themes()
-{
+function git_prompt_list_themes() {
   local oldTheme
   local oldThemeFile
 
@@ -160,7 +155,7 @@ function gp_set_file_var() {
 # return 0 (true) if any FILEPATH is readable, set ENVAR to it
 # return 1 (false) if not
 
-function gp_maybe_set_envar_to_path(){
+function gp_maybe_set_envar_to_path() {
   local envar="$1"
   shift
   local file
@@ -191,20 +186,19 @@ git_prompt_reset() {
 # signalled, otherwise echos the original value of RETVAL
 
 gp_format_exit_status() {
-    local RETVAL="$1"
-    local SIGNAL
-    # Suppress STDERR in case RETVAL is not an integer (in such cases, RETVAL
-    # is echoed verbatim)
-    if [ "${RETVAL}" -gt 128 ] 2>/dev/null; then
-        SIGNAL=$(( ${RETVAL} - 128 ))
-        kill -l "${SIGNAL}" 2>/dev/null || echo "${RETVAL}"
-    else
-        echo "${RETVAL}"
-    fi
+  local RETVAL="$1"
+  local SIGNAL
+  # Suppress STDERR in case RETVAL is not an integer (in such cases, RETVAL
+  # is echoed verbatim)
+  if [ "${RETVAL}" -gt 128 ] 2>/dev/null; then
+    SIGNAL=$(( ${RETVAL} - 128 ))
+    kill -l "${SIGNAL}" 2>/dev/null || echo "${RETVAL}"
+  else
+    echo "${RETVAL}"
+  fi
 }
 
-function git_prompt_config()
-{
+function git_prompt_config() {
   #Checking if root to change output
   _isroot=false
   [[ $UID -eq 0 ]] && _isroot=true
@@ -225,10 +219,10 @@ function git_prompt_config()
 
   git_prompt_load_theme
 
-  if [ "`type -t prompt_callback`" = 'function' ]; then
-      prompt_callback="prompt_callback"
+  if is_function prompt_callback; then
+    prompt_callback="prompt_callback"
   else
-      prompt_callback="prompt_callback_default"
+    prompt_callback="prompt_callback_default"
   fi
 
   if [ $GIT_PROMPT_LAST_COMMAND_STATE = 0 ]; then
@@ -369,42 +363,42 @@ function setGitPrompt() {
 _have_find_mmin=1
 
 function olderThanMinutes() {
-    local matches
-    local find_exit_code
+  local matches
+  local find_exit_code
 
-    if [[ -z "$_find_command" ]]; then
-        if command -v gfind > /dev/null; then
-            _find_command=gfind
-        else
-            _find_command=find
-        fi
-    fi
-
-    if [[ "$_have_find_mmin" = 1 ]]; then
-        matches=`"$_find_command" "$1" -mmin +"$2" 2> /dev/null`
-        find_exit_code="$?"
-        if [[ -n "$matches" ]]; then
-            return 0
-        else
-            if [[ "$find_exit_code" != 0 ]]; then
-                _have_find_mmin=0
-            else
-                return 1
-            fi
-        fi
-    fi
-
-    # try perl, solaris ships with perl
-    if command -v perl > /dev/null; then
-        perl -e '((time - (stat("'"$1"'"))[9]) / 60) > '"$2"' && exit(0) || exit(1)'
-        return "$?"
+  if [[ -z "$_find_command" ]]; then
+    if command -v gfind > /dev/null; then
+      _find_command=gfind
     else
-        echo >&2
-        echo "[1;31mWARNING[0m: neither a find that supports -mmin (such as GNU find) or perl is available, disabling remote status checking. Install GNU find as gfind or perl to enable this feature, or set GIT_PROMPT_FETCH_REMOTE_STATUS=0 to disable this warning." >&2
-        echo >&2
-        GIT_PROMPT_FETCH_REMOTE_STATUS=0
-        return 1
+      _find_command=find
     fi
+  fi
+
+  if [[ "$_have_find_mmin" = 1 ]]; then
+    matches=`"$_find_command" "$1" -mmin +"$2" 2> /dev/null`
+    find_exit_code="$?"
+    if [[ -n "$matches" ]]; then
+      return 0
+    else
+      if [[ "$find_exit_code" != 0 ]]; then
+        _have_find_mmin=0
+      else
+        return 1
+      fi
+    fi
+  fi
+
+  # try perl, solaris ships with perl
+  if command -v perl > /dev/null; then
+    perl -e '((time - (stat("'"$1"'"))[9]) / 60) > '"$2"' && exit(0) || exit(1)'
+    return "$?"
+  else
+    echo >&2
+    echo "[1;31mWARNING[0m: neither a find that supports -mmin (such as GNU find) or perl is available, disabling remote status checking. Install GNU find as gfind or perl to enable this feature, or set GIT_PROMPT_FETCH_REMOTE_STATUS=0 to disable this warning." >&2
+    echo >&2
+    GIT_PROMPT_FETCH_REMOTE_STATUS=0
+    return 1
+  fi
 }
 
 function checkUpstream() {
@@ -424,17 +418,16 @@ function checkUpstream() {
   fi
 }
 
-function replaceSymbols()
-{
+function replaceSymbols() {
   if [[ -z ${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING} ]]; then
     GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING=L
   fi
 
-	local VALUE=${1//_AHEAD_/${GIT_PROMPT_SYMBOLS_AHEAD}}
-	local VALUE1=${VALUE//_BEHIND_/${GIT_PROMPT_SYMBOLS_BEHIND}}
+  local VALUE=${1//_AHEAD_/${GIT_PROMPT_SYMBOLS_AHEAD}}
+  local VALUE1=${VALUE//_BEHIND_/${GIT_PROMPT_SYMBOLS_BEHIND}}
   local VALUE2=${VALUE1//_NO_REMOTE_TRACKING_/${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING}}
 
-	echo ${VALUE2//_PREHASH_/${GIT_PROMPT_SYMBOLS_PREHASH}}
+  echo ${VALUE2//_PREHASH_/${GIT_PROMPT_SYMBOLS_PREHASH}}
 }
 
 function updatePrompt() {
@@ -524,8 +517,14 @@ function updatePrompt() {
   PS1="${NEW_PROMPT//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
 }
 
+# Use exit status from declare command to determine whether input argument is a
+# bash function
+function is_function {
+  declare -Ff "$1" >/dev/null;
+}
+
 function prompt_callback_default {
-    return
+  return
 }
 
 function gp_install_prompt {
