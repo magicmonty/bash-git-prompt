@@ -49,7 +49,7 @@ function get_theme() {
       local theme=""
 
       # use default theme, if theme was not found
-      for themefile in ${__GIT_PROMPT_DIR}/themes/*.bgptheme; do
+      for themefile in "${__GIT_PROMPT_DIR}/themes/"*.bgptheme; do
         local basename=${themefile##*/}
         if [[ "${basename%.bgptheme}" = "${GIT_PROMPT_THEME}" ]]; then
           theme=$GIT_PROMPT_THEME
@@ -80,7 +80,7 @@ function git_prompt_list_themes() {
   git_prompt_dir
   get_theme
 
-  for themefile in ${__GIT_PROMPT_DIR}/themes/*.bgptheme; do
+  for themefile in "${__GIT_PROMPT_DIR}/themes/"*.bgptheme; do
     local basename=${themefile##*/}
     local theme="${basename%.bgptheme}"
     if [[ "${GIT_PROMPT_THEME}" = "${theme}" ]]; then
