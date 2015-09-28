@@ -189,16 +189,16 @@ git_prompt_reset() {
 # signalled, otherwise echos the original value of RETVAL
 
 gp_format_exit_status() {
-    local RETVAL="$1"
-    local SIGNAL
-    # Suppress STDERR in case RETVAL is not an integer (in such cases, RETVAL
-    # is echoed verbatim)
-    if [ "${RETVAL}" -gt 128 ] 2>/dev/null; then
-        SIGNAL=$(( ${RETVAL} - 128 ))
-        kill -l "${SIGNAL}" 2>/dev/null || echo "${RETVAL}"
-    else
-        echo "${RETVAL}"
-    fi
+  local RETVAL="$1"
+  local SIGNAL
+  # Suppress STDERR in case RETVAL is not an integer (in such cases, RETVAL
+  # is echoed verbatim)
+  if [ "${RETVAL}" -gt 128 ] 2>/dev/null; then
+    SIGNAL=$(( ${RETVAL} - 128 ))
+    kill -l "${SIGNAL}" 2>/dev/null || echo "${RETVAL}"
+  else
+    echo "${RETVAL}"
+  fi
 }
 
 function git_prompt_config() {
@@ -427,11 +427,11 @@ function replaceSymbols()
     GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING=L
   fi
 
-	local VALUE=${1//_AHEAD_/${GIT_PROMPT_SYMBOLS_AHEAD}}
-	local VALUE1=${VALUE//_BEHIND_/${GIT_PROMPT_SYMBOLS_BEHIND}}
+  local VALUE=${1//_AHEAD_/${GIT_PROMPT_SYMBOLS_AHEAD}}
+  local VALUE1=${VALUE//_BEHIND_/${GIT_PROMPT_SYMBOLS_BEHIND}}
   local VALUE2=${VALUE1//_NO_REMOTE_TRACKING_/${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING}}
 
-	echo ${VALUE2//_PREHASH_/${GIT_PROMPT_SYMBOLS_PREHASH}}
+  echo ${VALUE2//_PREHASH_/${GIT_PROMPT_SYMBOLS_PREHASH}}
 }
 
 function updatePrompt() {
