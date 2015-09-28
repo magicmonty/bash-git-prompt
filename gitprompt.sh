@@ -53,6 +53,7 @@ function get_theme() {
         local basename=${themefile##*/}
         if [[ "${basename%.bgptheme}" = "${GIT_PROMPT_THEME}" ]]; then
           theme=$GIT_PROMPT_THEME
+          break
         fi
       done
 
