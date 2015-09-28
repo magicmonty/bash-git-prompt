@@ -67,7 +67,7 @@ The symbols are as follows:
 - Local Status Symbols
   - ``✔``: repository clean
   - ``●n``: there are ``n`` staged files
-  - ``✖n``: there are ``n`` unmerged files
+  - ``✖n``: there are ``n`` files with merge conflict(s)
   - ``✚n``: there are ``n`` changed but *unstaged* files
   - ``…n``: there are ``n`` untracked files
   - ``⚑n``: there are ``n`` stash entries
