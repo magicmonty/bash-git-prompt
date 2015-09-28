@@ -206,7 +206,7 @@ function git_prompt_config() {
 
   # There are two files related to colors:
   #
-  #  prompt-colors.sh -- sets generic color names suitable for bash `PS1` prompt
+  #  prompt-colors.sh -- sets generic color names suitable for bash 'PS1' prompt
   #  git-prompt-colors.sh -- sets the GIT_PROMPT color scheme, using names from prompt-colors.sh
 
   if gp_set_file_var __PROMPT_COLORS_FILE prompt-colors.sh ; then
