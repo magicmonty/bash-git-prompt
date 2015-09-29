@@ -50,8 +50,9 @@ if (( num_changed == 0 && num_staged == 0 && num_untracked == 0 && num_stashed =
   clean=1
 fi
 
-IFS="." read -ra line <<< "${branch_line/\#\# }"
-branch="${line[0]}"
+branch="${branch_line#\#\# }"
+branch="${branch%\.\.\.*}"
+remote_branch_and_diff="${branch_line#*\.\.\.}"
 remote=
 
 if [[ "$branch" == *"Initial commit on"* ]]; then
@@ -66,10 +67,10 @@ elif [[ "$branch" == *"no branch"* ]]; then
     branch="_PREHASH_$( git rev-parse --short HEAD )"
   fi
 else
-  if [[ "${#line[@]}" -eq 1 ]]; then
+  if [[ "${remote_branch_and_diff}" == "${branch_line}" ]]; then
     remote="_NO_REMOTE_TRACKING_"
   else
-    IFS="[,]" read -ra remote_line <<< "${line[3]}"
+    IFS="[,]" read -ra remote_line <<< "${remote_branch_and_diff}"
     for rline in "${remote_line[@]}"; do
       if [[ "$rline" == *ahead* ]]; then
         num_ahead=${rline:6}
