@@ -69,7 +69,7 @@ else
   if [[ "${#branch_fields[@]}" -eq 1 ]]; then
     remote="_NO_REMOTE_TRACKING_"
   else
-    IFS="[,]" read -ra remote_line <<< "${branch_fields[1]}"
+    IFS="[,]" read -ra remote_line <<< "${line[3]}"
     for rline in "${remote_line[@]}"; do
       if [[ "$rline" == *ahead* ]]; then
         num_ahead=${rline:6}
