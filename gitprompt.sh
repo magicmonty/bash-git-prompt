@@ -49,9 +49,11 @@ function get_theme() {
       local theme=""
 
       # use default theme, if theme was not found
-      for themefile in $(cd "$__GIT_PROMPT_DIR/themes" && echo *); do
-        if [[ "${themefile}" = "${GIT_PROMPT_THEME}.bgptheme" ]]; then
+      for themefile in "${__GIT_PROMPT_DIR}/themes/"*.bgptheme; do
+        local basename=${themefile##*/}
+        if [[ "${basename%.bgptheme}" = "${GIT_PROMPT_THEME}" ]]; then
           theme=$GIT_PROMPT_THEME
+          break
         fi
       done
 
@@ -78,9 +80,9 @@ function git_prompt_list_themes() {
   git_prompt_dir
   get_theme
 
-  for themefile in `ls "$__GIT_PROMPT_DIR/themes"`; do
-    local theme="$(basename $themefile .bgptheme)"
-
+  for themefile in "${__GIT_PROMPT_DIR}/themes/"*.bgptheme; do
+    local basename=${themefile##*/}
+    local theme="${basename%.bgptheme}"
     if [[ "${GIT_PROMPT_THEME}" = "${theme}" ]]; then
       echoc ${Red} "*${theme}"
     else
@@ -205,7 +207,7 @@ function git_prompt_config() {
 
   # There are two files related to colors:
   #
-  #  prompt-colors.sh -- sets generic color names suitable for bash `PS1` prompt
+  #  prompt-colors.sh -- sets generic color names suitable for bash 'PS1' prompt
   #  git-prompt-colors.sh -- sets the GIT_PROMPT color scheme, using names from prompt-colors.sh
 
   if gp_set_file_var __PROMPT_COLORS_FILE prompt-colors.sh ; then
@@ -319,7 +321,7 @@ function update_old_git_prompt() {
 function setGitPrompt() {
   update_old_git_prompt
 
-  local repo=`git rev-parse --show-toplevel 2> /dev/null`
+  local repo=$(git rev-parse --show-toplevel 2> /dev/null)
   if [[ ! -e "$repo" ]] && [[ "$GIT_PROMPT_ONLY_IN_REPO" = 1 ]]; then
     # we do not permit bash-git-prompt outside git repos, so nothing to do
     PS1="$OLD_GITPROMPT"
@@ -375,7 +377,7 @@ function olderThanMinutes() {
   fi
 
   if [[ "$_have_find_mmin" = 1 ]]; then
-    matches=`"$_find_command" "$1" -mmin +"$2" 2> /dev/null`
+    matches=$("$_find_command" "$1" -mmin +"$2" 2> /dev/null)
     find_exit_code="$?"
     if [[ -n "$matches" ]]; then
       return 0
