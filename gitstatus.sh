@@ -69,14 +69,14 @@ else
   if [[ "${#branch_fields[@]}" -eq 1 ]]; then
     remote="_NO_REMOTE_TRACKING_"
   else
-    IFS="[,]" read -ra remote_line <<< "${branch_fields[1]}"
-    for rline in "${remote_line[@]}"; do
-      if [[ "$rline" == *ahead* ]]; then
-        num_ahead=${rline:6}
+    IFS="[,]" read -ra remote_fields <<< "${branch_fields[1]}"
+    for remote_field in "${remote_fields[@]}"; do
+      if [[ "$remote_field" == *ahead* ]]; then
+        num_ahead=${remote_field:6}
         ahead="_AHEAD_${num_ahead}"
       fi
-      if [[ "$rline" == *behind* ]]; then
-        num_behind=${rline:7}
+      if [[ "$remote_field" == *behind* ]]; then
+        num_behind=${remote_field:7}
         behind="_BEHIND_${num_behind# }"
       fi
     done
