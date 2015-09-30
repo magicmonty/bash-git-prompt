@@ -27,7 +27,7 @@ num_untracked=0
 while IFS='' read -r line || [[ -n "$line" ]]; do
   status=${line:0:2}
   case "$status" in
-    \#\#) branch_line="$line" ;;
+    \#\#) branch_line="${line/\.\.\./^}" ;;
     ?M) ((num_changed++)) ;;
     U?) ((num_conflicts++)) ;;
     \?\?) ((num_untracked++)) ;;
@@ -50,14 +50,13 @@ if (( num_changed == 0 && num_staged == 0 && num_untracked == 0 && num_stashed =
   clean=1
 fi
 
-branch="${branch_line#\#\# }"
-branch="${branch%\.\.\.*}"
-remote_branch_and_diff="${branch_line#*\.\.\.}"
+IFS="^" read -ra branch_fields <<< "${branch_line/\#\# }"
+branch="${branch_fields[0]}"
 remote=
 
 if [[ "$branch" == *"Initial commit on"* ]]; then
-  IFS=" " read -ra branch_line <<< "$branch"
-  branch="${branch_line[3]}"
+  IFS=" " read -ra fields <<< "$branch"
+  branch="${fields[3]}"
   remote="_NO_REMOTE_TRACKING_"
 elif [[ "$branch" == *"no branch"* ]]; then
   tag=$( git describe --exact-match )
@@ -67,10 +66,10 @@ elif [[ "$branch" == *"no branch"* ]]; then
     branch="_PREHASH_$( git rev-parse --short HEAD )"
   fi
 else
-  if [[ "${remote_branch_and_diff}" == "${branch_line}" ]]; then
+  if [[ "${#branch_fields[@]}" -eq 1 ]]; then
     remote="_NO_REMOTE_TRACKING_"
   else
-    IFS="[,]" read -ra remote_line <<< "${remote_branch_and_diff}"
+    IFS="[,]" read -ra remote_line <<< "${branch_fields[1]}"
     for rline in "${remote_line[@]}"; do
       if [[ "$rline" == *ahead* ]]; then
         num_ahead=${rline:6}
