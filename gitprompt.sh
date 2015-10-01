@@ -273,7 +273,7 @@ function git_prompt_config() {
     EMPTY_PROMPT="$OLD_GITPROMPT"
   else
     local ps=""
-    if [[ -n "$VIRTUAL_ENV" ]]; then
+    if [[ -n "$VIRTUAL_ENV" && -z "${VIRTUAL_ENV_DISABLE_PROMPT-}" ]]; then
       VENV=$(basename "${VIRTUAL_ENV}")
       ps="${ps}${GIT_PROMPT_VIRTUALENV//_VIRTUALENV_/${VENV}}"
     fi
