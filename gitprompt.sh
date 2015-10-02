@@ -501,7 +501,7 @@ function updatePrompt() {
     __add_status        "$ResetColor$GIT_PROMPT_SUFFIX"
 
     NEW_PROMPT=""
-    if [[ -n "$VIRTUAL_ENV" ]]; then
+    if [[ -n "$VIRTUAL_ENV" && -z "${VIRTUAL_ENV_DISABLE_PROMPT-}" ]]; then
       VENV=$(basename "${VIRTUAL_ENV}")
       NEW_PROMPT="$NEW_PROMPT${GIT_PROMPT_VIRTUALENV//_VIRTUALENV_/${VENV}}"
     fi
