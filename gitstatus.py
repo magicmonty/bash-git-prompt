@@ -8,37 +8,38 @@ http://docs.python.org/3.0/library/functions.html?highlight=print#print
 
 Shamelessly ripped from http://www.daniweb.com/software-development/python/code/217214/a-print-function-for-different-versions-of-python
 """
-
-__all__ = ["Print"]
-import sys
-try:
-  Print = eval("print") # python 3.0 case
-except SyntaxError:
-  try:
-    D = dict()
-    exec("from __future__ import print_function\np=print", D)
-    Print = D["p"] # 2.6 case
-    del D
-  except SyntaxError:
-    del D
-    def Print(*args, **kwd): # 2.4, 2.5, define our own Print function
-      fout = kwd.get("file", sys.stdout)
-      w = fout.write
-      if args:
-        w(str(args[0]))
-        sep = kwd.get("sep", " ")
-        for a in args[1:]:
-          w(sep)
-          w(str(a))
-      w(kwd.get("end", "\n"))
-
 # change those symbols to whatever you prefer
-symbols = {'ahead of': '↑·', 'behind': '↓·', 'prehash':':'}
+symbols = {'ahead of': '↑·', 'behind': '↓·', 'prehash': ':'}
 
 import sys
 import re
 import shlex
 from subprocess import Popen, PIPE, check_output
+
+__all__ = ["Print"]
+
+try:
+    Print = eval("print")  # python 3.0 case
+except SyntaxError:
+    try:
+        D = dict()
+        exec ("from __future__ import print_function\np=print", D)
+        Print = D["p"]  # 2.6 case
+        del D
+    except SyntaxError:
+        del D
+
+
+        def Print(*args, **kwd):  # 2.4, 2.5, define our own Print function
+            fout = kwd.get("file", sys.stdout)
+            w = fout.write
+            if args:
+                w(str(args[0]))
+                sep = kwd.get("sep", " ")
+                for a in args[1:]:
+                    w(sep)
+                    w(str(a))
+            w(kwd.get("end", "\n"))
 
 
 def get_tagname_or_hash():
@@ -49,11 +50,11 @@ def get_tagname_or_hash():
     # get hash
     m = re.search('\(.*\)$', output)
     if m:
-        hash_ = output[:m.start()-1]
+        hash_ = output[:m.start() - 1]
     # get tagname
     m = re.search('tag: .*[,\)]', output)
     if m:
-        tagname = 'tags/' + output[m.start()+len('tag: '): m.end()-1]
+        tagname = 'tags/' + output[m.start() + len('tag: '): m.end() - 1]
 
     if tagname:
         return tagname
@@ -61,10 +62,11 @@ def get_tagname_or_hash():
         return hash_
     return None
 
+
 def get_stash():
     cmd = Popen(['git', 'rev-parse', '--git-dir'], stdout=PIPE, stderr=PIPE)
     so, se = cmd.communicate()
-    stashFile = '%s%s' % (so.decode('utf-8').rstrip(),'/logs/refs/stash')
+    stashFile = '%s%s' % (so.decode('utf-8').rstrip(), '/logs/refs/stash')
 
     try:
         with open(stashFile) as f:
@@ -72,11 +74,12 @@ def get_stash():
     except IOError:
         return 0
 
+
 # `git status --porcelain --branch` can collect all information
 # branch, remote_branch, untracked, staged, changed, conflicts, ahead, behind
 po = Popen(['git', 'status', '--porcelain', '--branch'], env={'LC_ALL': 'C'},
            stdout=PIPE, stderr=PIPE)
-stdout, sterr = po.communicate()
+stdout, stderr = po.communicate()
 if po.returncode != 0:
     sys.exit(0)  # Not a git repository
 
@@ -120,7 +123,7 @@ for st in status:
         elif st[0] != ' ':
             staged.append(st)
 
-stashed=get_stash()
+stashed = get_stash()
 if not changed and not staged and not conflicts and not untracked and not stashed:
     clean = 1
 else:
