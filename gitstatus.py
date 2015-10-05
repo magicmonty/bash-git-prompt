@@ -52,7 +52,7 @@ def get_tag_or_hash():
         cmd = Popen(['git', 'rev-parse', '--short', 'HEAD'], stdout=PIPE, stderr=PIPE)
         so, se = cmd.communicate()
         hash_name = '%s' % so.decode('utf-8').strip()
-        return symbols['prehash'] + hash_name
+        return ''.join([symbols['prehash'], hash_name])
 
 
 def get_stash():
@@ -69,8 +69,7 @@ def get_stash():
 
 # `git status --porcelain --branch` can collect all information
 # branch, remote_branch, untracked, staged, changed, conflicts, ahead, behind
-po = Popen(['git', 'status', '--porcelain', '--branch'], env={'LC_ALL': 'C'},
-           stdout=PIPE, stderr=PIPE)
+po = Popen(['git', 'status', '--porcelain', '--branch'], env={'LC_ALL': 'C'}, stdout=PIPE, stderr=PIPE)
 stdout, stderr = po.communicate()
 if po.returncode != 0:
     sys.exit(0)  # Not a git repository
@@ -107,10 +106,7 @@ for st in status:
                     elif 'behind' in div:
                         num_behind = int(div[len('behind '):].strip())
                         behind = '%s%s' % (symbols['behind'], num_behind)
-                remote = ''.join([
-                    behind,
-                    ahead
-                ])
+                remote = ''.join([behind, ahead])
     elif st[0] == '?' and st[1] == '?':
         untracked.append(st)
     else:
