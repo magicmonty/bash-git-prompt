@@ -525,6 +525,11 @@ function is_function {
   declare -Ff "$1" >/dev/null;
 }
 
+#Sets the window title to the given argument string
+function gp_set_window_title {
+  echo -ne "\033]0;"$@"\007"
+}
+
 function prompt_callback_default {
   return
 }
