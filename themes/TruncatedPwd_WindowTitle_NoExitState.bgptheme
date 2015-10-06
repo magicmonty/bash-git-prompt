@@ -23,23 +23,10 @@
 override_git_prompt_colors() {
   GIT_PROMPT_THEME_NAME="TruncatedPwd_WindowTitle_NoExitState"
 
-  #Sets the window title to the given argument string
-  function gp_set_title {
-    echo -ne "\033]0;"$@"\007"
-  }
-
-  #Helper function that truncates $PWD depending on window width
-  function gp_truncate_pwd {
-    local newPWD="${PWD/#$HOME/~}"
-    local pwdmaxlen=$((${COLUMNS:-80}/3))
-    [ ${#newPWD} -gt $pwdmaxlen ] && newPWD="...${newPWD:3-$pwdmaxlen}"
-    echo -n "$newPWD"
-  }
-
   #Overrides the prompt_callback function used by bash-git-prompt
   function prompt_callback {
     local PS1="\u@\h: $(gp_truncate_pwd)"
-    gp_set_title $PS1
+    gp_set_window_title "$PS1"
     echo -n "[${PS1}]${ResetColor}"
   }
 

@@ -521,6 +521,19 @@ function is_function {
   declare -Ff "$1" >/dev/null;
 }
 
+#Helper function that truncates $PWD depending on window width
+function gp_truncate_pwd {
+  local newPWD="${PWD/#$HOME/~}"
+  local pwdmaxlen=$((${COLUMNS:-80}/3))
+  [ ${#newPWD} -gt $pwdmaxlen ] && newPWD="...${newPWD:3-$pwdmaxlen}"
+  echo -n "$newPWD"
+}
+
+#Sets the window title to the given argument string
+function gp_set_window_title {
+  echo -ne "\033]0;"$@"\007"
+}
+
 function prompt_callback_default {
   return
 }
