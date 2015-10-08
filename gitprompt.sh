@@ -435,6 +435,7 @@ function updatePrompt() {
 
   export __GIT_PROMPT_IGNORE_STASH=${GIT_PROMPT_IGNORE_STASH}
   export __GIT_PROMPT_SHOW_UPSTREAM=${GIT_PROMPT_SHOW_UPSTREAM}
+
   local -a git_status_fields
   git_status_fields=($("$__GIT_STATUS_CMD" 2>/dev/null))
 
@@ -533,7 +534,8 @@ function is_function {
 
 #Helper function that truncates $PWD depending on window width
 function gp_truncate_pwd {
-  local newPWD="${PWD/#$HOME/~}"
+  local tilde="~"
+  local newPWD="${PWD/#${HOME}/${tilde}}"
   local pwdmaxlen=$((${COLUMNS:-80}/3))
   [ ${#newPWD} -gt $pwdmaxlen ] && newPWD="...${newPWD:3-$pwdmaxlen}"
   echo -n "$newPWD"
