@@ -418,7 +418,7 @@ function replaceSymbols() {
 
   local VALUE=${1//_AHEAD_/${GIT_PROMPT_SYMBOLS_AHEAD}}
   local VALUE1=${VALUE//_BEHIND_/${GIT_PROMPT_SYMBOLS_BEHIND}}
-  local VALUE2=${VALUE1//_NO_REMOTE_TRACKING_/${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING}}
+  local VALUE2=${VALUE1//_NO_REMOTE_TRACKING_/"{${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING}}"}
 
   echo ${VALUE2//_PREHASH_/${GIT_PROMPT_SYMBOLS_PREHASH}}
 }
@@ -434,23 +434,32 @@ function updatePrompt() {
   git_prompt_config
 
   export __GIT_PROMPT_IGNORE_STASH=${GIT_PROMPT_IGNORE_STASH}
-  local -a GitStatus
-  GitStatus=($("$__GIT_STATUS_CMD" 2>/dev/null))
+  export __GIT_PROMPT_IGNORE_UPSTREAM=${GIT_PROMPT_IGNORE_UPSTREAM}
+  local -a git_status_fields
+  git_status_fields=($("$__GIT_STATUS_CMD" 2>/dev/null))
 
-  local GIT_BRANCH=$(replaceSymbols ${GitStatus[0]})
-  local GIT_REMOTE="$(replaceSymbols ${GitStatus[1]})"
+  local GIT_BRANCH=$(replaceSymbols ${git_status_fields[0]})
+  local GIT_REMOTE="$(replaceSymbols ${git_status_fields[1]})"
   if [[ "." == "$GIT_REMOTE" ]]; then
     unset GIT_REMOTE
   fi
-  local GIT_STAGED=${GitStatus[2]}
-  local GIT_CONFLICTS=${GitStatus[3]}
-  local GIT_CHANGED=${GitStatus[4]}
-  local GIT_UNTRACKED=${GitStatus[5]}
-  local GIT_STASHED=${GitStatus[6]}
-  local GIT_CLEAN=${GitStatus[7]}
+
+  local GIT_UPSTREAM="${git_status_fields[2]}"
+  if [[ -n "${__GIT_PROMPT_IGNORE_UPSTREAM}" || "^" == "$GIT_UPSTREAM" ]]; then
+    unset GIT_UPSTREAM
+  else
+    GIT_UPSTREAM=" ${Blue}{$GIT_UPSTREAM}${ResetColor}"
+  fi
+
+  local GIT_STAGED=${git_status_fields[3]}
+  local GIT_CONFLICTS=${git_status_fields[4]}
+  local GIT_CHANGED=${git_status_fields[5]}
+  local GIT_UNTRACKED=${git_status_fields[6]}
+  local GIT_STASHED=${git_status_fields[7]}
+  local GIT_CLEAN=${git_status_fields[8]}
 
   local NEW_PROMPT="$EMPTY_PROMPT"
-  if [[ -n "$GitStatus" ]]; then
+  if [[ -n "$git_status_fields" ]]; then
     local STATUS="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${GIT_PROMPT_BRANCH}${GIT_BRANCH}${ResetColor}"
 
     # __add_status KIND VALEXPR INSERT
@@ -481,6 +490,7 @@ function updatePrompt() {
       eval "STATUS=\"$STATUS$1\""
     }
 
+    __chk_gitvar_status 'UPSTREAM'   '-n'
     __chk_gitvar_status 'REMOTE'     '-n'
     __add_status        "$GIT_PROMPT_SEPARATOR"
     __chk_gitvar_status 'STAGED'     '-ne 0'
