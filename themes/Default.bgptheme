@@ -65,6 +65,9 @@ define_undefined_git_prompt_colors() {
   # the name of the current virtual environment (currently CONDA and VIRTUAL_ENV)
   if [[ -z ${GIT_PROMPT_VIRTUALENV} ]]; then GIT_PROMPT_VIRTUALENV="(${Blue}_VIRTUALENV_${ResetColor}) "; fi
 
+  # template for displaying the current remote tracking branch
+  # use the placeholder _UPSTREAM_ will be replaced with
+  # the name of the current remote tracking branch
   if [[ -z ${GIT_PROMPT_UPSTREAM} ]]; then GIT_PROMPT_UPSTREAM=" {${Blue}_UPSTREAM_${ResetColor}}"; fi
   
   # _LAST_COMMAND_INDICATOR_ will be replaced by the appropriate GIT_PROMPT_COMMAND_OK OR GIT_PROMPT_COMMAND_FAIL
