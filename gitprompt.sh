@@ -418,7 +418,7 @@ function replaceSymbols() {
 
   local VALUE=${1//_AHEAD_/${GIT_PROMPT_SYMBOLS_AHEAD}}
   local VALUE1=${VALUE//_BEHIND_/${GIT_PROMPT_SYMBOLS_BEHIND}}
-  local VALUE2=${VALUE1//_NO_REMOTE_TRACKING_/"{${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING}}"}
+  local VALUE2=${VALUE1//_NO_REMOTE_TRACKING_/${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING}}
 
   echo ${VALUE2//_PREHASH_/${GIT_PROMPT_SYMBOLS_PREHASH}}
 }
@@ -434,7 +434,7 @@ function updatePrompt() {
   git_prompt_config
 
   export __GIT_PROMPT_IGNORE_STASH=${GIT_PROMPT_IGNORE_STASH}
-  export __GIT_PROMPT_IGNORE_UPSTREAM=${GIT_PROMPT_IGNORE_UPSTREAM}
+  export __GIT_PROMPT_SHOW_UPSTREAM=${GIT_PROMPT_SHOW_UPSTREAM}
   local -a git_status_fields
   git_status_fields=($("$__GIT_STATUS_CMD" 2>/dev/null))
 
@@ -445,10 +445,10 @@ function updatePrompt() {
   fi
 
   local GIT_UPSTREAM="${git_status_fields[2]}"
-  if [[ -n "${__GIT_PROMPT_IGNORE_UPSTREAM}" || "^" == "$GIT_UPSTREAM" ]]; then
+  if [[ -z "${__GIT_PROMPT_SHOW_UPSTREAM}" || "^" == "$GIT_UPSTREAM" ]]; then
     unset GIT_UPSTREAM
   else
-    GIT_UPSTREAM=" ${Blue}{$GIT_UPSTREAM}${ResetColor}"
+    GIT_UPSTREAM="${GIT_PROMPT_UPSTREAM//_UPSTREAM_/${GIT_UPSTREAM}}"
   fi
 
   local GIT_STAGED=${git_status_fields[3]}
@@ -490,7 +490,7 @@ function updatePrompt() {
       eval "STATUS=\"$STATUS$1\""
     }
 
-    __chk_gitvar_status 'UPSTREAM'   '-n'
+    __add_status        '$GIT_UPSTREAM'
     __chk_gitvar_status 'REMOTE'     '-n'
     __add_status        "$GIT_PROMPT_SEPARATOR"
     __chk_gitvar_status 'STAGED'     '-ne 0'
