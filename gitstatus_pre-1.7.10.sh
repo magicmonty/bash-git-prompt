@@ -39,10 +39,15 @@ num_changed=$(( `all_lines "$gitstatus"` - `count_lines "$gitstatus" U` ))
 num_conflicts=`count_lines "$staged_files" U`
 num_staged=$(( `all_lines "$staged_files"` - num_conflicts ))
 num_untracked=`git ls-files --others --exclude-standard $(git rev-parse --show-cdup) | wc -l`
-if [[ "$__GIT_PROMPT_IGNORE_STASH" = "1" ]]; then
-  num_stashed=0
-else
-  num_stashed=`git stash list | wc -l`
+
+num_stashed=0
+if [[ "$__GIT_PROMPT_IGNORE_STASH" != "1" ]]; then
+  stash_file="$( git rev-parse --git-dir )/logs/refs/stash"
+  if [[ -e "${stash_file}" ]]; then
+    while IFS='' read -r wcline || [[ -n "$wcline" ]]; do
+      ((num_stashed++))
+    done < ${stash_file}
+  fi
 fi
 
 clean=0
@@ -105,8 +110,14 @@ if [[ "$has_remote_tracking" == "0" ]] ; then
   remote='_NO_REMOTE_TRACKING_'
 fi
 
-for w in "$branch" "$remote" $num_staged $num_conflicts $num_changed $num_untracked $num_stashed $clean ; do
-  echo "$w"
-done
+printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
+  "$branch" \
+  "$remote" \
+  $num_staged \
+  $num_conflicts \
+  $num_changed \
+  $num_untracked \
+  $num_stashed \
+  $clean
 
 exit
