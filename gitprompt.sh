@@ -282,8 +282,8 @@ function git_prompt_config() {
   fi
   if [[ -z "$__GIT_STATUS_CMD" ]] ; then          # if GIT_STATUS_CMD not defined..
     git_prompt_dir
-    if ! gp_maybe_set_envar_to_path __GIT_STATUS_CMD "$__GIT_PROMPT_DIR/gitstatus.sh" ; then
-      echo 1>&2 "Cannot find gitstatus.sh!"
+    if ! gp_maybe_set_envar_to_path __GIT_STATUS_CMD "$__GIT_PROMPT_DIR/$GIT_PROMPT_STATUS_COMMAND" ; then
+      echo 1>&2 "Cannot find $GIT_PROMPT_STATUS_COMMAND!"
     fi
     # __GIT_STATUS_CMD defined
   fi
@@ -520,7 +520,6 @@ function gp_add_virtualenv_to_prompt {
 function is_function {
   declare -Ff "$1" >/dev/null;
 }
-
 #Helper function that truncates $PWD depending on window width
 function gp_truncate_pwd {
   local newPWD="${PWD/#$HOME/~}"
