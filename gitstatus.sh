@@ -53,6 +53,7 @@ fi
 IFS="^" read -ra branch_fields <<< "${branch_line/\#\# }"
 branch="${branch_fields[0]}"
 remote=
+upstream=
 
 if [[ "$branch" == *"Initial commit on"* ]]; then
   IFS=" " read -ra fields <<< "$branch"
@@ -70,6 +71,7 @@ else
     remote="_NO_REMOTE_TRACKING_"
   else
     IFS="[,]" read -ra remote_fields <<< "${branch_fields[1]}"
+    upstream="${remote_fields[0]}"
     for remote_field in "${remote_fields[@]}"; do
       if [[ "$remote_field" == *ahead* ]]; then
         num_ahead=${remote_field:6}
@@ -88,9 +90,14 @@ if [[ -z "$remote" ]] ; then
   remote='.'
 fi
 
-printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
+if [[ -z "$upstream" ]] ; then
+  upstream='^'
+fi
+
+printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
   "$branch" \
   "$remote" \
+  "$upstream" \
   $num_staged \
   $num_conflicts \
   $num_changed \
