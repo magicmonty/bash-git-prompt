@@ -1,5 +1,7 @@
 # Informative git prompt for bash and fish
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/magicmonty/bash-git-prompt?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 This prompt is a port of the "Informative git prompt for zsh" which you can
 find [here](https://github.com/olivierverdier/zsh-git-prompt)
 
@@ -65,7 +67,7 @@ The symbols are as follows:
 - Local Status Symbols
   - ``✔``: repository clean
   - ``●n``: there are ``n`` staged files
-  - ``✖n``: there are ``n`` unmerged files
+  - ``✖n``: there are ``n`` files with merge conflict(s)
   - ``✚n``: there are ``n`` changed but *unstaged* files
   - ``…n``: there are ``n`` untracked files
   - ``⚑n``: there are ``n`` stash entries
@@ -198,6 +200,10 @@ function prompt_callback {
 }
 ```
 
+- There are two helper functions that can be used within `prompt_callback`:
+    - `gp_set_window_title <String>` - sets the window title to the given string (should work for XTerm type terminals like in OS X or Ubuntu)
+    - `gp_truncate_pwd` - a function that returns the current PWD truncated to fit the current terminal width
+
 - If you want to show the git prompt only if you are in a git repository you
   can set ``GIT_PROMPT_ONLY_IN_REPO=1`` before sourcing the gitprompt script
 
@@ -302,9 +308,8 @@ Please leave a comment on the issue, that you want to fix it, so others know, th
 Pull requests are welcome. I will check them and merge them, if I think they help the project.
 
 ## Donations
-I accept tips through [Gittip][tip] and [Flattr][flattr].
+I accept tips through [Flattr][flattr].
 
-[![Gittip](https://img.shields.io/gittip/magicmonty.svg?style=flat)](https://www.gittip.com/magicmonty/)
 [![Flattr](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=magicmonty&url=https%3A%2F%2Fgithub.com%2Fmagicmonty%2Fbash-git-prompt)
 
 [blog post]: http://sebastiancelis.com/2009/nov/16/zsh-prompt-git-users/

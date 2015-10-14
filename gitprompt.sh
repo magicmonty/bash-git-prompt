@@ -1,14 +1,12 @@
 #!/bin/sh
 
-function async_run()
-{
+function async_run() {
   {
     eval "$@" &> /dev/null
   }&
 }
 
-function git_prompt_dir()
-{
+function git_prompt_dir() {
   # assume the gitstatus.sh is in the same directory as this script
   # code thanks to http://stackoverflow.com/questions/59895
   if [ -z "$__GIT_PROMPT_DIR" ]; then
@@ -23,11 +21,10 @@ function git_prompt_dir()
 }
 
 function echoc() {
-    echo -e "${1}$2${ResetColor}" | sed 's/\\\]//g'  | sed 's/\\\[//g'
+  echo -e "${1}$2${ResetColor}" | sed 's/\\\]//g'  | sed 's/\\\[//g'
 }
 
-function get_theme()
-{
+function get_theme() {
   local CUSTOM_THEME_FILE="${HOME}/.git-prompt-colors.sh"
   local DEFAULT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
 
@@ -52,9 +49,11 @@ function get_theme()
       local theme=""
 
       # use default theme, if theme was not found
-      for themefile in $(cd "$__GIT_PROMPT_DIR/themes" && echo *); do
-        if [[ "${themefile}" = "${GIT_PROMPT_THEME}.bgptheme" ]]; then
+      for themefile in "${__GIT_PROMPT_DIR}/themes/"*.bgptheme; do
+        local basename=${themefile##*/}
+        if [[ "${basename%.bgptheme}" = "${GIT_PROMPT_THEME}" ]]; then
           theme=$GIT_PROMPT_THEME
+          break
         fi
       done
 
@@ -67,25 +66,23 @@ function get_theme()
   fi
 }
 
-function git_prompt_load_theme()
-{
+function git_prompt_load_theme() {
   get_theme
   local DEFAULT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
   source "${DEFAULT_THEME_FILE}"
   source "${__GIT_PROMPT_THEME_FILE}"
 }
 
-function git_prompt_list_themes()
-{
+function git_prompt_list_themes() {
   local oldTheme
   local oldThemeFile
 
   git_prompt_dir
   get_theme
 
-  for themefile in `ls "$__GIT_PROMPT_DIR/themes"`; do
-    local theme="$(basename $themefile .bgptheme)"
-
+  for themefile in "${__GIT_PROMPT_DIR}/themes/"*.bgptheme; do
+    local basename=${themefile##*/}
+    local theme="${basename%.bgptheme}"
     if [[ "${GIT_PROMPT_THEME}" = "${theme}" ]]; then
       echoc ${Red} "*${theme}"
     else
@@ -117,7 +114,7 @@ function git_prompt_make_custom_theme() {
     if [[ "${base}" = "Custom" ]]; then
       echoc ${Red} "You cannot use the custom theme as base"
     else
-      echoc ${Green} "Creating new cutom theme in \"${HOME}/.git-prompt-colors.sh\""
+      echoc ${Green} "Creating new custom theme in \"${HOME}/.git-prompt-colors.sh\""
       echoc ${DimYellow} "Please add ${Magenta}\"GIT_PROMPT_THEME=Custom\"${DimYellow} to your .bashrc to use this theme"
       if [[ "${base}" == "Default" ]]; then
         cp "${__GIT_PROMPT_DIR}/themes/Custom.bgptemplate" "${HOME}/.git-prompt-colors.sh"
@@ -160,7 +157,7 @@ function gp_set_file_var() {
 # return 0 (true) if any FILEPATH is readable, set ENVAR to it
 # return 1 (false) if not
 
-function gp_maybe_set_envar_to_path(){
+function gp_maybe_set_envar_to_path() {
   local envar="$1"
   shift
   local file
@@ -191,27 +188,26 @@ git_prompt_reset() {
 # signalled, otherwise echos the original value of RETVAL
 
 gp_format_exit_status() {
-    local RETVAL="$1"
-    local SIGNAL
-    # Suppress STDERR in case RETVAL is not an integer (in such cases, RETVAL
-    # is echoed verbatim)
-    if [ "${RETVAL}" -gt 128 ] 2>/dev/null; then
-        SIGNAL=$(( ${RETVAL} - 128 ))
-        kill -l "${SIGNAL}" 2>/dev/null || echo "${RETVAL}"
-    else
-        echo "${RETVAL}"
-    fi
+  local RETVAL="$1"
+  local SIGNAL
+  # Suppress STDERR in case RETVAL is not an integer (in such cases, RETVAL
+  # is echoed verbatim)
+  if [ "${RETVAL}" -gt 128 ] 2>/dev/null; then
+    SIGNAL=$(( ${RETVAL} - 128 ))
+    kill -l "${SIGNAL}" 2>/dev/null || echo "${RETVAL}"
+  else
+    echo "${RETVAL}"
+  fi
 }
 
-function git_prompt_config()
-{
+function git_prompt_config() {
   #Checking if root to change output
   _isroot=false
   [[ $UID -eq 0 ]] && _isroot=true
 
   # There are two files related to colors:
   #
-  #  prompt-colors.sh -- sets generic color names suitable for bash `PS1` prompt
+  #  prompt-colors.sh -- sets generic color names suitable for bash 'PS1' prompt
   #  git-prompt-colors.sh -- sets the GIT_PROMPT color scheme, using names from prompt-colors.sh
 
   if gp_set_file_var __PROMPT_COLORS_FILE prompt-colors.sh ; then
@@ -224,6 +220,12 @@ function git_prompt_config()
   # sitting in the same directory as this script
 
   git_prompt_load_theme
+
+  if is_function prompt_callback; then
+    prompt_callback="prompt_callback"
+  else
+    prompt_callback="prompt_callback_default"
+  fi
 
   if [ $GIT_PROMPT_LAST_COMMAND_STATE = 0 ]; then
     LAST_COMMAND_INDICATOR="$GIT_PROMPT_COMMAND_OK";
@@ -270,16 +272,7 @@ function git_prompt_config()
   if [[ "$GIT_PROMPT_ONLY_IN_REPO" = 1 ]]; then
     EMPTY_PROMPT="$OLD_GITPROMPT"
   else
-    local ps=""
-    if [[ -n "$VIRTUAL_ENV" ]]; then
-      VENV=$(basename "${VIRTUAL_ENV}")
-      ps="${ps}${GIT_PROMPT_VIRTUALENV//_VIRTUALENV_/${VENV}}"
-    fi
-    if [[ -n "$CONDA_DEFAULT_ENV" ]]; then
-      VENV=$(basename "${CONDA_DEFAULT_ENV}")
-      ps="${ps}${GIT_PROMPT_VIRTUALENV//_VIRTUALENV_/${VENV}}"
-    fi
-    ps="$ps$PROMPT_START$($prompt_callback)$PROMPT_END"
+    local ps="$(gp_add_virtualenv_to_prompt)$PROMPT_START$($prompt_callback)$PROMPT_END"
     EMPTY_PROMPT="${ps//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
   fi
 
@@ -289,8 +282,8 @@ function git_prompt_config()
   fi
   if [[ -z "$__GIT_STATUS_CMD" ]] ; then          # if GIT_STATUS_CMD not defined..
     git_prompt_dir
-    if ! gp_maybe_set_envar_to_path __GIT_STATUS_CMD "$__GIT_PROMPT_DIR/gitstatus.sh" ; then
-      echo 1>&2 "Cannot find gitstatus.sh!"
+    if ! gp_maybe_set_envar_to_path __GIT_STATUS_CMD "$__GIT_PROMPT_DIR/$GIT_PROMPT_STATUS_COMMAND" ; then
+      echo 1>&2 "Cannot find $GIT_PROMPT_STATUS_COMMAND!"
     fi
     # __GIT_STATUS_CMD defined
   fi
@@ -319,7 +312,7 @@ function update_old_git_prompt() {
 function setGitPrompt() {
   update_old_git_prompt
 
-  local repo=`git rev-parse --show-toplevel 2> /dev/null`
+  local repo=$(git rev-parse --show-toplevel 2> /dev/null)
   if [[ ! -e "$repo" ]] && [[ "$GIT_PROMPT_ONLY_IN_REPO" = 1 ]]; then
     # we do not permit bash-git-prompt outside git repos, so nothing to do
     PS1="$OLD_GITPROMPT"
@@ -363,42 +356,42 @@ function setGitPrompt() {
 _have_find_mmin=1
 
 function olderThanMinutes() {
-    local matches
-    local find_exit_code
+  local matches
+  local find_exit_code
 
-    if [[ -z "$_find_command" ]]; then
-        if command -v gfind > /dev/null; then
-            _find_command=gfind
-        else
-            _find_command=find
-        fi
-    fi
-
-    if [[ "$_have_find_mmin" = 1 ]]; then
-        matches=`"$_find_command" "$1" -mmin +"$2" 2> /dev/null`
-        find_exit_code="$?"
-        if [[ -n "$matches" ]]; then
-            return 0
-        else
-            if [[ "$find_exit_code" != 0 ]]; then
-                _have_find_mmin=0
-            else
-                return 1
-            fi
-        fi
-    fi
-
-    # try perl, solaris ships with perl
-    if command -v perl > /dev/null; then
-        perl -e '((time - (stat("'"$1"'"))[9]) / 60) > '"$2"' && exit(0) || exit(1)'
-        return "$?"
+  if [[ -z "$_find_command" ]]; then
+    if command -v gfind > /dev/null; then
+      _find_command=gfind
     else
-        echo >&2
-        echo "[1;31mWARNING[0m: neither a find that supports -mmin (such as GNU find) or perl is available, disabling remote status checking. Install GNU find as gfind or perl to enable this feature, or set GIT_PROMPT_FETCH_REMOTE_STATUS=0 to disable this warning." >&2
-        echo >&2
-        GIT_PROMPT_FETCH_REMOTE_STATUS=0
-        return 1
+      _find_command=find
     fi
+  fi
+
+  if [[ "$_have_find_mmin" = 1 ]]; then
+    matches=$("$_find_command" "$1" -mmin +"$2" 2> /dev/null)
+    find_exit_code="$?"
+    if [[ -n "$matches" ]]; then
+      return 0
+    else
+      if [[ "$find_exit_code" != 0 ]]; then
+        _have_find_mmin=0
+      else
+        return 1
+      fi
+    fi
+  fi
+
+  # try perl, solaris ships with perl
+  if command -v perl > /dev/null; then
+    perl -e '((time - (stat("'"$1"'"))[9]) / 60) > '"$2"' && exit(0) || exit(1)'
+    return "$?"
+  else
+    echo >&2
+    echo "[1;31mWARNING[0m: neither a find that supports -mmin (such as GNU find) or perl is available, disabling remote status checking. Install GNU find as gfind or perl to enable this feature, or set GIT_PROMPT_FETCH_REMOTE_STATUS=0 to disable this warning." >&2
+    echo >&2
+    GIT_PROMPT_FETCH_REMOTE_STATUS=0
+    return 1
+  fi
 }
 
 function checkUpstream() {
@@ -418,17 +411,16 @@ function checkUpstream() {
   fi
 }
 
-function replaceSymbols()
-{
+function replaceSymbols() {
   if [[ -z ${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING} ]]; then
     GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING=L
   fi
 
-	local VALUE=${1//_AHEAD_/${GIT_PROMPT_SYMBOLS_AHEAD}}
-	local VALUE1=${VALUE//_BEHIND_/${GIT_PROMPT_SYMBOLS_BEHIND}}
+  local VALUE=${1//_AHEAD_/${GIT_PROMPT_SYMBOLS_AHEAD}}
+  local VALUE1=${VALUE//_BEHIND_/${GIT_PROMPT_SYMBOLS_BEHIND}}
   local VALUE2=${VALUE1//_NO_REMOTE_TRACKING_/${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING}}
 
-	echo ${VALUE2//_PREHASH_/${GIT_PROMPT_SYMBOLS_PREHASH}}
+  echo ${VALUE2//_PREHASH_/${GIT_PROMPT_SYMBOLS_PREHASH}}
 }
 
 function updatePrompt() {
@@ -499,18 +491,7 @@ function updatePrompt() {
     __chk_gitvar_status 'CLEAN'      '-eq 1'   -
     __add_status        "$ResetColor$GIT_PROMPT_SUFFIX"
 
-    NEW_PROMPT=""
-    if [[ -n "$VIRTUAL_ENV" ]]; then
-      VENV=$(basename "${VIRTUAL_ENV}")
-      NEW_PROMPT="$NEW_PROMPT${GIT_PROMPT_VIRTUALENV//_VIRTUALENV_/${VENV}}"
-    fi
-
-    if [[ -n "$CONDA_DEFAULT_ENV" ]]; then
-      VENV=$(basename "${CONDA_DEFAULT_ENV}")
-      NEW_PROMPT="$NEW_PROMPT${GIT_PROMPT_VIRTUALENV//_VIRTUALENV_/${VENV}}"
-    fi
-
-    NEW_PROMPT="$NEW_PROMPT$PROMPT_START$($prompt_callback)$STATUS$PROMPT_END"
+    NEW_PROMPT="$(gp_add_virtualenv_to_prompt)$PROMPT_START$($prompt_callback)$STATUS$PROMPT_END"
   else
     NEW_PROMPT="$EMPTY_PROMPT"
   fi
@@ -518,17 +499,45 @@ function updatePrompt() {
   PS1="${NEW_PROMPT//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
 }
 
+# Helper function that returns virtual env information to be set in prompt
+# Honors virtualenvs own setting VIRTUAL_ENV_DISABLE_PROMPT
+function gp_add_virtualenv_to_prompt {
+  local ACCUMULATED_VENV_PROMPT=""
+  local VENV=""
+  if [[ -n "$VIRTUAL_ENV" && -z "${VIRTUAL_ENV_DISABLE_PROMPT-}" ]]; then
+    VENV=$(basename "${VIRTUAL_ENV}")
+    ACCUMULATED_VENV_PROMPT="${ACCUMULATED_VENV_PROMPT}${GIT_PROMPT_VIRTUALENV//_VIRTUALENV_/${VENV}}"
+  fi
+  if [[ -n "$CONDA_DEFAULT_ENV" ]]; then
+    VENV=$(basename "${CONDA_DEFAULT_ENV}")
+    ACCUMULATED_VENV_PROMPT="${ACCUMULATED_VENV_PROMPT}${GIT_PROMPT_VIRTUALENV//_VIRTUALENV_/${VENV}}"
+  fi
+  echo "$ACCUMULATED_VENV_PROMPT"
+}
+
+# Use exit status from declare command to determine whether input argument is a
+# bash function
+function is_function {
+  declare -Ff "$1" >/dev/null;
+}
+#Helper function that truncates $PWD depending on window width
+function gp_truncate_pwd {
+  local newPWD="${PWD/#$HOME/~}"
+  local pwdmaxlen=$((${COLUMNS:-80}/3))
+  [ ${#newPWD} -gt $pwdmaxlen ] && newPWD="...${newPWD:3-$pwdmaxlen}"
+  echo -n "$newPWD"
+}
+
+#Sets the window title to the given argument string
+function gp_set_window_title {
+  echo -ne "\033]0;"$@"\007"
+}
+
 function prompt_callback_default {
-    return
+  return
 }
 
 function gp_install_prompt {
-  if [ "`type -t prompt_callback`" = 'function' ]; then
-      prompt_callback="prompt_callback"
-  else
-      prompt_callback="prompt_callback_default"
-  fi
-
   if [ -z "$OLD_GITPROMPT" ]; then
     OLD_GITPROMPT=$PS1
   fi

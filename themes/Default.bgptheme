@@ -16,6 +16,7 @@ unset_git_prompt_colors() {
   unset GIT_PROMPT_CLEAN
   unset GIT_PROMPT_COMMAND_OK
   unset GIT_PROMPT_COMMAND_FAIL
+  unset GIT_PROMPT_STATUS_COMMAND
   unset GIT_PROMPT_VIRTUALENV
   unset GIT_PROMPT_START_USER
   unset GIT_PROMPT_START_ROOT
@@ -51,7 +52,7 @@ define_undefined_git_prompt_colors() {
   if [[ -z ${GIT_PROMPT_STASHED} ]]; then GIT_PROMPT_STASHED="${BoldBlue}⚑ "; fi    # the number of stashed files/dir
   if [[ -z ${GIT_PROMPT_CLEAN} ]]; then GIT_PROMPT_CLEAN="${BoldGreen}✔"; fi      # a colored flag indicating a "clean" repo
 
-  # For the command indicator, the placeholder _LAST_COMMAND_STATE_ 
+  # For the command indicator, the placeholder _LAST_COMMAND_STATE_
   # will be replaced with the exit code of the last command
   # e.g.
   # GIT_PROMPT_COMMAND_OK="${Green}✔-_LAST_COMMAND_STATE_ "    # indicator if the last command returned with an exit code of 0
@@ -60,11 +61,18 @@ define_undefined_git_prompt_colors() {
   if [[ -z ${GIT_PROMPT_COMMAND_OK} ]]; then GIT_PROMPT_COMMAND_OK="${Green}✔"; fi    # indicator if the last command returned with an exit code of 0
   if [[ -z ${GIT_PROMPT_COMMAND_FAIL} ]]; then GIT_PROMPT_COMMAND_FAIL="${Red}✘-_LAST_COMMAND_STATE_"; fi    # indicator if the last command returned with an exit code of other than 0
 
+  # Possible to change which command is used to create git status information
+  # There are three options:
+  # 1) gitstatus.sh (uses git status --branch --porcelain - fast, requires git > 1.7.10)
+  # 2) gitstatus_pre-1.7.10.sh (Uses a variety of git commands and pipes - slower, works with older git clients)
+  # 3) gitstatus.py (Unsupported, lack features found in the bash versions)
+  if [[ -z ${GIT_PROMPT_STATUS_COMMAND} ]]; then GIT_PROMPT_STATUS_COMMAND="gitstatus.sh"; fi    # Point out the command to get the git status from
+
   # template for displaying the current virtual environment
-  # use the placeholder _VIRTUALENV_ will be replaced with 
+  # use the placeholder _VIRTUALENV_ will be replaced with
   # the name of the current virtual environment (currently CONDA and VIRTUAL_ENV)
   if [[ -z ${GIT_PROMPT_VIRTUALENV} ]]; then GIT_PROMPT_VIRTUALENV="(${Blue}_VIRTUALENV_${ResetColor}) "; fi
-  
+
   # _LAST_COMMAND_INDICATOR_ will be replaced by the appropriate GIT_PROMPT_COMMAND_OK OR GIT_PROMPT_COMMAND_FAIL
   if [[ -z ${GIT_PROMPT_START_USER} ]]; then GIT_PROMPT_START_USER="_LAST_COMMAND_INDICATOR_ ${Yellow}${PathShort}${ResetColor}"; fi
   if [[ -z ${GIT_PROMPT_START_ROOT} ]]; then GIT_PROMPT_START_ROOT="${GIT_PROMPT_START_USER}"; fi
@@ -75,7 +83,7 @@ define_undefined_git_prompt_colors() {
   if [[ -z ${GIT_PROMPT_SYMBOLS_AHEAD} ]]; then GIT_PROMPT_SYMBOLS_AHEAD="↑·"; fi             # The symbol for "n versions ahead of origin"
   if [[ -z ${GIT_PROMPT_SYMBOLS_BEHIND} ]]; then GIT_PROMPT_SYMBOLS_BEHIND="↓·"; fi            # The symbol for "n versions behind of origin"
   if [[ -z ${GIT_PROMPT_SYMBOLS_PREHASH} ]]; then GIT_PROMPT_SYMBOLS_PREHASH=":"; fi            # Written before hash of commit, if no name could be found
-  if [[ -z ${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING} ]]; then GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING="L"; fi # This symbol is written after the branch, if the branch is not tracked 
+  if [[ -z ${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING} ]]; then GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING="L"; fi # This symbol is written after the branch, if the branch is not tracked
 }
 
 # call only from theme file

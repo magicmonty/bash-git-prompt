@@ -1,0 +1,31 @@
+# This theme for gitprompt.sh is designed for dark color schemes
+# it is clone of oh-my-zsh crunch theme style with exit status
+
+override_git_prompt_colors() {
+  if [ -e ~/.rvm/bin/rvm-prompt ]; then
+    RUBY_PROMPT='{$(~/.rvm/bin/rvm-prompt i v)}'
+  else
+    if command -v rbenv > /dev/null; then
+      RUBY_PROMPT='{$(rbenv version | sed -e "s/ (set.*$//")}'
+    fi
+  fi
+  Time12a="\$(date +%H:%M)"
+
+
+  GIT_PROMPT_THEME_NAME="Chmike"
+  GIT_PROMPT_BRANCH="${Green}"
+  GIT_PROMPT_REMOTE=" "
+  GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING="⭐"
+
+  GIT_PROMPT_SEPARATOR="|"
+  GIT_PROMPT_CHANGED="${Cyan}❗"
+  GIT_PROMPT_STAGED="${Yellow}▸"
+  GIT_PROMPT_UNTRACKED="${Blue}…"
+  GIT_PROMPT_CONFLICTS="${BoldRed}❓"
+  GIT_PROMPT_STASHED="${Magenta}>"
+  GIT_PROMPT_CLEAN="${Green}✔ "
+  GIT_PROMPT_COMMAND_OK="${Green}✔"
+  GIT_PROMPT_COMMAND_FAIL="${Red}✘"
+}
+
+reload_git_prompt_colors "Crunch"

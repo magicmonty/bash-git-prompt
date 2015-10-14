@@ -22,7 +22,7 @@ LOCALSTATUS is one of the following:
 
     ${GIT_PROMPT_CLEAN}${ResetColor} - repository clean
     ${GIT_PROMPT_STAGED}N${ResetColor} - N staged files
-    ${GIT_PROMPT_CONFLICTS}N${ResetColor} - N conflicted files
+    ${GIT_PROMPT_CONFLICTS}N${ResetColor} - N files with merge conflicts
     ${GIT_PROMPT_CHANGED}N${ResetColor} - N changed but *unstaged* files
     ${GIT_PROMPT_UNTRACKED}N${ResetColor} - N untracked files
     ${GIT_PROMPT_STASHED}N${ResetColor} - N stash entries
