@@ -36,9 +36,9 @@ if [[ $? != 0 ]]; then exit 0; fi
 
 staged_files=$( git diff --staged --name-status )
 
-num_changed=$(( `all_lines "$gitstatus"` - `count_lines "$gitstatus" U` ))
-num_conflicts=`count_lines "$staged_files" U`
-num_staged=$(( `all_lines "$staged_files"` - num_conflicts ))
+num_changed=$(( $( all_lines "$gitstatus" ) - $( count_lines "$gitstatus" U ) ))
+num_conflicts=$( count_lines "$staged_files" U )
+num_staged=$(( $( all_lines "$staged_files" ) - num_conflicts ))
 num_untracked=$( git ls-files --others --exclude-standard $(git rev-parse --show-cdup) | wc -l )
 
 num_stashed=0
@@ -60,7 +60,7 @@ remote=
 upstream=
 
 if [[ -z "$branch" ]]; then
-  tag=$( git describe --exact-match 2>/dev/null)
+  tag=$( git describe --exact-match 2>/dev/null )
   if [[ -n "$tag" ]]; then
     branch="$tag"
   else
