@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #  git-prompt-help -- show useful info to help new users with the information
 # being displayed.
 
