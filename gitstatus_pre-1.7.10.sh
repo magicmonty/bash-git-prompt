@@ -19,26 +19,27 @@ if [ -z "${__GIT_PROMPT_DIR}" ]; then
   __GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 fi
 
-gitsym=$( git symbolic-ref HEAD )
+branch=$( git rev-parse --abbrev-ref HEAD )
 
-# if "fatal: Not a git repo .., then exit
-case "$gitsym" in fatal*) exit 0 ;; esac
+#If error code we are not in a repo - exit
+if [[ $? != 0 ]]; then exit 0; fi
 
-# the current branch is the tail end of the symbolic reference
-branch="${gitsym##refs/heads/}"    # get the basename after "refs/heads/"
+#If we are detached, branch name will be HEAD
+if [[ "$branch" == "HEAD" ]]; then
+  unset branch
+fi
 
-gitstatus=`git diff --name-status 2>&1`
+gitstatus=$( git diff --name-status 2>&1 )
 
 # if the diff is fatal, exit now
-case "$gitstatus" in fatal*) exit 0 ;; esac
+if [[ $? != 0 ]]; then exit 0; fi
 
-
-staged_files=`git diff --staged --name-status`
+staged_files=$( git diff --staged --name-status )
 
 num_changed=$(( `all_lines "$gitstatus"` - `count_lines "$gitstatus" U` ))
 num_conflicts=`count_lines "$staged_files" U`
 num_staged=$(( `all_lines "$staged_files"` - num_conflicts ))
-num_untracked=`git ls-files --others --exclude-standard $(git rev-parse --show-cdup) | wc -l`
+num_untracked=$( git ls-files --others --exclude-standard $(git rev-parse --show-cdup) | wc -l )
 
 num_stashed=0
 if [[ "$__GIT_PROMPT_IGNORE_STASH" != "1" ]]; then
