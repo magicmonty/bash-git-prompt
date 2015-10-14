@@ -113,7 +113,7 @@ if [[ "$has_remote_tracking" == "0" ]] ; then
 fi
 
 if [[ -z "$upstream" ]] ; then
-  remote='.'
+  upstream='^'
 fi
 
 printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
