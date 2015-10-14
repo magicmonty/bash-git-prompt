@@ -122,7 +122,7 @@ git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt
    GIT_PROMPT_ONLY_IN_REPO=1
 
    # GIT_PROMPT_FETCH_REMOTE_STATUS=0   # uncomment to avoid fetching remote status
-   
+
    # GIT_PROMPT_SHOW_UPSTREAM=1 # uncomment to show upstream tracking branch
 
    # GIT_PROMPT_START=...    # uncomment for custom prompt start sequence
