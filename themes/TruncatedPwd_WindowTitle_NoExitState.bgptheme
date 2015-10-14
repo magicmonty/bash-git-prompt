@@ -30,8 +30,6 @@ override_git_prompt_colors() {
     echo -n "[${PS1}]${ResetColor}"
   }
 
-  Time12a="\$(date +%H:%M)"
-
   GIT_PROMPT_START_USER="${Yellow}"
   GIT_PROMPT_START_ROOT="${GIT_PROMPT_START_USER}"
   GIT_PROMPT_END_USER="\n${White}${Time12a}${ResetColor} $ "
