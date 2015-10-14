@@ -19,7 +19,7 @@ if [ -z "${__GIT_PROMPT_DIR}" ]; then
   __GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 fi
 
-gitsym=`git symbolic-ref HEAD`
+gitsym=$( git symbolic-ref HEAD )
 
 # if "fatal: Not a git repo .., then exit
 case "$gitsym" in fatal*) exit 0 ;; esac
@@ -59,17 +59,17 @@ remote=
 upstream=
 
 if [[ -z "$branch" ]]; then
-  tag=`git describe --exact-match`
+  tag=$( git describe --exact-match 2>/dev/null)
   if [[ -n "$tag" ]]; then
     branch="$tag"
   else
-    branch="_PREHASH_`git rev-parse --short HEAD`"
+    branch="_PREHASH_$( git rev-parse --short HEAD )"
   fi
 else
-  remote_name=`git config branch.${branch}.remote`
+  remote_name=$( git config branch.${branch}.remote )
 
   if [[ -n "$remote_name" ]]; then
-    merge_name=`git config branch.${branch}.merge`
+    merge_name=$( git config branch.${branch}.merge )
   else
     remote_name='origin'
     merge_name="refs/heads/${branch}"
@@ -92,15 +92,17 @@ else
   fi
 
   # get the revision list, and count the leading "<" and ">"
-  revgit=`git rev-list --left-right ${remote_ref}...HEAD`
-  num_revs=`all_lines "$revgit"`
-  num_ahead=`count_lines "$revgit" "^>"`
-  num_behind=$(( num_revs - num_ahead ))
-  if (( num_behind > 0 )) ; then
-    remote="${remote}_BEHIND_${num_behind}"
-  fi
-  if (( num_ahead > 0 )) ; then
-    remote="${remote}_AHEAD_${num_ahead}"
+  revgit=$( git rev-list --left-right ${remote_ref}...HEAD 2>/dev/null )
+  if [[ $? == 0 ]]; then
+    num_revs=$( all_lines "$revgit" )
+    num_ahead=$( count_lines "$revgit" "^>" )
+    num_behind=$(( num_revs - num_ahead ))
+    if (( num_behind > 0 )) ; then
+      remote="${remote}_BEHIND_${num_behind}"
+    fi
+    if (( num_ahead > 0 )) ; then
+      remote="${remote}_AHEAD_${num_ahead}"
+    fi
   fi
 fi
 
