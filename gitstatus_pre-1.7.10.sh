@@ -56,6 +56,7 @@ if (( num_changed == 0 && num_staged == 0 && num_U == 0 && num_untracked == 0 &&
 fi
 
 remote=
+upstream=
 
 if [[ -z "$branch" ]]; then
   tag=`git describe --exact-match`
@@ -81,12 +82,13 @@ else
   fi
 
   # detect if the local branch have a remote tracking branch
-  cmd_output=$(git rev-parse --abbrev-ref ${branch}@{upstream} 2>&1 >/dev/null)
+  upstream=$( git rev-parse --abbrev-ref ${branch}@{upstream} 2>&1 )
 
   if [[ $? == 0 ]]; then
     has_remote_tracking=1
   else
     has_remote_tracking=0
+    unset upstream
   fi
 
   # get the revision list, and count the leading "<" and ">"
@@ -110,9 +112,14 @@ if [[ "$has_remote_tracking" == "0" ]] ; then
   remote='_NO_REMOTE_TRACKING_'
 fi
 
-printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
+if [[ -z "$upstream" ]] ; then
+  remote='.'
+fi
+
+printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
   "$branch" \
   "$remote" \
+  "$upstream" \
   $num_staged \
   $num_conflicts \
   $num_changed \
