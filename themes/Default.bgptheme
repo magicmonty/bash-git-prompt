@@ -28,8 +28,7 @@ unset_git_prompt_colors() {
   unset GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING
 }
 
-define_helpers()
-{
+define_helpers() {
   Time12a="\$(date +%H:%M)"
   PathShort="\w";
 }

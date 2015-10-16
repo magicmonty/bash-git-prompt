@@ -36,7 +36,12 @@ override_git_prompt_colors() {
   ## use the placeholder _VIRTUALENV_ will be replaced with 
   ## the name of the current virtual environment (currently CONDA and VIRTUAL_ENV)
   # GIT_PROMPT_VIRTUALENV="(${Blue}_VIRTUALENV_${ResetColor}) "
-  
+
+  # template for displaying the current remote tracking branch
+  # use the placeholder _UPSTREAM_ will be replaced with
+  # the name of the current remote tracking branch
+  # GIT_PROMPT_UPSTREAM=" {${Blue}_UPSTREAM_${ResetColor}}"
+
   ## _LAST_COMMAND_INDICATOR_ will be replaced by the appropriate GIT_PROMPT_COMMAND_OK OR GIT_PROMPT_COMMAND_FAIL
   # GIT_PROMPT_START_USER="_LAST_COMMAND_INDICATOR_ ${Yellow}${PathShort}${ResetColor}"
   # GIT_PROMPT_START_ROOT="_LAST_COMMAND_INDICATOR_ ${GIT_PROMPT_START_USER}"
