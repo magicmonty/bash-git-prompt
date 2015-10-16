@@ -17,6 +17,7 @@ unset_git_prompt_colors() {
   unset GIT_PROMPT_COMMAND_OK
   unset GIT_PROMPT_COMMAND_FAIL
   unset GIT_PROMPT_VIRTUALENV
+  unset GIT_PROMPT_UPSTREAM
   unset GIT_PROMPT_START_USER
   unset GIT_PROMPT_START_ROOT
   unset GIT_PROMPT_END_USER
@@ -27,8 +28,7 @@ unset_git_prompt_colors() {
   unset GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING
 }
 
-define_helpers()
-{
+define_helpers() {
   Time12a="\$(date +%H:%M)"
   PathShort="\w";
 }

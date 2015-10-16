@@ -21,7 +21,7 @@ override_git_prompt_colors() {
 
   KERNEL_PROMPT='‹$(uname -r)›'
   
-GIT_PROMPT_START_USER="_LAST_COMMAND_INDICATOR_${White}{${Yellow}${Time12a}${White}}[${Magenta}${RUBY_PROMPT}${White}]${Cyan}${PathShort}${White}:"
+  GIT_PROMPT_START_USER="_LAST_COMMAND_INDICATOR_${White}{${Yellow}${Time12a}${White}}[${Magenta}${RUBY_PROMPT}${White}]${Cyan}${PathShort}${White}:"
   GIT_PROMPT_START_ROOT="${GIT_PROMPT_START_USER}"
   GIT_PROMPT_END_USER="${BoldBlue} ➭ ${ResetColor}"
   GIT_PROMPT_END_ROOT="${BoldRed} # ${ResetColor}"
