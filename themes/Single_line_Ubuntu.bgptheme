@@ -1,5 +1,4 @@
 # This is an alternative approach. Single line in git repo.
-# Theme optimised for Terminus and PowerLine compatible fonts.
 
 unset_git_prompt_colors() {
   unset Time12a
@@ -18,6 +17,7 @@ unset_git_prompt_colors() {
   unset GIT_PROMPT_COMMAND_OK
   unset GIT_PROMPT_COMMAND_FAIL
   unset GIT_PROMPT_VIRTUALENV
+  unset GIT_PROMPT_UPSTREAM
   unset GIT_PROMPT_START_USER
   unset GIT_PROMPT_START_ROOT
   unset GIT_PROMPT_END_USER
@@ -61,14 +61,25 @@ define_undefined_git_prompt_colors() {
   if [[ -z ${GIT_PROMPT_COMMAND_OK} ]]; then GIT_PROMPT_COMMAND_OK="${Green}✔"; fi    # indicator if the last command returned with an exit code of 0
   if [[ -z ${GIT_PROMPT_COMMAND_FAIL} ]]; then GIT_PROMPT_COMMAND_FAIL="${Red}✘"; fi  # indicator if the last command returned with an exit code of other than 0
 
+  # Possible to change which command is used to create git status information
+  # There are three options:
+  # 1) gitstatus.sh (uses git status --branch --porcelain - fast, requires git > 1.7.10)
+  # 2) gitstatus_pre-1.7.10.sh (Uses a variety of git commands and pipes - slower, works with older git clients)
+  # 3) gitstatus.py (Unsupported, lack features found in the bash versions)
+  if [[ -z ${GIT_PROMPT_STATUS_COMMAND} ]]; then GIT_PROMPT_STATUS_COMMAND="gitstatus.sh"; fi    # Point out the command to get the git status from
+  
   # template for displaying the current virtual environment
   # use the placeholder _VIRTUALENV_ will be replaced with
   # the name of the current virtual environment (currently CONDA and VIRTUAL_ENV)
   if [[ -z ${GIT_PROMPT_VIRTUALENV} ]]; then GIT_PROMPT_VIRTUALENV="(${Blue}_VIRTUALENV_${ResetColor}) "; fi
 
+  # template for displaying the current remote tracking branch
+  # use the placeholder _UPSTREAM_ will be replaced with
+  # the name of the current remote tracking branch
+  if [[ -z ${GIT_PROMPT_UPSTREAM} ]]; then GIT_PROMPT_UPSTREAM=" {${Blue}_UPSTREAM_${ResetColor}}"; fi
+  
   # _LAST_COMMAND_INDICATOR_ will be replaced by the appropriate GIT_PROMPT_COMMAND_OK OR GIT_PROMPT_COMMAND_FAIL
   if [[ -z ${GIT_PROMPT_START_USER} ]]; then GIT_PROMPT_START_USER="_LAST_COMMAND_INDICATOR_ ${White}${Time12a}${ResetColor} ${Cyan}${PathShort}${ResetColor}"; fi
-
   if [[ -z ${GIT_PROMPT_START_ROOT} ]]; then GIT_PROMPT_START_ROOT="${GIT_PROMPT_START_USER}"; fi
   if [[ -z ${GIT_PROMPT_END_USER} ]]; then GIT_PROMPT_END_USER="${ResetColor} $ "; fi  # Reset color for user
   if [[ -z ${GIT_PROMPT_END_ROOT} ]]; then GIT_PROMPT_END_ROOT="${BoldRed} # "; fi     # Bright red for Root
