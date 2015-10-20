@@ -84,33 +84,27 @@ else
   upstream=$( git rev-parse --abbrev-ref ${branch}@{upstream} 2>&1 )
 
   if [[ $? == 0 ]]; then
-    has_remote_tracking=1
+     # get the revision list, and count the leading "<" and ">"
+    revgit=$( git rev-list --left-right ${remote_ref}...HEAD 2>/dev/null )
+    if [[ $? == 0 ]]; then
+      num_revs=$( all_lines "$revgit" )
+      num_ahead=$( count_lines "$revgit" "^>" )
+      num_behind=$(( num_revs - num_ahead ))
+      if (( num_behind > 0 )) ; then
+        remote="${remote}_BEHIND_${num_behind}"
+      fi
+      if (( num_ahead > 0 )) ; then
+        remote="${remote}_AHEAD_${num_ahead}"
+      fi
+    fi
   else
-    has_remote_tracking=0
+    remote='_NO_REMOTE_TRACKING_'
     unset upstream
-  fi
-
-  # get the revision list, and count the leading "<" and ">"
-  revgit=$( git rev-list --left-right ${remote_ref}...HEAD 2>/dev/null )
-  if [[ $? == 0 ]]; then
-    num_revs=$( all_lines "$revgit" )
-    num_ahead=$( count_lines "$revgit" "^>" )
-    num_behind=$(( num_revs - num_ahead ))
-    if (( num_behind > 0 )) ; then
-      remote="${remote}_BEHIND_${num_behind}"
-    fi
-    if (( num_ahead > 0 )) ; then
-      remote="${remote}_AHEAD_${num_ahead}"
-    fi
   fi
 fi
 
 if [[ -z "$remote" ]] ; then
   remote='.'
-fi
-
-if [[ "$has_remote_tracking" == "0" ]] ; then
-  remote='_NO_REMOTE_TRACKING_'
 fi
 
 if [[ -z "$upstream" ]] ; then
