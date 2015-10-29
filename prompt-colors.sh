@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # prompt-colors.sh
 #
 # source this file to get color definitions
