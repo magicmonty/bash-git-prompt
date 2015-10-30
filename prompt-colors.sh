@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # prompt-colors.sh
 #
 # source this file to get color definitions
@@ -65,8 +66,6 @@ define_color_names() {
     eval "$def"
   }
 
-  #ResetColor="`_term_color 0`"         # Text reset
-
   _map_colors Bold   $AttrBright
   _map_colors Bright $AttrBright
   _map_colors Dim    $AttrDim
@@ -81,6 +80,3 @@ define_color_names() {
 if [[ ${#ColorNames[*]} = 0 || -z "$IntenseBlack" || -z "$ResetColor" ]]; then
   define_color_names
 fi
-
-# end of prompt-colors.sh
-# vim: set ai sw=2
