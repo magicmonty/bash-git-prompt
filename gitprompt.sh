@@ -542,7 +542,7 @@ function gp_truncate_pwd {
 
 #Sets the window title to the given argument string
 function gp_set_window_title {
-  echo -ne "\033]0;"$@"\007"
+  echo -ne "\[\033]0;"$@"\007\]"
 }
 
 function prompt_callback_default {
