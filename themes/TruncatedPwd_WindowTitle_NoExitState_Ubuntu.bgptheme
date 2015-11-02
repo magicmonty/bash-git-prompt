@@ -28,13 +28,14 @@ override_git_prompt_colors() {
   function prompt_callback {
     local PS1="\u@\h: $(gp_truncate_pwd)"
     gp_set_window_title "$PS1"
-    echo -n "[${PS1}]${ResetColor}"
+    echo -n "${Yellow}[${PS1}]${ResetColor}"
   }
 
-  GIT_PROMPT_START_USER="${Yellow}"
-  GIT_PROMPT_START_ROOT="${GIT_PROMPT_START_USER}"
-  GIT_PROMPT_END_USER="\n${White}${Time12a}${ResetColor} $ "
-  GIT_PROMPT_END_ROOT="\n${White}${Time12a}${ResetColor} # "
+  local gp_end=" _LAST_COMMAND_INDICATOR_\n${White}${Time12a}${ResetColor}"
+
+  GIT_PROMPT_START_USER=""
+  GIT_PROMPT_END_USER="${gp_end} $ "
+  GIT_PROMPT_END_ROOT="${gp_end} # "
 
   GIT_PROMPT_STAGED="${Red}● "          # the number of staged files/directories
   GIT_PROMPT_CLEAN="${BoldGreen}✔ "     # a colored flag indicating a "clean" repo
