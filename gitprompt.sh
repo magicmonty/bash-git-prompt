@@ -74,9 +74,6 @@ function git_prompt_load_theme() {
 }
 
 function git_prompt_list_themes() {
-  local oldTheme
-  local oldThemeFile
-
   git_prompt_dir
   get_theme
 
