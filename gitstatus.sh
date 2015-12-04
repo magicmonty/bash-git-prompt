@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 # gitstatus.sh -- produce the current git repo status on STDOUT
 # Functionally equivalent to 'gitstatus.py', but written in bash (not python).
 #
@@ -15,7 +15,11 @@ if [ -z "${__GIT_PROMPT_DIR}" ]; then
   __GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 fi
 
-gitstatus=$( LC_ALL=C git status --untracked-files=all --porcelain --branch )
+if [ -z "${GIT_SHOW_UNTRACKED_FILES}" ]; then
+    GIT_SHOW_UNTRACKED_FILES="all"
+fi
+
+gitstatus=$( LC_ALL=C git status --untracked-files=${GIT_SHOW_UNTRACKED_FILES} --porcelain --branch )
 
 # if the status is fatal, exit now
 [[ "$?" -ne 0 ]] && exit 0
