@@ -1,4 +1,4 @@
-Copyright (c) {{{year}}}, {{{fullname}}}
+Copyright (c) 2016, Martin Gondermann
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
