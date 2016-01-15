@@ -109,14 +109,15 @@ cd ~
 git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt
 ```
 
-- Source the file `gitprompt.sh` from `~/.bashrc`
+Add to the `~/.bashrc`: 
+```
+  source ~/.bash-git-prompt/gitprompt.sh
+  GIT_PROMPT_ONLY_IN_REPO=1
+```
 
-### Configuration
+### All configs for .bashrc
 
 ```sh
-   # some other config in .bashrc
-
-   # gitprompt configuration
 
    # Set config variables first
    GIT_PROMPT_ONLY_IN_REPO=1
