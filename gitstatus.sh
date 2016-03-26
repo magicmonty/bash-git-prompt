@@ -60,7 +60,7 @@ if [[ "$branch" == *"Initial commit on"* ]]; then
   branch="${fields[3]}"
   remote="_NO_REMOTE_TRACKING_"
 elif [[ "$branch" == *"no branch"* ]]; then
-  tag=$( git describe --exact-match )
+  tag=$( git describe --tags --exact-match )
   if [[ -n "$tag" ]]; then
     branch="$tag"
   else
