@@ -58,7 +58,7 @@ remote=
 upstream=
 
 if [[ -z "$branch" ]]; then
-  tag=$( git describe --exact-match 2>/dev/null )
+  tag=$( git describe --branch --exact-match 2>/dev/null )
   if [[ -n "$tag" ]]; then
     branch="$tag"
   else
