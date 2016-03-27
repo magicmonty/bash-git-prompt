@@ -106,10 +106,10 @@ fi
 
 ```sh
 cd ~
-git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt --depth=0
+git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt --depth=1
 ```
 
-Add to the `~/.bashrc`: 
+Add to the `~/.bashrc`:
 ```
   source ~/.bash-git-prompt/gitprompt.sh
   GIT_PROMPT_ONLY_IN_REPO=1
