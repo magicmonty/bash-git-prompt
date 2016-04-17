@@ -518,7 +518,7 @@ function updatePrompt() {
     NEW_PROMPT="$EMPTY_PROMPT"
   fi
 
-  PS1="${NEW_PROMPT//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
+  PS1="${NEW_PROMPT//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}${ResetColor}}"
 }
 
 # Helper function that returns virtual env information to be set in prompt
