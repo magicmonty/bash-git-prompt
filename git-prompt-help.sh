@@ -65,7 +65,7 @@ git_prompt_color_samples() {
     echo -e "${color}$1${ResetColor}" | sed 's/\\\]//g'  | sed 's/\\\[//g'
   }
 
-  local x
+  local x=0
   while (( x < 8 )) ; do
     showColor ${ColorNames[x]}
     showColor "Dim${ColorNames[x]}"
