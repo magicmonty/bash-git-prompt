@@ -19,8 +19,8 @@ override_git_prompt_colors() {
 
 	GIT_PROMPT_UPSTREAM=" {${Magenta}_UPSTREAM_${ResetColor}}"
 
-	GIT_PROMPT_START_USER="[\[\e[1;32m\]\u\[\e[0m\]\[\e[1;32m\]@\[\e[0m\]\[\e[1;32m\]\h\[\e[0m\] \[\e[1;33m\]\${?}\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\]"
-	GIT_PROMPT_START_ROOT="[\[\e[1;31m\]\u\[\e[0m\]\[\e[1;31m\]@\[\e[0m\]\[\e[1;31m\]\h\[\e[0m\] \[\e[1;33m\]\${?}\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\]"
+	GIT_PROMPT_START_USER="[${BoldGreen}\u@\h${ResetColor} ${BoldYellow}\${?}${ResetColor} ${BoldBlue}\w${ResetColor}"
+	GIT_PROMPT_START_ROOT="[${BoldRed}\u@\h${ResetColor} ${BoldYellow}\${?}${ResetColor} ${BoldBlue}\w${ResetColor}"
 	GIT_PROMPT_END_USER="]$ "
 	GIT_PROMPT_END_ROOT="]# "
 
