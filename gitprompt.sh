@@ -77,6 +77,10 @@ function git_prompt_list_themes() {
   git_prompt_dir
   get_theme
 
+  if [ -z "$ResetColor" ]; then
+    source ${__GIT_PROMPT_DIR}/prompt-colors.sh
+  fi
+
   for themefile in "${__GIT_PROMPT_DIR}/themes/"*.bgptheme; do
     local basename=${themefile##*/}
     local theme="${basename%.bgptheme}"
