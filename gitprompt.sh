@@ -66,6 +66,15 @@ function get_theme() {
   fi
 }
 
+function git_prompt_load_colors() {
+  if gp_set_file_var __PROMPT_COLORS_FILE prompt-colors.sh ; then
+    # outsource the color defs
+    source "$__PROMPT_COLORS_FILE"
+  else
+    echo 1>&2 "Cannot find prompt-colors.sh!"
+  fi
+}
+
 function git_prompt_load_theme() {
   get_theme
   local DEFAULT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
@@ -74,6 +83,7 @@ function git_prompt_load_theme() {
 }
 
 function git_prompt_list_themes() {
+  git_prompt_load_colors
   git_prompt_dir
   get_theme
 
@@ -207,11 +217,7 @@ function git_prompt_config() {
   #  prompt-colors.sh -- sets generic color names suitable for bash 'PS1' prompt
   #  git-prompt-colors.sh -- sets the GIT_PROMPT color scheme, using names from prompt-colors.sh
 
-  if gp_set_file_var __PROMPT_COLORS_FILE prompt-colors.sh ; then
-    source "$__PROMPT_COLORS_FILE"        # outsource the color defs
-  else
-    echo 1>&2 "Cannot find prompt-colors.sh!"
-  fi
+  git_prompt_load_colors
 
   # source the user's ~/.git-prompt-colors.sh file, or the one that should be
   # sitting in the same directory as this script
