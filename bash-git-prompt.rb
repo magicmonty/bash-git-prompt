@@ -1,14 +1,16 @@
-require "formula"
-
 class BashGitPrompt < Formula
+  desc "Informative, fancy bash prompt for Git users"
   homepage "https://github.com/magicmonty/bash-git-prompt"
-  url "https://github.com/magicmonty/bash-git-prompt/archive/2.3.5.tar.gz"
-  sha1 "16e1a9ab0ac711de79fd3b823138c16fadb3d5de"
+  url "https://github.com/magicmonty/bash-git-prompt/archive/2.5.1.tar.gz"
+  sha256 "c7d1b2dece41bb5518f94e3d9045eb2020b9bb9e69de3503d3e082f03b252c86"
   head "https://github.com/magicmonty/bash-git-prompt.git"
+
+  bottle :unneeded
 
   def install
     share.install "gitprompt.sh", "gitprompt.fish", "git-prompt-help.sh",
-                  "gitstatus.sh", "prompt-colors.sh"
+                  "gitstatus.py", "gitstatus.sh", "gitstatus_pre-1.7.10.sh",
+                  "prompt-colors.sh"
 
     (share/"themes").install Dir["themes/*.bgptheme"], "themes/Custom.bgptemplate"
     doc.install "README.md"
