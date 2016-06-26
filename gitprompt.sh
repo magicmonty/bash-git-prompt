@@ -26,6 +26,9 @@ function echoc() {
 
 function get_theme() {
   local CUSTOM_THEME_FILE="${HOME}/.git-prompt-colors.sh"
+  if [[ ! (-z ${GIT_PROMPT_THEME_FILE} ) ]]; then
+    CUSTOM_THEME_FILE=$GIT_PROMPT_THEME_FILE
+  fi
   local DEFAULT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
 
   if [[ -z ${GIT_PROMPT_THEME} ]]; then
