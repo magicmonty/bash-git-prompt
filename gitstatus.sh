@@ -28,6 +28,7 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
   status=${line:0:2}
   case "$status" in
     \#\#) branch_line="${line/\.\.\./^}" ;;
+    MM) ((num_staged++)); ((num_changed++)) ;;
     ?M) ((num_changed++)) ;;
     ?D) ((num_changed++)) ;;
     U?) ((num_conflicts++)) ;;
