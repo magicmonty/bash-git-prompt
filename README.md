@@ -269,7 +269,7 @@ git_prompt_reset
 - You can disable/enable gitprompt by runnning:
 
 ```sh
-$ git_prompt_toggle`
+git_prompt_toggle
 ```
 
 
