@@ -26,15 +26,18 @@ num_conflicts=0
 num_untracked=0
 while IFS='' read -r line || [[ -n "$line" ]]; do
   status=${line:0:2}
-  case "$status" in
-    \#\#) branch_line="${line/\.\.\./^}" ;;
-    ?M) ((num_changed++)) ;;&
-    ?D) ((num_changed++)) ;;&
-    U?) ((num_conflicts++)) ;;&
-    \?\?) ((num_untracked++)) ;;
-    \ ?) ;;
-    *) ((num_staged++)) ;;
-  esac
+  while true
+  do
+    case "$status" in
+      \#\#) branch_line="${line/\.\.\./^}"; break ;;
+      ?M) ((num_changed++)); status=${status:0:1}"_" ;;
+      ?D) ((num_changed++)); status=${status:0:1}"_" ;;
+      U?) ((num_conflicts++)); break ;;
+      \?\?) ((num_untracked++)); break ;;
+      \ ?) break ;;
+      *) ((num_staged++)); break ;;
+    esac
+  done
 done <<< "$gitstatus"
 
 num_stashed=0
