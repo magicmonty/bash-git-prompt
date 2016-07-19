@@ -331,7 +331,7 @@ function setGitPrompt() {
 
   git_prompt_config
 
-  if [[ ! -e "$repo" ]]; then
+  if [[ ! -e "$repo" ]] || [[ "$GIT_PROMPT_DISABLE" = 1 ]]; then
     PS1="$EMPTY_PROMPT"
     return
   fi
@@ -567,6 +567,16 @@ function gp_set_window_title {
 }
 
 function prompt_callback_default {
+  return
+}
+
+# toggle gitprompt
+function git_prompt_toggle() {
+  if [[ "$GIT_PROMPT_DISABLE" = 1 ]]; then
+    GIT_PROMPT_DISABLE=0
+  else
+    GIT_PROMPT_DISABLE=1
+  fi
   return
 }
 
