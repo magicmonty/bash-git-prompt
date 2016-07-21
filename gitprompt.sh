@@ -447,7 +447,7 @@ function createPrivateIndex {
     __GIT_INDEX_FILE="$GIT_INDEX_FILE"
   fi
   __GIT_INDEX_PRIVATE="/tmp/git-index-private$$"
-  cp "$__GIT_INDEX_FILE" "$__GIT_INDEX_PRIVATE" 2>/dev/null
+  command cp "$__GIT_INDEX_FILE" "$__GIT_INDEX_PRIVATE" 2>/dev/null
   echo "$__GIT_INDEX_PRIVATE"
 }
 
@@ -547,7 +547,7 @@ function updatePrompt() {
   fi
 
   PS1="${NEW_PROMPT//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}${ResetColor}}"
-  rm "$GIT_INDEX_PRIVATE" 2>/dev/null
+  command rm "$GIT_INDEX_PRIVATE" 2>/dev/null
 }
 
 # Helper function that returns virtual env information to be set in prompt
