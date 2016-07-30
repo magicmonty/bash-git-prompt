@@ -8,7 +8,7 @@ Summary:	Informative git prompt for bash and fish
 
 Group:		Development/Tools
 License:	FreeBSD
-URL:		https://github.com/magicmonty/bash-git-prompt.git
+URL:		https://github.com/magicmonty/bash-git-prompt
 Source0:        https://github.com/magicmonty/%{name}/archive/%{version}.tar.gz
 Requires:       git
 BuildArch:      noarch
@@ -22,13 +22,11 @@ install. It will disable the prompt accordingly after uninstall.
 %prep
 %setup -q
 
-
 %build
-
+# No command are required here
+# These comments are here to avoid rpm lint issue
 
 %install
-rm -rf %{buildroot}
-
 install -d 755 %{buildroot}%{_datadir}/%{name}
 install -pm 755 *.sh %{buildroot}%{_datadir}/%{name}
 #install -pm 755 *.py %{buildroot}%{_datadir}/%{name}
@@ -37,20 +35,6 @@ install -pm 644 README.md %{buildroot}%{_datadir}/%{name}
 install -d 755 %{buildroot}%{_datadir}/%{name}/themes
 install -pm 644 themes/*.bgptheme %{buildroot}%{_datadir}/%{name}/themes
 install -pm 644 themes/*.bgptemplate %{buildroot}%{_datadir}/%{name}/themes
-
-# never include compiled Python program
-#rm -fr  %{buildroot}%{_datadir}/%{name}/*.pyo
-#rm -fr  %{buildroot}%{_datadir}/%{name}/*.pyc
-
-
-%clean
-rm -rf %{buildroot}
-
-
-%files
-%defattr(-,root,root,-)
-%{_datadir}/%{name}
-
 
 %post
 # enable bash-git-prompt
@@ -70,6 +54,10 @@ EOF
 # remove bash-git-prompt setup
 sed -i -e '/^%{START_TOKEN}/, /^%{END_TOKEN}/{d}' /etc/bashrc
 
+%files
+%defattr(-,root,root,-)
+%{_datadir}/%{name}
+
 %doc README.md
 
 %license License.txt
@@ -77,3 +65,6 @@ sed -i -e '/^%{START_TOKEN}/, /^%{END_TOKEN}/{d}' /etc/bashrc
 %changelog
 * Fri Aug 08 2014 Justin Zhang <schnell18@gmail.com - 1.0.1-1
 - Initial version of package
+
+* Tue Jun 28 15:37:55 2016 +0530 Koustubh Sinkar <ksinkar@gmail.com>
+- Updating the spec file to reflect more recent changes
