@@ -26,8 +26,8 @@ override_git_prompt_colors() {
 
   #Overrides the prompt_callback function used by bash-git-prompt
   function prompt_callback {
-    GIT_CONTAINER_FOLDER_FULLPATH=$(git rev-parse --show-toplevel)
-    GIT_CONTAINER_FOLDER=$(basename $GIT_CONTAINER_FOLDER_FULLPATH)
+    GIT_CONTAINER_FOLDER_FULLPATH=$(git rev-parse --show-toplevel 2> /dev/null)
+    GIT_CONTAINER_FOLDER=$(basename $GIT_CONTAINER_FOLDER_FULLPATH 2> /dev/null)
     CURRENT_FULLPATH=$(realpath .)
     local PS1=$GIT_CONTAINER_FOLDER${CURRENT_FULLPATH#$GIT_CONTAINER_FOLDER_FULLPATH}
     gp_set_window_title "$PS1"
