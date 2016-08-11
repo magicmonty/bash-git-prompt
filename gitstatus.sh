@@ -44,7 +44,7 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
       \ ) ;;
       *) ((num_staged++)) ;;
     esac
-    status=${status:0:-1}
+    status=${status:0:(${#status}-1)}
   done
 done <<< "$gitstatus"
 
