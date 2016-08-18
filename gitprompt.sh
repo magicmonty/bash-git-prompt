@@ -519,7 +519,7 @@ function updatePrompt() {
         v="\$GIT_$1 $2"
       fi
       if eval "test $v" ; then
-        if [[ $# -lt 2 || "$3" != '-' ]] && [[ "x$1" == "xREMOTE" || "x$__GIT_PROMPT_SHOW_CHANGED_FILES_COUNT" == "x1" ]]; then
+        if [[ $# -lt 2 || "$3" != '-' ]] && [[ "x$__GIT_PROMPT_SHOW_CHANGED_FILES_COUNT" == "x1" || "x$1" == "xREMOTE" ]]; then
           __add_status "\$GIT_PROMPT_$1\$GIT_$1\$ResetColor"
         else
           __add_status "\$GIT_PROMPT_$1\$ResetColor"
