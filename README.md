@@ -166,6 +166,15 @@ You can display a list of available themes with `git_prompt_list_themes` (the cu
 **If you omit the `GIT_PROMPT_THEME` variable, the Default theme is used or, if you have a custom `.git-prompt-colors.sh`
 in your home directory, then the Custom theme is used.**
 
+##### Ubuntu Themes
+
+Ubuntu requires a bit more spacing for some characters so it has its own themes.
+
+These can be listed with `git_prompt_list_themes`:
+```sh
+git_prompt_list_themes | grep Ubuntu
+```
+
 ##### Theme structure
 
 Please see the ``Custom.bgptemplate`` in the ``themes`` subdirectory of the installation directory!
