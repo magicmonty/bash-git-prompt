@@ -111,8 +111,8 @@ git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt --d
 
 Add to the `~/.bashrc`:
 ```
-  source ~/.bash-git-prompt/gitprompt.sh
   GIT_PROMPT_ONLY_IN_REPO=1
+  source ~/.bash-git-prompt/gitprompt.sh
 ```
 
 ### All configs for .bashrc
