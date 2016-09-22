@@ -13,16 +13,15 @@ override_git_prompt_colors() {
   GIT_PROMPT_STASHED=" ${BoldBlue}⚑ ${ResetColor}"
   GIT_PROMPT_CLEAN=" ${BoldGreen}✔ ${ResetColor}"
   GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING="✭"
+  GIT_PROMPT_LEADING_SPACE=1
 
   GIT_PROMPT_COMMAND_OK="${Green}✔ "
   GIT_PROMPT_COMMAND_FAIL="${Red}✘ "
 
-  GIT_PROMPT_START_USER="➾"
+  GIT_PROMPT_START_USER="❖"
   GIT_PROMPT_START_ROOT="${GIT_PROMPT_START_USER}"
   GIT_PROMPT_END_USER="\n_LAST_COMMAND_INDICATOR_${White}${Time12a}${ResetColor} ${BoldGreen}\\u${White}@${BoldYellow}\\h ${Cyan}${PathShort}${ResetColor}${BoldWhite} $ ${ResetColor}"
   GIT_PROMPT_END_ROOT="\n_LAST_COMMAND_INDICATOR_${White}${Time12a}${ResetColor} ${BoldGreen}\\u${White}@${BoldYellow}\\h ${Cyan}${PathShort}${ResetColor}${BoldRed} # ${ResetColor}"
-  GIT_PROMPT_LEADING_SPACE=1
-
 }
-reload_git_prompt_colors "Plague Doctor"
 
+reload_git_prompt_colors "Plague Doctor"
