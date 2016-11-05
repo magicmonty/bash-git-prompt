@@ -426,6 +426,9 @@ function checkUpstream() {
 }
 
 function replaceSymbols() {
+  # Disable globbing, so a * could be used as symbol here
+  set -f
+
   if [[ -z ${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING} ]]; then
     GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING=L
   fi
@@ -435,6 +438,9 @@ function replaceSymbols() {
   local VALUE2=${VALUE1//_NO_REMOTE_TRACKING_/${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING}}
 
   echo ${VALUE2//_PREHASH_/${GIT_PROMPT_SYMBOLS_PREHASH}}
+
+  # reenable globbing symbols
+  set +f
 }
 
 function createPrivateIndex {
