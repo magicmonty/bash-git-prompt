@@ -228,7 +228,7 @@ function prompt_callback {
 
 - There are two helper functions that can be used within `prompt_callback`:
     - `gp_set_window_title <String>` - sets the window title to the given string (should work for XTerm type terminals like in OS X or Ubuntu)
-    - `gp_truncate_pwd` - a function that returns the current PWD truncated to fit the current terminal width
+    - `gp_truncate_pwd` - a function that returns the current PWD truncated to fit the current terminal width. Specify the length to truncate to as a parameter. Otherwise it defaults to 1/3 of the terminal width.
 
 - If you want to show the git prompt only if you are in a git repository you
   can set ``GIT_PROMPT_ONLY_IN_REPO=1`` before sourcing the gitprompt script
