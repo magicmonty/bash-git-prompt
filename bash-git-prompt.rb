@@ -20,6 +20,7 @@ class BashGitPrompt < Formula
     You should add the following to your .bashrc (or equivalent):
       if [ -f "$(brew --prefix bash-git-prompt)/share/gitprompt.sh" ]; then
         GIT_PROMPT_THEME=Default
+        __GIT_PROMPT_DIR=$(brew --prefix)/opt/bash-git-prompt/share
         source "$(brew --prefix bash-git-prompt)/share/gitprompt.sh"
       fi
     EOS
