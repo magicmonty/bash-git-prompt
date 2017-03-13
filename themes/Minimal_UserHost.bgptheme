@@ -8,18 +8,20 @@
 # The prompt will use a Debian-style on the form
 #
 # relative-path-from-git-toplevel-dir bash-git-prompt-info <exit status>
-# HH:MM:SS ▶
+# HH:MM:SS User@Host ▶
 #
 # The window title will have the form
 # relative-path-from-git-toplevel-dir
 #
 # Example usage:
 # if [ -f ~/.bash-git-prompt/gitprompt.sh ]; then
-#   GIT_PROMPT_THEME=Minimal
+#   GIT_PROMPT_THEME=Minimal_UserHost
 #   source ~/.bash-git-prompt/gitprompt.sh
 # fi
 #
-# Imbibinebe <imbibinebe@gmail.com> [https://github.com/imbibinebe]
+# Gert Pellin <gert@pellin.be> [https://github.com/switch87]
+#
+# Based on Minimal by Imbibinebe <imbibinebe@gmail.com> [https://github.com/imbibinebe]
 ##############################################################################
 override_git_prompt_colors() {
   GIT_PROMPT_THEME_NAME="Minimal"
@@ -35,6 +37,12 @@ override_git_prompt_colors() {
   }
   
   Time12a="\$(date +%H:%M:%S)"
+  if [ "$(id -u)" != "0" ]; then
+     UserHost_Color="${BoldGreen}"
+  else
+     UserHost_Color="${BoldRed}"
+  fi
+
   GIT_PROMPT_BRANCH="${BoldMagenta}"        # the git branch that is active in the current directory
   GIT_PROMPT_PREFIX=""                 # start of the git info string
   GIT_PROMPT_SUFFIX=""                 # the end of the git info string
@@ -48,7 +56,7 @@ override_git_prompt_colors() {
   GIT_PROMPT_STASHED=" ${BoldCyan}⚑"    # the number of stashed files/dir
   GIT_PROMPT_CLEAN=" ${BoldGreen}✔"      # a colored flag indicating a "clean" repo
 
-  local gp_end="_LAST_COMMAND_INDICATOR_\n${BoldBlack}${Time12a} ${BoldGreen}$(whoami)@$(hostname)${ResetColor}"
+  local gp_end="_LAST_COMMAND_INDICATOR_\n${BoldBlack}${Time12a} ${UserHost_Color}$(whoami)@$(hostname)${ResetColor}"
 
   GIT_PROMPT_START_USER=""
   GIT_PROMPT_END_USER="${gp_end} ▶ "
