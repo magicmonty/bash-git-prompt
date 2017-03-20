@@ -436,8 +436,10 @@ function replaceSymbols() {
   local VALUE=${1//_AHEAD_/${GIT_PROMPT_SYMBOLS_AHEAD}}
   local VALUE1=${VALUE//_BEHIND_/${GIT_PROMPT_SYMBOLS_BEHIND}}
   local VALUE2=${VALUE1//_NO_REMOTE_TRACKING_/${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING}}
+  local VALUE3=${VALUE2//_PREHASH_/${GIT_PROMPT_SYMBOLS_PREHASH}}
 
-  echo ${VALUE2//_PREHASH_/${GIT_PROMPT_SYMBOLS_PREHASH}}
+  # Replace all but letters, numbers and forward slash to prevent shell exploit when rendering the branch name
+  echo ${VALUE3//[^a-z0-9\/]/}
 
   # reenable globbing symbols
   set +f
@@ -496,7 +498,7 @@ function updatePrompt() {
     unset GIT_REMOTE
   fi
 
-  local GIT_UPSTREAM="${git_status_fields[2]}"
+  local GIT_UPSTREAM="$(replaceSymbols ${git_status_fields[2]})"
   if [[ -z "${__GIT_PROMPT_SHOW_UPSTREAM}" || "^" == "$GIT_UPSTREAM" ]]; then
     unset GIT_UPSTREAM
   else
