@@ -496,10 +496,11 @@ function updatePrompt() {
     unset GIT_REMOTE
   fi
 
-  export GIT_UPSTREAM="${git_status_fields[2]}"
-  if [[ -z "${__GIT_PROMPT_SHOW_UPSTREAM}" || "^" == "$GIT_UPSTREAM" ]]; then
+  local GIT_UPSTREAM_PRIVATE="${git_status_fields[2]}"
+  if [[ -z "${__GIT_PROMPT_SHOW_UPSTREAM}" || "^" == "$GIT_UPSTREAM_PRIVATE" ]]; then
     unset GIT_UPSTREAM
   else
+    export GIT_UPSTREAM=${GIT_UPSTREAM_PRIVATE}
     local GIT_FORMATTED_UPSTREAM="${GIT_PROMPT_UPSTREAM//_UPSTREAM_/\$GIT_UPSTREAM}"
   fi
 
