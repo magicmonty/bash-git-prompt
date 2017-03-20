@@ -499,7 +499,6 @@ function updatePrompt() {
   export GIT_UPSTREAM="${git_status_fields[2]}"
   if [[ -z "${__GIT_PROMPT_SHOW_UPSTREAM}" || "^" == "$GIT_UPSTREAM" ]]; then
     unset GIT_UPSTREAM
-    unset GIT_FORMATTED_UPSTREAM
   else
     local GIT_FORMATTED_UPSTREAM="${GIT_PROMPT_UPSTREAM//_UPSTREAM_/\$GIT_UPSTREAM}"
   fi
