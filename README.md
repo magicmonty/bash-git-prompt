@@ -123,6 +123,11 @@ Add to the `~/.bashrc`:
    # Set config variables first
    GIT_PROMPT_ONLY_IN_REPO=1
 
+   # # When GIT_PROMPT_ONLY_IN_REPO is 1, gitprompt can be selectively disabled for certain
+   # # repositories by setting GIT_PROMPT_REPO_EXCLUSIONS.
+   # # (Provided repository names should be in `git rev-parse --show-toplevel` format)
+   # GIT_PROMPT_REPO_EXCLUSIONS="/home/myname /some/other"  # repos separated by space
+
    # GIT_PROMPT_FETCH_REMOTE_STATUS=0   # uncomment to avoid fetching remote status
 
    # GIT_PROMPT_SHOW_UPSTREAM=1 # uncomment to show upstream tracking branch
