@@ -496,11 +496,12 @@ function updatePrompt() {
     unset GIT_REMOTE
   fi
 
-  local GIT_UPSTREAM="${git_status_fields[2]}"
-  if [[ -z "${__GIT_PROMPT_SHOW_UPSTREAM}" || "^" == "$GIT_UPSTREAM" ]]; then
+  local GIT_UPSTREAM_PRIVATE="${git_status_fields[2]}"
+  if [[ -z "${__GIT_PROMPT_SHOW_UPSTREAM}" || "^" == "$GIT_UPSTREAM_PRIVATE" ]]; then
     unset GIT_UPSTREAM
   else
-    GIT_UPSTREAM="${GIT_PROMPT_UPSTREAM//_UPSTREAM_/${GIT_UPSTREAM}}"
+    export GIT_UPSTREAM=${GIT_UPSTREAM_PRIVATE}
+    local GIT_FORMATTED_UPSTREAM="${GIT_PROMPT_UPSTREAM//_UPSTREAM_/\$GIT_UPSTREAM}"
   fi
 
   local GIT_STAGED=${git_status_fields[3]}
@@ -512,7 +513,8 @@ function updatePrompt() {
 
   local NEW_PROMPT="$EMPTY_PROMPT"
   if [[ -n "$git_status_fields" ]]; then
-    local STATUS="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${GIT_PROMPT_BRANCH}${GIT_BRANCH}${ResetColor}"
+    local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${GIT_PROMPT_BRANCH}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM}"
+    local STATUS=""
 
     # __add_status KIND VALEXPR INSERT
     # eg: __add_status  'STAGED' '-ne 0'
@@ -542,7 +544,6 @@ function updatePrompt() {
       eval "STATUS=\"$STATUS$1\""
     }
 
-    __add_status        '$GIT_UPSTREAM'
     __chk_gitvar_status 'REMOTE'     '-n'
     __add_status        "$GIT_PROMPT_SEPARATOR"
     __chk_gitvar_status 'STAGED'     '-ne 0'
@@ -553,7 +554,7 @@ function updatePrompt() {
     __chk_gitvar_status 'CLEAN'      '-eq 1'   -
     __add_status        "$ResetColor$GIT_PROMPT_SUFFIX"
 
-    NEW_PROMPT="$(gp_add_virtualenv_to_prompt)$PROMPT_START$($prompt_callback)$STATUS$PROMPT_END"
+    NEW_PROMPT="$(gp_add_virtualenv_to_prompt)$PROMPT_START$($prompt_callback)$STATUS_PREFIX$STATUS$PROMPT_END"
   else
     NEW_PROMPT="$EMPTY_PROMPT"
   fi
