@@ -586,10 +586,11 @@ function is_function {
 }
 
 # Helper function that truncates $PWD depending on window width
+# Optionally specify maximum length as parameter (defaults to 1/3 of terminal)
 function gp_truncate_pwd {
   local tilde="~"
   local newPWD="${PWD/#${HOME}/${tilde}}"
-  local pwdmaxlen=$((${COLUMNS:-80}/3))
+  local pwdmaxlen=${1:-$((${COLUMNS:-80}/3))}
   [ ${#newPWD} -gt $pwdmaxlen ] && newPWD="...${newPWD:3-$pwdmaxlen}"
   echo -n "$newPWD"
 }
