@@ -122,7 +122,7 @@ Add to the `~/.bashrc`:
 - If you cloned the repo to a directory other then ~/.bash-git-prompt , set __GIT_PROMPT_DIR in ~/.config/fish/config.fish
    to that path
 
-- Run 
+- To install as an option in the fish_config GUI
 
 ```sh
 sudo install -m 666 gitprompt.fish /usr/share/fish/tools/web_config/sample_prompts/
@@ -130,6 +130,14 @@ fish_config
 ```
    to install the bash-git-prompt as a choice under the prompt tab of the web config. Selecting this will copy it to
    ~/.config/fish/functions/fish_prompt.fish
+
+- You can also do
+
+```sh
+mkdir -p ~/.config/fish/functions/
+cp gitprompt.fish ~/.config/fish/functions/fish_prompt.fish
+```
+   to overwrite the current prompt with the bash-git-prompt directly
 
 
 ### All configs for .bashrc
