@@ -1,3 +1,6 @@
+# name: bash-git-prompt
+# author: Mariusz Smykuła <mariuszs@gmail.com>
+
 if not set -q __GIT_PROMPT_DIR
     set __GIT_PROMPT_DIR ~/.gitprompt
 end
