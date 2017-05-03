@@ -347,7 +347,7 @@ function setGitPrompt() {
 
   if [[ -e "$repo/.bash-git-rc" ]]; then
     # The config file can only contain variable declarations on the form A_B=0 or G_P=all
-    local CONFIG_SYNTAX="^[A-Z_]+=[0-9a-z]+$"
+    local CONFIG_SYNTAX="^(FETCH_REMOTE_STATUS|GIT_PROMPT_SHOW_UNTRACKED_FILES|GIT_PROMPT_IGNORE)=[0-9a-z]+$"
     if egrep -q -v "$CONFIG_SYNTAX" "$repo/.bash-git-rc"; then
       echo ".bash-git-rc can only contain variable values on the form NAME=value. Ignoring file." >&2
     else
