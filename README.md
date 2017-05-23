@@ -68,6 +68,7 @@ The symbols are as follows:
   - ``✔``: repository clean
   - ``●n``: there are ``n`` staged files
   - ``✖n``: there are ``n`` files with merge conflicts
+  - ``✖-n``: there are ``n`` staged files wayting for removal
   - ``✚n``: there are ``n`` changed but *unstaged* files
   - ``…n``: there are ``n`` untracked files
   - ``⚑n``: there are ``n`` stash entries
@@ -115,6 +116,29 @@ Add to the `~/.bashrc`:
   GIT_PROMPT_ONLY_IN_REPO=1
   source ~/.bash-git-prompt/gitprompt.sh
 ```
+
+### install for the fish shell
+
+- If you cloned the repo to a directory other then ~/.bash-git-prompt , set __GIT_PROMPT_DIR in ~/.config/fish/config.fish
+   to that path
+
+- To install as an option in the fish_config GUI
+
+```sh
+sudo install -m 666 gitprompt.fish /usr/share/fish/tools/web_config/sample_prompts/
+fish_config
+```
+   to install the bash-git-prompt as a choice under the prompt tab of the web config. Selecting this will copy it to
+   ~/.config/fish/functions/fish_prompt.fish
+
+- You can also do
+
+```sh
+mkdir -p ~/.config/fish/functions/
+cp gitprompt.fish ~/.config/fish/functions/fish_prompt.fish
+```
+   to overwrite the current prompt with the bash-git-prompt directly
+
 
 ### All configs for .bashrc
 
@@ -229,7 +253,7 @@ function prompt_callback {
 
 - There are two helper functions that can be used within `prompt_callback`:
     - `gp_set_window_title <String>` - sets the window title to the given string (should work for XTerm type terminals like in OS X or Ubuntu)
-    - `gp_truncate_pwd` - a function that returns the current PWD truncated to fit the current terminal width
+    - `gp_truncate_pwd` - a function that returns the current PWD truncated to fit the current terminal width. Specify the length to truncate to as a parameter. Otherwise it defaults to 1/3 of the terminal width.
 
 - If you want to show the git prompt only if you are in a git repository you
   can set ``GIT_PROMPT_ONLY_IN_REPO=1`` before sourcing the gitprompt script
