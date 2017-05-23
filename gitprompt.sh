@@ -300,26 +300,37 @@ function setLastCommandState() {
   GIT_PROMPT_LAST_COMMAND_STATE=$?
 }
 
-function we_are_on_repo() {
-  if [[ -e "$(git rev-parse --git-dir 2> /dev/null)" ]]; then
-    echo 1
-  fi
-  echo 0
+git_prompt_root=
+git_prompt_root_current_dir=
+function git_find_root() {
+    if [ "$PWD" != "$git_prompt_root_current_dir" ]; then
+      local gitroot="$(git rev-parse --show-toplevel 2>/dev/null)"
+      local hgroot="$(hg root 2>/dev/null)"
+      if [ "${#hgroot}" -gt "${#gitroot}" ]; then
+        git_prompt_root="$hgroot"
+      else
+          git_prompt_root="$gitroot"
+      fi
+      git_prompt_root_current_dir="$PWD"
+    fi
 }
 
 function update_old_git_prompt() {
-  local in_repo=$(we_are_on_repo)
-  if [[ $GIT_PROMPT_OLD_DIR_WAS_GIT = 0 ]]; then
-    OLD_GITPROMPT=$PS1
+    git_find_root
+    local in_repo="$git_prompt_root"
+  if [ -n "$GIT_PROMPT_OLD_DIR_WAS_GIT" ]; then
+    OLD_GITPROMPT="$PS1"
   fi
 
-  GIT_PROMPT_OLD_DIR_WAS_GIT=$in_repo
+  GIT_PROMPT_OLD_DIR_WAS_GIT="$in_repo"
 }
 
 function setGitPrompt() {
+  trap "set -$-" RETURN; set +o nounset
   update_old_git_prompt
 
-  local repo=$(git rev-parse --show-toplevel 2> /dev/null)
+  git_find_root
+  local repo="$git_prompt_root"
   if [[ ! -e "$repo" ]] && [[ "$GIT_PROMPT_ONLY_IN_REPO" = 1 ]]; then
     # we do not permit bash-git-prompt outside git repos, so nothing to do
     PS1="$OLD_GITPROMPT"
@@ -408,7 +419,7 @@ function olderThanMinutes() {
   fi
 }
 
-function checkUpstream() {
+function checkUpstreamGit() {
   local GIT_PROMPT_FETCH_TIMEOUT
   git_prompt_config
 
@@ -416,13 +427,41 @@ function checkUpstream() {
   # Fech repo if local is stale for more than $GIT_FETCH_TIMEOUT minutes
   if [[ ! -e "$FETCH_HEAD" ]] || olderThanMinutes "$FETCH_HEAD" "$GIT_PROMPT_FETCH_TIMEOUT"
   then
-    if [[ -n $(git remote show) ]]; then
+    if [[ -n "$(git remote show)" ]]; then
       (
         async_run "git fetch --quiet"
         disown -h
       )
     fi
   fi
+}
+
+function checkUpstreamHg() {
+  local GIT_PROMPT_FETCH_TIMEOUT
+  git_prompt_config
+
+  local summary="$repo/.hg/git-prompt-incoming"
+  # Fech repo if local is stale for more than $GIT_FETCH_TIMEOUT minutes
+  if [[ ! -e "$summary" ]] || olderThanMinutes "$summary" "$GIT_PROMPT_FETCH_TIMEOUT"
+  then
+    if hg paths default &>/dev/null; then
+      (
+          cd "${summary%/*}"
+          async_run "hg incoming | grep -c '^changeset:' > ${summary##*/}"
+          disown -h
+      )
+    fi
+  fi
+}
+
+function checkUpstream() {
+    git_find_root
+    local repo="$git_prompt_root"
+    if [ -d "$repo/.git" ]; then
+      checkUpstreamGit
+    elif [ -d "$repo/.hg" ]; then
+        checkUpstreamHg
+    fi
 }
 
 function replaceSymbols() {
@@ -448,7 +487,7 @@ function createPrivateIndex {
   local __GIT_INDEX_FILE
   local __GIT_INDEX_PRIVATE
   if [[ -z "$GIT_INDEX_FILE" ]]; then
-    __GIT_INDEX_FILE="$(git rev-parse --git-dir)/index"
+    __GIT_INDEX_FILE="$(git rev-parse --git-dir 2>/dev/null)/index"
   else
     __GIT_INDEX_FILE="$GIT_INDEX_FILE"
   fi
@@ -614,12 +653,14 @@ function git_prompt_toggle() {
 }
 
 function gp_install_prompt {
+  trap "set -$-" RETURN; set +o nounset
   if [ -z "$OLD_GITPROMPT" ]; then
     OLD_GITPROMPT=$PS1
   fi
 
   if [ -z "$GIT_PROMPT_OLD_DIR_WAS_GIT" ]; then
-    GIT_PROMPT_OLD_DIR_WAS_GIT=$(we_are_on_repo)
+    git_find_root
+    GIT_PROMPT_OLD_DIR_WAS_GIT="$git_prompt_root"
   fi
 
   if [ -z "$PROMPT_COMMAND" ]; then
