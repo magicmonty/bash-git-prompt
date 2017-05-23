@@ -60,7 +60,7 @@ define_color_names() {
   # def_color NAME ATTRCODE COLORCODE
   _def_color() {
     local def="$1=\"\`_term_color $2 $3\`\""
-    if [[ -n "$debug$verbose" ]]; then
+    if [[ -n "${debug-}${verbose-}" ]]; then
       echo 1>&2 "+ $def"
     fi
     eval "$def"
@@ -77,6 +77,4 @@ define_color_names() {
 }
 
 # do the color definitions only once
-if [[ ${#ColorNames[*]} = 0 || -z "$IntenseBlack" || -z "$ResetColor" ]]; then
-  define_color_names
-fi
+[ -z "${ResetColor-}" ] && define_color_names

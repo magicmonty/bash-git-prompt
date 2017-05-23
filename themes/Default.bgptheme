@@ -92,7 +92,7 @@ define_undefined_git_prompt_colors() {
 
 # call only from theme file
 reload_git_prompt_colors() {
-  if [[ "${GIT_PROMPT_THEME_NAME}" != $1 ]]; then
+  if [[ "${GIT_PROMPT_THEME_NAME:-}" != $1 ]]; then
     unset_git_prompt_colors
     define_helpers
     override_git_prompt_colors

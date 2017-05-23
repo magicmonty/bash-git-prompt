@@ -26,12 +26,12 @@ function echoc() {
 
 function get_theme() {
   local CUSTOM_THEME_FILE="${HOME}/.git-prompt-colors.sh"
-  if [[ ! (-z ${GIT_PROMPT_THEME_FILE} ) ]]; then
+  if [[ ! (-z ${GIT_PROMPT_THEME_FILE:-} ) ]]; then
     CUSTOM_THEME_FILE=$GIT_PROMPT_THEME_FILE
   fi
   local DEFAULT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
 
-  if [[ -z ${GIT_PROMPT_THEME} ]]; then
+  if [[ -z ${GIT_PROMPT_THEME:-} ]]; then
     if [[ -r $CUSTOM_THEME_FILE ]]; then
       GIT_PROMPT_THEME="Custom"
       __GIT_PROMPT_THEME_FILE=$CUSTOM_THEME_FILE
@@ -145,6 +145,7 @@ function git_prompt_make_custom_theme() {
 # Return 0 (success) if ENVAR not already defined, 1 (failure) otherwise.
 
 function gp_set_file_var() {
+  trap "set -$-" RETURN; set +o nounset
   local envar="$1"
   local file="$2"
   if eval "[[ -n \"\$$envar\" && -r \"\$$envar\" ]]" ; then # is envar set to a readable file?
@@ -211,6 +212,7 @@ gp_format_exit_status() {
 }
 
 function git_prompt_config() {
+  trap "set -$-" RETURN; set +o nounset
   #Checking if root to change output
   _isroot=false
   [[ $UID -eq 0 ]] && _isroot=true
