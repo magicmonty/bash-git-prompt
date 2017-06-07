@@ -68,7 +68,7 @@ The symbols are as follows:
   - ``✔``: repository clean
   - ``●n``: there are ``n`` staged files
   - ``✖n``: there are ``n`` files with merge conflicts
-  - ``✖-n``: there are ``n`` staged files wayting for removal
+  - ``✖-n``: there are ``n`` staged files waiting for removal
   - ``✚n``: there are ``n`` changed but *unstaged* files
   - ``…n``: there are ``n`` untracked files
   - ``⚑n``: there are ``n`` stash entries
