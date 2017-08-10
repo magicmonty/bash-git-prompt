@@ -72,6 +72,10 @@ if [[ "$branch" == *"Initial commit on"* ]]; then
   IFS=" " read -ra fields <<< "$branch"
   branch="${fields[3]}"
   remote="_NO_REMOTE_TRACKING_"
+elif [[ "$branch" == *"No commits yet on"* ]]; then
+  IFS=" " read -ra fields <<< "$branch"
+  branch="${fields[4]}"
+  remote="_NO_REMOTE_TRACKING_"
 elif [[ "$branch" == *"no branch"* ]]; then
   tag=$( git describe --tags --exact-match )
   if [[ -n "$tag" ]]; then
