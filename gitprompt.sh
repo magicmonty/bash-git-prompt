@@ -551,13 +551,15 @@ function updatePrompt() {
     }
 
     __chk_gitvar_status 'REMOTE'     '-n'
-    __add_status        "$GIT_PROMPT_SEPARATOR"
-    __chk_gitvar_status 'STAGED'     '-ne 0'
-    __chk_gitvar_status 'CONFLICTS'  '-ne 0'
-    __chk_gitvar_status 'CHANGED'    '-ne 0'
-    __chk_gitvar_status 'UNTRACKED'  '-ne 0'
-    __chk_gitvar_status 'STASHED'    '-ne 0'
-    __chk_gitvar_status 'CLEAN'      '-eq 1'   -
+    if [[ $GIT_CLEAN -eq 0 ]] || [[ $GIT_PROMPT_CLEAN != "" ]]; then
+      __add_status        "$GIT_PROMPT_SEPARATOR"
+      __chk_gitvar_status 'STAGED'     '-ne 0'
+      __chk_gitvar_status 'CONFLICTS'  '-ne 0'
+      __chk_gitvar_status 'CHANGED'    '-ne 0'
+      __chk_gitvar_status 'UNTRACKED'  '-ne 0'
+      __chk_gitvar_status 'STASHED'    '-ne 0'
+      __chk_gitvar_status 'CLEAN'      '-eq 1'   -
+    fi
     __add_status        "$ResetColor$GIT_PROMPT_SUFFIX"
 
     NEW_PROMPT="$(gp_add_virtualenv_to_prompt)$PROMPT_START$($prompt_callback)$STATUS_PREFIX$STATUS$PROMPT_END"
