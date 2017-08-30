@@ -1,43 +1,43 @@
 # name: bash-git-prompt
 # author: Mariusz Smykuła <mariuszs@gmail.com>
 
-if not set -q __GIT_PROMPT_DIR
-    set __GIT_PROMPT_DIR ~/.gitprompt
-end
-
-# Colors
-# Reset
-set ResetColor (set_color normal)       # Text Reset
-
-# Regular Colors
-set Red (set_color red)                 # Red
-set Yellow (set_color yellow);          # Yellow
-set Blue (set_color blue)               # Blue
-set WHITE (set_color white)
-
-# Bold
-set BGreen (set_color -o green)         # Green
-
-# High Intensty
-set IBlack (set_color -o black)         # Black
-
-# Bold High Intensty
-set Magenta (set_color -o purple)       # Purple
-
-# Default values for the appearance of the prompt. Configure at will.
-set GIT_PROMPT_PREFIX "["
-set GIT_PROMPT_SUFFIX "]"
-set GIT_PROMPT_SEPARATOR "|"
-set GIT_PROMPT_BRANCH "$Magenta"
-set GIT_PROMPT_STAGED "$Red● "
-set GIT_PROMPT_CONFLICTS "$Red✖ "
-set GIT_PROMPT_CHANGED "$Blue✚ "
-set GIT_PROMPT_REMOTE " "
-set GIT_PROMPT_UNTRACKED "…"
-set GIT_PROMPT_STASHED "⚑ "
-set GIT_PROMPT_CLEAN "$BGreen✔"
-
 function fish_prompt
+
+    if not set -q __GIT_PROMPT_DIR
+        set __GIT_PROMPT_DIR ~/.bash-git-prompt
+    end
+
+    # Colors
+    # Reset
+    set ResetColor (set_color normal)       # Text Reset
+
+    # Regular Colors
+    set Red (set_color red)                 # Red
+    set Yellow (set_color yellow);          # Yellow
+    set Blue (set_color blue)               # Blue
+    set WHITE (set_color white)
+
+    # Bold
+    set BGreen (set_color -o green)         # Green
+
+    # High Intensty
+    set IBlack (set_color -o black)         # Black
+
+    # Bold High Intensty
+    set Magenta (set_color -o purple)       # Purple
+
+    # Default values for the appearance of the prompt. Configure at will.
+    set GIT_PROMPT_PREFIX "["
+    set GIT_PROMPT_SUFFIX "]"
+    set GIT_PROMPT_SEPARATOR "|"
+    set GIT_PROMPT_BRANCH "$Magenta"
+    set GIT_PROMPT_STAGED "$Red● "
+    set GIT_PROMPT_CONFLICTS "$Red✖ "
+    set GIT_PROMPT_CHANGED "$Blue✚ "
+    set GIT_PROMPT_REMOTE " "
+    set GIT_PROMPT_UNTRACKED "…"
+    set GIT_PROMPT_STASHED "⚑ "
+    set GIT_PROMPT_CLEAN "$BGreen✔"
 
     # Various variables you might want for your PS1 prompt instead
     set Time (date +%R)
@@ -92,7 +92,7 @@ function fish_prompt
         if [ "$GIT_UNTRACKED" != "0" ]
             set STATUS "$STATUS$GIT_PROMPT_UNTRACKED$GIT_UNTRACKED$ResetColor"
         end
-        
+
         if [ "$GIT_STASHED" != "0" ]
             set STATUS "$STATUS$GIT_PROMPT_STASHED$GIT_STASHED$ResetColor"
         end
