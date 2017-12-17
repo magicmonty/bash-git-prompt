@@ -519,7 +519,15 @@ function updatePrompt() {
 
   local NEW_PROMPT="$EMPTY_PROMPT"
   if [[ -n "$git_status_fields" ]]; then
-    local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${GIT_PROMPT_BRANCH}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM}"
+
+    case "$GIT_BRANCH" in
+      $GIT_PROMPT_MASTER_BRANCHES)
+        local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${GIT_PROMPT_MASTER_BRANCH}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM}"
+        ;;
+      *)
+        local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${GIT_PROMPT_BRANCH}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM}"
+        ;;
+    esac
     local STATUS=""
 
     # __add_status KIND VALEXPR INSERT
