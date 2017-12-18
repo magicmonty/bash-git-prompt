@@ -148,10 +148,11 @@ cp gitprompt.fish ~/.config/fish/functions/fish_prompt.fish
    GIT_PROMPT_ONLY_IN_REPO=1
 
    # GIT_PROMPT_FETCH_REMOTE_STATUS=0   # uncomment to avoid fetching remote status
+   # GIT_PROMPT_IGNORE_SUBMODULES=1 # uncomment to avoid searching for changed files in submodules
 
    # GIT_PROMPT_SHOW_UPSTREAM=1 # uncomment to show upstream tracking branch
    # GIT_PROMPT_SHOW_UNTRACKED_FILES=all # can be no, normal or all; determines counting of untracked files
-   
+
    # GIT_PROMPT_SHOW_CHANGED_FILES_COUNT=0 # uncomment to avoid printing the number of changed files
 
    # GIT_PROMPT_STATUS_COMMAND=gitstatus_pre-1.7.10.sh # uncomment to support Git older than 1.7.10
@@ -289,6 +290,10 @@ GIT_PROMPT_COMMAND_FAIL="${Red}✘-_LAST_COMMAND_STATE_ " # displays as ✘-1 fo
   You can disable the display of untracked files on a per repository basis by setting
   ``GIT_PROMPT_SHOW_UNTRACKED_FILES=no`` in your ``.bash-git-rc`` in the repository or
   by disabling it globally in your ``.bashrc``
+
+- If you have a repository with a deep submodule hierarchy, this can also affect performance.
+  You can disable searching for changes in submodules on a per repository basis by setting
+  ``GIT_PROMPT_IGNORE_SUBMODULES=1`` in your ``.bash-git-rc``
 
 - You can get help on the git prompt with the function ``git_prompt_help``.
   Examples are available with ``git_prompt_examples``.
