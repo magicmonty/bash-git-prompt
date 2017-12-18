@@ -42,6 +42,7 @@ define_undefined_git_prompt_colors() {
   if [ -z ${GIT_PROMPT_SEPARATOR+x} ]; then GIT_PROMPT_SEPARATOR="|"; fi              # separates each item
 
   if [ -z ${GIT_PROMPT_BRANCH+x} ]; then GIT_PROMPT_BRANCH="${Magenta}"; fi        # the git branch that is active in the current directory
+  if [ -z ${GIT_PROMPT_MASTER_BRANCH+x} ]; then GIT_PROMPT_MASTER_BRANCH="${GIT_PROMPT_BRANCH}"; fi  # used if the git branch that is active in the current directory is $GIT_PROMPT_MASTER_BRANCHES
   if [ -z ${GIT_PROMPT_STAGED+x} ]; then GIT_PROMPT_STAGED="${Red}●"; fi           # the number of staged files/directories
   if [ -z ${GIT_PROMPT_CONFLICTS+x} ]; then GIT_PROMPT_CONFLICTS="${Red}✖ "; fi       # the number of files in conflict
   if [ -z ${GIT_PROMPT_CHANGED+x} ]; then GIT_PROMPT_CHANGED="${Blue}✚ "; fi        # the number of changed files
@@ -88,6 +89,12 @@ define_undefined_git_prompt_colors() {
   if [ -z ${GIT_PROMPT_SYMBOLS_BEHIND+x} ]; then GIT_PROMPT_SYMBOLS_BEHIND="↓·"; fi            # The symbol for "n versions behind of origin"
   if [ -z ${GIT_PROMPT_SYMBOLS_PREHASH+x} ]; then GIT_PROMPT_SYMBOLS_PREHASH=":"; fi            # Written before hash of commit, if no name could be found
   if [ -z ${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING+x} ]; then GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING="L"; fi # This symbol is written after the branch, if the branch is not tracked
+
+  # branch name(s) that will use $GIT_PROMPT_MASTER_BRANCH color
+  # To specify multiple branches, use
+  #   shopt -s extglob
+  #   GIT_PROMPT_MASTER_BRANCHES='@(master|production)'
+  if [ -z ${GIT_PROMPT_MASTER_BRANCHES+x} ]; then GIT_PROMPT_MASTER_BRANCHES="master"; fi
 }
 
 # call only from theme file
