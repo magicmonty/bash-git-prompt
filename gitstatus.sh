@@ -15,7 +15,13 @@ if [ -z "${__GIT_PROMPT_DIR}" ]; then
   __GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 fi
 
-gitstatus=$( LC_ALL=C git status --untracked-files=${__GIT_PROMPT_SHOW_UNTRACKED_FILES:-all} --porcelain --branch )
+if [[ "${__GIT_PROMPT_IGNORE_SUBMODULES}" == "1" ]]; then
+  _ignore_submodules=--ignore-submodules
+else
+  _ignore_submodules=
+fi
+
+gitstatus=$( LC_ALL=C git status ${_ignore_submodules} --untracked-files=${__GIT_PROMPT_SHOW_UNTRACKED_FILES:-all} --porcelain --branch )
 
 # if the status is fatal, exit now
 [[ "$?" -ne 0 ]] && exit 0
