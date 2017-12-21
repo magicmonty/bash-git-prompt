@@ -1,8 +1,8 @@
 class BashGitPrompt < Formula
   desc "Informative, fancy bash prompt for Git users"
   homepage "https://github.com/magicmonty/bash-git-prompt"
-  url "https://github.com/magicmonty/bash-git-prompt/archive/2.6.3.tar.gz"
-  sha256 "c941b6b34a01ef2e30c8a54bbd908a5ebd8d3e20694dc1a7e84ccbec57258421"
+  url "https://github.com/magicmonty/bash-git-prompt/archive/2.7.1.tar.gz"
+  sha256 "5e5fc6f5133b65760fede8050d4c3bc8edb8e78bc7ce26c16db442aa94b8a709"
   head "https://github.com/magicmonty/bash-git-prompt.git"
 
   bottle :unneeded
@@ -16,12 +16,16 @@ class BashGitPrompt < Formula
     doc.install "README.md"
   end
 
-  def caveats; <<-EOS.undent
-    You should add the following to your .bashrc (or equivalent):
+  def caveats; <<~EOS
+    You should add the following to your .bashrc (or .bash_profile if bash is your login shell):
       if [ -f "#{HOMEBREW_PREFIX}/opt/bash-git-prompt/share/gitprompt.sh" ]; then
         __GIT_PROMPT_DIR="#{HOMEBREW_PREFIX}/opt/bash-git-prompt/share"
         source "#{HOMEBREW_PREFIX}/opt/bash-git-prompt/share/gitprompt.sh"
       fi
     EOS
+  end
+
+  test do
+    system "true"
   end
 end
