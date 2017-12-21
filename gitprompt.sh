@@ -570,12 +570,12 @@ function updatePrompt() {
     __chk_gitvar_status 'REMOTE'     '-n'
     if [[ $GIT_CLEAN -eq 0 ]] || [[ $GIT_PROMPT_CLEAN != "" ]]; then
       __add_status        "$GIT_PROMPT_SEPARATOR"
-      __chk_gitvar_status 'STAGED'     '-ne 0'
-      __chk_gitvar_status 'CONFLICTS'  '-ne 0'
-      __chk_gitvar_status 'CHANGED'    '-ne 0'
-      __chk_gitvar_status 'UNTRACKED'  '-ne 0'
-      __chk_gitvar_status 'STASHED'    '-ne 0'
-      __chk_gitvar_status 'CLEAN'      '-eq 1'   -
+      __chk_gitvar_status 'STAGED'     '!= "0" -a $GIT_STAGED != "^"'
+      __chk_gitvar_status 'CONFLICTS'  '!= "0"'
+      __chk_gitvar_status 'CHANGED'    '!= "0"'
+      __chk_gitvar_status 'UNTRACKED'  '!= "0"'
+      __chk_gitvar_status 'STASHED'    '!= "0"'
+      __chk_gitvar_status 'CLEAN'      '= "1"'   -
     fi
     __add_status        "$ResetColor$GIT_PROMPT_SUFFIX"
 

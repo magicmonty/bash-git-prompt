@@ -26,6 +26,53 @@ gitstatus=$( LC_ALL=C git status ${_ignore_submodules} --untracked-files=${__GIT
 # if the status is fatal, exit now
 [[ "$?" -ne 0 ]] && exit 0
 
+git_dir="$(git rev-parse --git-dir 2>/dev/null)"
+[[ -z "$git_dir" ]] && exit 0
+
+__git_prompt_read ()
+{
+	local f="$1"
+	shift
+	test -r "$f" && read "$@" <"$f"
+}
+
+state=""
+step=""
+total=""
+if [ -d "${git_dir}/rebase-merge" ]; then
+  __git_prompt_read "${git_dir}/rebase-merge/msgnum" step
+  __git_prompt_read "${git_dir}/rebase-merge/end" total
+  if [ -f "${git_dir}/rebase-merge/interactive" ]; then
+    state="|REBASE-i"
+  else
+    state="|REBASE-m"
+  fi
+else
+  if [ -d "${git_dir}/rebase-apply" ]; then
+    __git_prompt_read "${git_dir}/rebase-apply/next" step
+    __git_prompt_read "${git_dir}/rebase-apply/last" total
+    if [ -f "${git_dir}/rebase-apply/rebasing" ]; then
+      state="|REBASE"
+    elif [ -f "${git_dir}/rebase-apply/applying" ]; then
+      state="|AM"
+    else
+      state="|AM/REBASE"
+    fi
+  elif [ -f "${git_dir}/MERGE_HEAD" ]; then
+    state="|MERGING"
+  elif [ -f "${git_dir}/CHERRY_PICK_HEAD" ]; then
+    state="|CHERRY-PICKING"
+  elif [ -f "${git_dir}/REVERT_HEAD" ]; then
+    state="|REVERTING"
+  elif [ -f "${git_dir}/BISECT_LOG" ]; then
+    state="|BISECTING"
+  fi
+fi
+
+if [ -n "$step" ] && [ -n "$total" ]; then
+  state="${state} ${step}/${total}"
+fi
+
 num_staged=0
 num_changed=0
 num_conflicts=0
@@ -118,7 +165,7 @@ if [[ -z "$upstream" ]] ; then
 fi
 
 printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
-  "$branch" \
+  "${branch}${state}" \
   "$remote" \
   "$upstream" \
   $num_staged \
