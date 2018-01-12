@@ -109,7 +109,7 @@ function git_prompt_list_themes() {
 
 function git_prompt_make_custom_theme() {
   if [[ -r "${HOME}/.git-prompt-colors.sh" ]]; then
-    echoc ${Red} "You alread have created a custom theme!"
+    echoc ${Red} "You have already created a custom theme!"
   else
     git_prompt_dir
 
