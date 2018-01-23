@@ -472,6 +472,28 @@ function createPrivateIndex {
   echo "$__GIT_INDEX_PRIVATE"
 }
 
+function get_branch_prefix() {
+    local GIT_BRANCH=$1
+    local DETACHED_HEAD=$2
+
+    case "$GIT_BRANCH" in
+      $GIT_PROMPT_MASTER_BRANCHES)
+        local IS_MASTER_BRANCH=1
+        ;;
+      *)
+        local IS_MASTER_BRANCH=0
+        ;;
+    esac
+
+    if [[ "$IS_MASTER_BRANCH" == "1" ]]; then
+        echo $GIT_PROMPT_MASTER_BRANCH
+    elif [[ "$DETACHED_HEAD" = "1" ]]; then
+        echo $GIT_PROMPT_DETACHED_HEAD
+    else
+        echo $GIT_PROMPT_BRANCH
+    fi
+}
+
 function updatePrompt() {
   local LAST_COMMAND_INDICATOR
   local PROMPT_LEADING_SPACE
@@ -526,18 +548,13 @@ function updatePrompt() {
   local GIT_UNTRACKED=${git_status_fields[6]}
   local GIT_STASHED=${git_status_fields[7]}
   local GIT_CLEAN=${git_status_fields[8]}
+  local GIT_DETACHED_HEAD=${git_status_fields[9]}
 
   local NEW_PROMPT="$EMPTY_PROMPT"
   if [[ -n "$git_status_fields" ]]; then
 
-    case "$GIT_BRANCH" in
-      $GIT_PROMPT_MASTER_BRANCHES)
-        local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${GIT_PROMPT_MASTER_BRANCH}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM}"
-        ;;
-      *)
-        local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${GIT_PROMPT_BRANCH}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM}"
-        ;;
-    esac
+    local BRANCH_PREFIX=`get_branch_prefix $GIT_BRANCH $GIT_DETACHED_HEAD`
+    local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${BRANCH_PREFIX}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM}"
     local STATUS=""
 
     # __add_status KIND VALEXPR INSERT

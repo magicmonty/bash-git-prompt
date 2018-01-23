@@ -121,6 +121,8 @@ branch="${branch_fields[0]}"
 remote=
 upstream=
 
+detached_head=0
+
 if [[ "$branch" == *"Initial commit on"* ]]; then
   IFS=" " read -ra fields <<< "$branch"
   branch="${fields[3]}"
@@ -133,8 +135,10 @@ elif [[ "$branch" == *"no branch"* ]]; then
   tag=$( git describe --tags --exact-match )
   if [[ -n "$tag" ]]; then
     branch="_PRETAG_$tag"
+    detached_head=1
   else
     branch="_PREHASH_$( git rev-parse --short HEAD )"
+    detached_head=1
   fi
 else
   if [[ "${#branch_fields[@]}" -eq 1 ]]; then
@@ -164,7 +168,7 @@ if [[ -z "$upstream" ]] ; then
   upstream='^'
 fi
 
-printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
+printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
   "${branch}${state}" \
   "$remote" \
   "$upstream" \
@@ -173,6 +177,7 @@ printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
   $num_changed \
   $num_untracked \
   $num_stashed \
-  $clean
+  $clean \
+  $detached_head
 
 exit
