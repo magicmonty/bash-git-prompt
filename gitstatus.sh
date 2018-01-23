@@ -148,7 +148,7 @@ elif [[ "${branch}" == *"No commits yet on"* ]]; then
 elif [[ "${branch}" == *"no branch"* ]]; then
   tag=$( git describe --tags --exact-match )
   if [[ -n "${tag}" ]]; then
-    branch="${tag}"
+    branch="_PRETAG_${tag}"
   else
     branch="_PREHASH_$( git rev-parse --short HEAD )"
   fi
