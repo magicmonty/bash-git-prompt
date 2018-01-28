@@ -432,7 +432,7 @@ function checkUpstream() {
   then
     if [[ -n $(git remote show) ]]; then
       (
-        async_run "git fetch --quiet"
+        async_run "GIT_TERMINAL_PROMPT=0 git fetch --quiet"
         disown -h
       )
     fi
