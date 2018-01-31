@@ -303,6 +303,7 @@ function setLastCommandState() {
 function we_are_on_repo() {
   if [[ -e "$(git rev-parse --git-dir 2> /dev/null)" ]]; then
     echo 1
+    return
   fi
   echo 0
 }
