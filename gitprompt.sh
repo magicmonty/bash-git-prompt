@@ -303,8 +303,9 @@ function setLastCommandState() {
 function we_are_on_repo() {
   if [[ -e "$(git rev-parse --git-dir 2> /dev/null)" ]]; then
     echo 1
+  else
+    echo 0
   fi
-  echo 0
 }
 
 function update_old_git_prompt() {
