@@ -1,0 +1,3 @@
+# Unix lines endings in bash script files
+*.sh text eol=lf
+themes/* text eol=lf
