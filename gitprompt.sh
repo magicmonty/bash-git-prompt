@@ -656,6 +656,8 @@ function gp_install_prompt {
   if [ -z "$PROMPT_COMMAND" ]; then
     PROMPT_COMMAND=setGitPrompt
   else
+    PROMPT_COMMAND="${PROMPT_COMMAND//$'\n'/;}" # convert all new lines to semi-colons
+    PROMPT_COMMAND=${PROMPT_COMMAND#\;}; # remove leading semi-colon
     PROMPT_COMMAND=${PROMPT_COMMAND%% }; # remove trailing spaces
     PROMPT_COMMAND=${PROMPT_COMMAND%\;}; # remove trailing semi-colon
 
