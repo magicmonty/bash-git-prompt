@@ -301,6 +301,10 @@ function setLastCommandState() {
 }
 
 function we_are_on_repo() {
+  if [ $(pwd) == $HOME ]; then
+    echo 0
+  fi
+
   if [[ -e "$(git rev-parse --git-dir 2> /dev/null)" ]]; then
     echo 1
   else
@@ -320,7 +324,12 @@ function update_old_git_prompt() {
 function setGitPrompt() {
   update_old_git_prompt
 
-  local repo=$(git rev-parse --show-toplevel 2> /dev/null)
+  if [ $(pwd) == $HOME ]; then
+    local repo=0
+  else
+    local repo=$(git rev-parse --show-toplevel 2> /dev/null)
+  fi
+
   if [[ ! -e "$repo" ]] && [[ "$GIT_PROMPT_ONLY_IN_REPO" = 1 ]]; then
     # we do not permit bash-git-prompt outside git repos, so nothing to do
     PS1="$OLD_GITPROMPT"
