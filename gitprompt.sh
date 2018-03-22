@@ -322,13 +322,13 @@ function update_old_git_prompt() {
 }
 
 function setGitPrompt() {
+  update_old_git_prompt
+
   if [ $(pwd) == $HOME ]; then
     local repo=0
   else
     local repo=$(git rev-parse --show-toplevel 2> /dev/null)
   fi
-
-  update_old_git_prompt
 
   if [[ ! -e "$repo" ]] && [[ "$GIT_PROMPT_ONLY_IN_REPO" = 1 ]]; then
     # we do not permit bash-git-prompt outside git repos, so nothing to do
