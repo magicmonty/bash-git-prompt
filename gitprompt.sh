@@ -301,6 +301,10 @@ function setLastCommandState() {
 }
 
 function we_are_on_repo() {
+  if [ $(pwd) == $HOME ]; then
+    echo 0
+  fi
+
   if [[ -e "$(git rev-parse --git-dir 2> /dev/null)" ]]; then
     echo 1
   else
@@ -318,69 +322,72 @@ function update_old_git_prompt() {
 }
 
 function setGitPrompt() {
-  if [ $(pwd) != $HOME ]; then
-    update_old_git_prompt
-
+  if [ $(pwd) == $HOME ]; then
+    local repo=0
+  else
     local repo=$(git rev-parse --show-toplevel 2> /dev/null)
-    if [[ ! -e "$repo" ]] && [[ "$GIT_PROMPT_ONLY_IN_REPO" = 1 ]]; then
-      # we do not permit bash-git-prompt outside git repos, so nothing to do
-      PS1="$OLD_GITPROMPT"
-      return
-    fi
-
-    local EMPTY_PROMPT
-    local __GIT_STATUS_CMD
-
-    git_prompt_config
-
-    if [[ ! -e "$repo" ]] || [[ "$GIT_PROMPT_DISABLE" = 1 ]]; then
-      PS1="$EMPTY_PROMPT"
-      return
-    fi
-
-    local FETCH_REMOTE_STATUS=1
-    if [[ "$GIT_PROMPT_FETCH_REMOTE_STATUS" = 0 ]]; then
-      FETCH_REMOTE_STATUS=0
-    fi
-
-    unset GIT_PROMPT_IGNORE
-    OLD_GIT_PROMPT_SHOW_UNTRACKED_FILES=${GIT_PROMPT_SHOW_UNTRACKED_FILES}
-    unset GIT_PROMPT_SHOW_UNTRACKED_FILES
-
-    OLD_GIT_PROMPT_IGNORE_SUBMODULES=${GIT_PROMPT_IGNORE_SUBMODULES}
-    unset GIT_PROMPT_IGNORE_SUBMODULES
-
-    if [[ -e "$repo/.bash-git-rc" ]]; then
-      # The config file can only contain variable declarations on the form A_B=0 or G_P=all
-      local CONFIG_SYNTAX="^(FETCH_REMOTE_STATUS|GIT_PROMPT_SHOW_UNTRACKED_FILES|GIT_PROMPT_IGNORE_SUBMODULES|GIT_PROMPT_IGNORE)=[0-9a-z]+$"
-      if egrep -q -v "$CONFIG_SYNTAX" "$repo/.bash-git-rc"; then
-        echo ".bash-git-rc can only contain variable values on the form NAME=value. Ignoring file." >&2
-      else
-        source "$repo/.bash-git-rc"
-      fi
-    fi
-
-    if [ -z "${GIT_PROMPT_SHOW_UNTRACKED_FILES}" ]; then
-      GIT_PROMPT_SHOW_UNTRACKED_FILES=${OLD_GIT_PROMPT_SHOW_UNTRACKED_FILES}
-    fi
-    unset OLD_GIT_PROMPT_SHOW_UNTRACKED_FILES
-
-    if [ -z "${GIT_PROMPT_IGNORE_SUBMODULES}" ]; then
-      GIT_PROMPT_IGNORE_SUBMODULES=${OLD_GIT_PROMPT_IGNORE_SUBMODULES}
-    fi
-    unset OLD_GIT_PROMPT_IGNORE_SUBMODULES
-
-    if [[ "$GIT_PROMPT_IGNORE" = 1 ]]; then
-      PS1="$EMPTY_PROMPT"
-      return
-    fi
-
-    if [[ "$FETCH_REMOTE_STATUS" = 1 ]]; then
-      checkUpstream
-    fi
-
-    updatePrompt
   fi
+
+  update_old_git_prompt
+
+  if [[ ! -e "$repo" ]] && [[ "$GIT_PROMPT_ONLY_IN_REPO" = 1 ]]; then
+    # we do not permit bash-git-prompt outside git repos, so nothing to do
+    PS1="$OLD_GITPROMPT"
+    return
+  fi
+
+  local EMPTY_PROMPT
+  local __GIT_STATUS_CMD
+
+  git_prompt_config
+
+  if [[ ! -e "$repo" ]] || [[ "$GIT_PROMPT_DISABLE" = 1 ]]; then
+    PS1="$EMPTY_PROMPT"
+    return
+  fi
+
+  local FETCH_REMOTE_STATUS=1
+  if [[ "$GIT_PROMPT_FETCH_REMOTE_STATUS" = 0 ]]; then
+    FETCH_REMOTE_STATUS=0
+  fi
+
+  unset GIT_PROMPT_IGNORE
+  OLD_GIT_PROMPT_SHOW_UNTRACKED_FILES=${GIT_PROMPT_SHOW_UNTRACKED_FILES}
+  unset GIT_PROMPT_SHOW_UNTRACKED_FILES
+
+  OLD_GIT_PROMPT_IGNORE_SUBMODULES=${GIT_PROMPT_IGNORE_SUBMODULES}
+  unset GIT_PROMPT_IGNORE_SUBMODULES
+
+  if [[ -e "$repo/.bash-git-rc" ]]; then
+    # The config file can only contain variable declarations on the form A_B=0 or G_P=all
+    local CONFIG_SYNTAX="^(FETCH_REMOTE_STATUS|GIT_PROMPT_SHOW_UNTRACKED_FILES|GIT_PROMPT_IGNORE_SUBMODULES|GIT_PROMPT_IGNORE)=[0-9a-z]+$"
+    if egrep -q -v "$CONFIG_SYNTAX" "$repo/.bash-git-rc"; then
+      echo ".bash-git-rc can only contain variable values on the form NAME=value. Ignoring file." >&2
+    else
+      source "$repo/.bash-git-rc"
+    fi
+  fi
+
+  if [ -z "${GIT_PROMPT_SHOW_UNTRACKED_FILES}" ]; then
+    GIT_PROMPT_SHOW_UNTRACKED_FILES=${OLD_GIT_PROMPT_SHOW_UNTRACKED_FILES}
+  fi
+  unset OLD_GIT_PROMPT_SHOW_UNTRACKED_FILES
+
+  if [ -z "${GIT_PROMPT_IGNORE_SUBMODULES}" ]; then
+    GIT_PROMPT_IGNORE_SUBMODULES=${OLD_GIT_PROMPT_IGNORE_SUBMODULES}
+  fi
+  unset OLD_GIT_PROMPT_IGNORE_SUBMODULES
+
+  if [[ "$GIT_PROMPT_IGNORE" = 1 ]]; then
+    PS1="$EMPTY_PROMPT"
+    return
+  fi
+
+  if [[ "$FETCH_REMOTE_STATUS" = 1 ]]; then
+    checkUpstream
+  fi
+
+  updatePrompt
 }
 
 # some versions of find do not have -mmin
