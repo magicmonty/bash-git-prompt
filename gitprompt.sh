@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set echo
 
 function async_run() {
   {
