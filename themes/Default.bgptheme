@@ -107,7 +107,7 @@ reload_git_prompt_colors() {
   fi
 }
 
-if [[ "${GIT_PROMPT_THEME}" == "Default" && "${GIT_PROMPT_THEME_NAME}" != "Default" ]]; then
+if [[ "${GIT_PROMPT_THEME}" == "Default" ]] && [[ -z "${GIT_PROMPT_THEME_NAME+x}" || "${GIT_PROMPT_THEME_NAME}" != "Default" ]]; then
   define_helpers
   define_undefined_git_prompt_colors
 fi
