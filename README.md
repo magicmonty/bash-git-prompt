@@ -151,7 +151,7 @@ cp gitprompt.fish ~/.config/fish/functions/fish_prompt.fish
    # GIT_PROMPT_IGNORE_SUBMODULES=1 # uncomment to avoid searching for changed files in submodules
 
    # GIT_PROMPT_SHOW_UPSTREAM=1 # uncomment to show upstream tracking branch
-   # GIT_PROMPT_SHOW_UNTRACKED_FILES=all # can be no, normal or all; determines counting of untracked files
+   # GIT_PROMPT_SHOW_UNTRACKED_FILES=normal # can be no, normal or all; determines counting of untracked files
 
    # GIT_PROMPT_SHOW_CHANGED_FILES_COUNT=0 # uncomment to avoid printing the number of changed files
 
@@ -169,7 +169,8 @@ cp gitprompt.fish ~/.config/fish/functions/fish_prompt.fish
 
 You can set the `GIT_PROMPT_SHOW_UNTRACKED_FILES` variable to `no` or `normal` to speed things up if you have lots of
 untracked files in your repository. This can be the case for build systems that put their build artifacts in
-the subdirectory structure of the git repository.
+the subdirectory structure of the git repository. Setting it to `all` will count all untracked files, including files
+listed in .gitignore.
 
 - `cd` to a git repository and test it!
 
