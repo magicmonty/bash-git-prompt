@@ -530,12 +530,19 @@ function updatePrompt() {
   local NEW_PROMPT="$EMPTY_PROMPT"
   if [[ -n "$git_status_fields" ]]; then
 
+    # supports urls:
+    # https://user@bitbucket.org/user/repo.git
+    # https://github.com/user/repo.git
+    # git@github.com:user/repo.git
+    # gives "user/repo"
+    local URL_SHORT="$(git config --get remote.origin.url | sed 's|^.*//||; s/.*@//; s/[^:/]\+[:/]//; s/.git$//'):"
+
     case "$GIT_BRANCH" in
       $GIT_PROMPT_MASTER_BRANCHES)
-        local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${GIT_PROMPT_MASTER_BRANCH}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM}"
+        local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${GIT_PROMPT_MASTER_BRANCH}${URL_SHORT}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM}"
         ;;
       *)
-        local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${GIT_PROMPT_BRANCH}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM}"
+        local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${GIT_PROMPT_BRANCH}${URL_SHORT}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM}"
         ;;
     esac
     local STATUS=""
