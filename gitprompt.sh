@@ -210,6 +210,19 @@ gp_format_exit_status() {
   fi
 }
 
+# gp_format_username_repo
+#
+# returns "user/repo" from remote.origin.url git variable
+#
+# supports urls:
+# https://user@bitbucket.org/user/repo.git
+# https://github.com/user/repo.git
+# git@github.com:user/repo.git
+#
+gp_format_username_repo() {
+    echo "$(git config --get remote.origin.url | sed 's|^.*//||; s/.*@//; s/[^:/]\+[:/]//; s/.git$//')"
+}
+
 function git_prompt_config() {
   #Checking if root to change output
   _isroot=false
@@ -530,19 +543,15 @@ function updatePrompt() {
   local NEW_PROMPT="$EMPTY_PROMPT"
   if [[ -n "$git_status_fields" ]]; then
 
-    # supports urls:
-    # https://user@bitbucket.org/user/repo.git
-    # https://github.com/user/repo.git
-    # git@github.com:user/repo.git
-    # gives "user/repo"
-    local URL_SHORT="$(git config --get remote.origin.url | sed 's|^.*//||; s/.*@//; s/[^:/]\+[:/]//; s/.git$//'):"
+    local USERNAME_REPO=$(gp_format_username_repo)
+    local GIT_PROMPT_PREFIX_FINAL="${GIT_PROMPT_PREFIX//_USERNAME_REPO_/${USERNAME_REPO}${ResetColor}}"
 
     case "$GIT_BRANCH" in
       $GIT_PROMPT_MASTER_BRANCHES)
-        local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${GIT_PROMPT_MASTER_BRANCH}${URL_SHORT}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM}"
+        local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX_FINAL}${GIT_PROMPT_MASTER_BRANCH}${URL_SHORT}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM}"
         ;;
       *)
-        local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${GIT_PROMPT_BRANCH}${URL_SHORT}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM}"
+        local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX_FINAL}${GIT_PROMPT_BRANCH}${URL_SHORT}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM}"
         ;;
     esac
     local STATUS=""
