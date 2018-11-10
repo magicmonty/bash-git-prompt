@@ -21,6 +21,20 @@ else
   _ignore_submodules=
 fi
 
+if [[ "${__GIT_PROMPT_WITH_USERNAME_AND_REPO}" == "1" ]]; then
+  # returns "user/repo" from remote.origin.url git variable
+  #
+  # supports urls:
+  # https://user@bitbucket.org/user/repo.git
+  # https://github.com/user/repo.git
+  # git@github.com:user/repo.git
+  #
+  remote_url=$(git config --get remote.origin.url | sed 's|^.*//||; s/.*@//; s/[^:/]\+[:/]//; s/.git$//')
+else
+  remote_url='.'
+fi
+
+
 gitstatus=$( LC_ALL=C git status ${_ignore_submodules} --untracked-files=${__GIT_PROMPT_SHOW_UNTRACKED_FILES:-normal} --porcelain --branch )
 
 # if the status is fatal, exit now
@@ -125,10 +139,12 @@ if [[ "$branch" == *"Initial commit on"* ]]; then
   IFS=" " read -ra fields <<< "$branch"
   branch="${fields[3]}"
   remote="_NO_REMOTE_TRACKING_"
+  remote_url='.'
 elif [[ "$branch" == *"No commits yet on"* ]]; then
   IFS=" " read -ra fields <<< "$branch"
   branch="${fields[4]}"
   remote="_NO_REMOTE_TRACKING_"
+  remote_url='.'
 elif [[ "$branch" == *"no branch"* ]]; then
   tag=$( git describe --tags --exact-match )
   if [[ -n "$tag" ]]; then
@@ -139,6 +155,7 @@ elif [[ "$branch" == *"no branch"* ]]; then
 else
   if [[ "${#branch_fields[@]}" -eq 1 ]]; then
     remote="_NO_REMOTE_TRACKING_"
+    remote_url='.'
   else
     IFS="[,]" read -ra remote_fields <<< "${branch_fields[1]}"
     upstream="${remote_fields[0]}"
@@ -167,6 +184,7 @@ fi
 printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
   "${branch}${state}" \
   "$remote" \
+  "$remote_url" \
   "$upstream" \
   $num_staged \
   $num_conflicts \
