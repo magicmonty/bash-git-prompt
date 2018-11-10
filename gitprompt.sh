@@ -210,15 +210,6 @@ gp_format_exit_status() {
   fi
 }
 
-# gp_format_username_repo
-#
-# returns "user/repo" from remote.origin.url git variable
-#
-# supports urls:
-# https://user@bitbucket.org/user/repo.git
-# https://github.com/user/repo.git
-# git@github.com:user/repo.git
-#
 gp_format_username_repo() {
     echo "$(git config --get remote.origin.url | sed 's|^.*//||; s/.*@//; s/[^:/]\+[:/]//; s/.git$//')"
 }
@@ -498,6 +489,7 @@ function updatePrompt() {
   export __GIT_PROMPT_IGNORE_STASH=${GIT_PROMPT_IGNORE_STASH}
   export __GIT_PROMPT_SHOW_UPSTREAM=${GIT_PROMPT_SHOW_UPSTREAM}
   export __GIT_PROMPT_IGNORE_SUBMODULES=${GIT_PROMPT_IGNORE_SUBMODULES}
+  export __GIT_PROMPT_WITH_USERNAME_AND_REPO=${GIT_PROMPT_WITH_USERNAME_AND_REPO}
 
   if [ -z "${GIT_PROMPT_SHOW_UNTRACKED_FILES}" ]; then
     export __GIT_PROMPT_SHOW_UNTRACKED_FILES=normal
@@ -524,8 +516,12 @@ function updatePrompt() {
   if [[ "." == "$GIT_REMOTE" ]]; then
     unset GIT_REMOTE
   fi
+  local GIT_REMOTE_USERNAME_REPO="$(replaceSymbols ${git_status_fields[2]})"
+  if [[ "." == "$GIT_REMOTE_USERNAME_REPO" ]]; then
+    unset GIT_REMOTE_USERNAME_REPO
+  fi
 
-  local GIT_UPSTREAM_PRIVATE="${git_status_fields[2]}"
+  local GIT_UPSTREAM_PRIVATE="${git_status_fields[3]}"
   if [[ -z "${__GIT_PROMPT_SHOW_UPSTREAM}" || "^" == "$GIT_UPSTREAM_PRIVATE" ]]; then
     unset GIT_UPSTREAM
   else
@@ -533,18 +529,25 @@ function updatePrompt() {
     local GIT_FORMATTED_UPSTREAM="${GIT_PROMPT_UPSTREAM//_UPSTREAM_/\$GIT_UPSTREAM}"
   fi
 
-  local GIT_STAGED=${git_status_fields[3]}
-  local GIT_CONFLICTS=${git_status_fields[4]}
-  local GIT_CHANGED=${git_status_fields[5]}
-  local GIT_UNTRACKED=${git_status_fields[6]}
-  local GIT_STASHED=${git_status_fields[7]}
-  local GIT_CLEAN=${git_status_fields[8]}
+  local GIT_STAGED=${git_status_fields[4]}
+  local GIT_CONFLICTS=${git_status_fields[5]}
+  local GIT_CHANGED=${git_status_fields[6]}
+  local GIT_UNTRACKED=${git_status_fields[7]}
+  local GIT_STASHED=${git_status_fields[8]}
+  local GIT_CLEAN=${git_status_fields[9]}
 
   local NEW_PROMPT="$EMPTY_PROMPT"
   if [[ -n "$git_status_fields" ]]; then
 
-    local USERNAME_REPO=$(gp_format_username_repo)
-    local GIT_PROMPT_PREFIX_FINAL="${GIT_PROMPT_PREFIX//_USERNAME_REPO_/${USERNAME_REPO}${ResetColor}}"
+    if [[ -z "${GIT_REMOTE_USERNAME_REPO}" ]]; then
+      local GIT_PROMPT_PREFIX_FINAL="${GIT_PROMPT_PREFIX//_USERNAME_REPO_/${ResetColor}}"
+    else 
+      if [[ -z "${GIT_PROMPT_USERNAME_REPO_SEPARATOR}" ]]; then
+        local GIT_PROMPT_PREFIX_FINAL="${GIT_PROMPT_PREFIX//_USERNAME_REPO_/${GIT_REMOTE_USERNAME_REPO}${ResetColor}}"
+      else
+        local GIT_PROMPT_PREFIX_FINAL="${GIT_PROMPT_PREFIX//_USERNAME_REPO_/${GIT_REMOTE_USERNAME_REPO}${ResetColor}${GIT_PROMPT_USERNAME_REPO_SEPARATOR}}"
+      fi
+    fi
 
     case "$GIT_BRANCH" in
       $GIT_PROMPT_MASTER_BRANCHES)
