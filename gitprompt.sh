@@ -448,7 +448,7 @@ function replaceSymbols() {
   # Disable globbing, so a * could be used as symbol here
   set -f
 
-  if [[ ! -v GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING ]]; then
+  if [ -z ${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING+x} ]; then
     GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING=L
   fi
 
