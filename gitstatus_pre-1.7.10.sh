@@ -19,6 +19,19 @@ if [ -z "${__GIT_PROMPT_DIR}" ]; then
   __GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 fi
 
+if [[ "${__GIT_PROMPT_WITH_USERNAME_AND_REPO}" == "1" ]]; then
+  # returns "user/repo" from remote.origin.url git variable
+  #
+  # supports urls:
+  # https://user@bitbucket.org/user/repo.git
+  # https://github.com/user/repo.git
+  # git@github.com:user/repo.git
+  #
+  remote_url=$(git config --get remote.origin.url | sed 's|^.*//||; s/.*@//; s/[^:/]\+[:/]//; s/.git$//')
+else
+  remote_url='.'
+fi
+
 gitsym=$( git symbolic-ref HEAD 2>/dev/null )
 
 #If exit status OK, we have a branch
@@ -99,6 +112,7 @@ else
     fi
   else
     remote='_NO_REMOTE_TRACKING_'
+    remote_url='.'
     unset upstream
   fi
 fi
@@ -111,9 +125,10 @@ if [[ -z "$upstream" ]] ; then
   upstream='^'
 fi
 
-printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
+printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
   "$branch" \
   "$remote" \
+  "$remote_url" \
   "$upstream" \
   $num_staged \
   $num_conflicts \
