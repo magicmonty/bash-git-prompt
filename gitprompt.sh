@@ -324,6 +324,11 @@ function setGitPrompt() {
   if [[ ! -e "$repo" ]] && [[ "$GIT_PROMPT_ONLY_IN_REPO" = 1 ]]; then
     # we do not permit bash-git-prompt outside git repos, so nothing to do
     PS1="$OLD_GITPROMPT"
+
+    if test -s "$__GIT_PROMPT_DIR/git_user_cmds.sh"; then
+      unset -f mv rm mv_mv rm_rm;
+    fi;
+
     return
   fi
 
@@ -336,6 +341,10 @@ function setGitPrompt() {
     PS1="$EMPTY_PROMPT"
     return
   fi
+
+  if test -s "$__GIT_PROMPT_DIR/git_user_cmds.sh"; then
+    source "$__GIT_PROMPT_DIR/git_user_cmds.sh";
+  fi;
 
   local FETCH_REMOTE_STATUS=1
   if [[ "$GIT_PROMPT_FETCH_REMOTE_STATUS" = 0 ]]; then
