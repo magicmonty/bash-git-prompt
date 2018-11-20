@@ -3,8 +3,8 @@
 # being displayed.
 
 git_prompt_help() {
-  source ${__GIT_PROMPT_DIR}/prompt-colors.sh
-  source ${__GIT_PROMPT_DIR}/themes/Default.bgptheme
+  source "${__GIT_PROMPT_DIR}/prompt-colors.sh"
+  source "${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
  cat <<EOF | sed 's/\\\[\\033//g' | sed 's/\\\]//g'
 The git prompt format is ${GIT_PROMPT_PREFIX}<BRANCH><TRACKING>${GIT_PROMPT_SEPARATOR}<LOCALSTATUS>${GIT_PROMPT_SUFFIX}
 
@@ -61,13 +61,13 @@ EOF
 git_prompt_color_samples() {
   
   showColor() {
-    local color=$(eval echo "\${$1}")
-    echo -e "${color}$1${ResetColor}" | sed 's/\\\]//g'  | sed 's/\\\[//g'
+    local color=$(eval echo "\${${1}}")
+    echo -e "${color}${1}${ResetColor}" | sed 's/\\\]//g'  | sed 's/\\\[//g'
   }
 
   local x=0
   while (( x < 8 )) ; do
-    showColor ${ColorNames[x]}
+    showColor "${ColorNames[x]}"
     showColor "Dim${ColorNames[x]}"
     showColor "Bold${ColorNames[x]}"
     showColor "Bright${ColorNames[x]}"
