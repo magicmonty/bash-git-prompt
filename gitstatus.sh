@@ -16,7 +16,7 @@ if [[ -z "${__GIT_PROMPT_DIR+x}" ]]; then
 fi
 
 if [[ "${__GIT_PROMPT_IGNORE_SUBMODULES}" == "1" ]]; then
-  _ignore_submodules=--ignore-submodules
+  _ignore_submodules="--ignore-submodules"
 else
   _ignore_submodules=
 fi
@@ -34,8 +34,7 @@ else
   remote_url='.'
 fi
 
-
-gitstatus=$( LC_ALL=C git status "${_ignore_submodules}" --untracked-files="${__GIT_PROMPT_SHOW_UNTRACKED_FILES:-normal}" --porcelain --branch )
+gitstatus=$( LC_ALL=C git status ${_ignore_submodules} --untracked-files="${__GIT_PROMPT_SHOW_UNTRACKED_FILES:-normal}" --porcelain --branch )
 
 # if the status is fatal, exit now
 [[ ! "${?}" ]] && exit 0
