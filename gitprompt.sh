@@ -9,7 +9,7 @@ function async_run() {
 function git_prompt_dir() {
   # assume the gitstatus.sh is in the same directory as this script
   # code thanks to http://stackoverflow.com/questions/59895
-  if [[ -z "${__GIT_PROMPT_DIR-}" ]]; then
+  if [[ -z "${__GIT_PROMPT_DIR+x}" ]]; then
     local SOURCE="${BASH_SOURCE[0]}"
     while [[ -h "${SOURCE}" ]]; do
       local DIR="$( command cd -P "$( dirname "${SOURCE}" )" && pwd )"
@@ -26,12 +26,12 @@ function echoc() {
 
 function get_theme() {
   local CUSTOM_THEME_FILE="${HOME}/.git-prompt-colors.sh"
-  if [[ ! (-z "${GIT_PROMPT_THEME_FILE-}" ) ]]; then
+  if [[ ! (-z "${GIT_PROMPT_THEME_FILE+x}" ) ]]; then
     CUSTOM_THEME_FILE="${GIT_PROMPT_THEME_FILE}"
   fi
   local DEFAULT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
 
-  if [[ -z "${GIT_PROMPT_THEME-}" ]]; then
+  if [[ -z "${GIT_PROMPT_THEME+x}" ]]; then
     if [[ -r "${CUSTOM_THEME_FILE}" ]]; then
       GIT_PROMPT_THEME="Custom"
       __GIT_PROMPT_THEME_FILE="${CUSTOM_THEME_FILE}"
@@ -203,7 +203,7 @@ gp_format_exit_status() {
   # Suppress STDERR in case RETVAL is not an integer (in such cases, RETVAL
   # is echoed verbatim)
   if [[ "${RETVAL}" -gt 128 ]] 2>/dev/null; then
-    SIGNAL=$(( ${RETVAL} - 128 ))
+    SIGNAL=$(( RETVAL - 128 ))
     kill -l "${SIGNAL}" 2>/dev/null || echo "${RETVAL}"
   else
     echo "${RETVAL}"
@@ -211,7 +211,7 @@ gp_format_exit_status() {
 }
 
 gp_format_username_repo() {
-    echo "$(git config --get remote.origin.url | sed 's|^.*//||; s/.*@//; s/[^:/]\+[:/]//; s/.git$//')"
+    git config --get remote.origin.url | sed 's|^.*//||; s/.*@//; s/[^:/]\+[:/]//; s/.git$//'
 }
 
 function git_prompt_config() {
@@ -247,9 +247,9 @@ function git_prompt_config() {
 
   # Do this only once to define PROMPT_START and PROMPT_END
 
-  if [[ -z "${PROMPT_START-}" || -z "${PROMPT_END-}" ]]; then
+  if [[ -z "${PROMPT_START+x}" || -z "${PROMPT_END+x}" ]]; then
 
-    if [[ -z "${GIT_PROMPT_START-}" ]] ; then
+    if [[ -z "${GIT_PROMPT_START+x}" ]] ; then
       if ${_isroot}; then
         PROMPT_START="${GIT_PROMPT_START_ROOT}"
       else
@@ -259,7 +259,7 @@ function git_prompt_config() {
       PROMPT_START="${GIT_PROMPT_START}"
     fi
 
-    if [[ -z "${GIT_PROMPT_END-}" ]] ; then
+    if [[ -z "${GIT_PROMPT_END+x}" ]] ; then
       if $_isroot; then
         PROMPT_END="${GIT_PROMPT_END_ROOT}"
       else
@@ -285,10 +285,10 @@ function git_prompt_config() {
   fi
 
   # fetch remote revisions every other $GIT_PROMPT_FETCH_TIMEOUT (default 5) minutes
-  if [[ -z "${GIT_PROMPT_FETCH_TIMEOUT-}" ]]; then
+  if [[ -z "${GIT_PROMPT_FETCH_TIMEOUT+x}" ]]; then
     GIT_PROMPT_FETCH_TIMEOUT="5"
   fi
-  if [[ -z "${__GIT_STATUS_CMD-}" ]] ; then          # if GIT_STATUS_CMD not defined..
+  if [[ -z "${__GIT_STATUS_CMD+x}" ]] ; then          # if GIT_STATUS_CMD not defined..
     git_prompt_dir
     if ! gp_maybe_set_envar_to_path __GIT_STATUS_CMD "${__GIT_PROMPT_DIR}/${GIT_PROMPT_STATUS_COMMAND}" ; then
       echo 1>&2 "Cannot find ${GIT_PROMPT_STATUS_COMMAND}!"
@@ -354,19 +354,19 @@ function setGitPrompt() {
   if [[ -e "${repo}/.bash-git-rc" ]]; then
     # The config file can only contain variable declarations on the form A_B=0 or G_P=all
     local CONFIG_SYNTAX="^(FETCH_REMOTE_STATUS|GIT_PROMPT_SHOW_UNTRACKED_FILES|GIT_PROMPT_IGNORE_SUBMODULES|GIT_PROMPT_IGNORE)=[0-9a-z]+$"
-    if egrep -q -v "${CONFIG_SYNTAX}" "${repo}/.bash-git-rc"; then
+    if grep -q -v -E "${CONFIG_SYNTAX}" "${repo}/.bash-git-rc"; then
       echo ".bash-git-rc can only contain variable values on the form NAME=value. Ignoring file." >&2
     else
       source "${repo}/.bash-git-rc"
     fi
   fi
 
-  if [[ -z "${GIT_PROMPT_SHOW_UNTRACKED_FILES-}" ]]; then
+  if [[ -z "${GIT_PROMPT_SHOW_UNTRACKED_FILES+x}" ]]; then
     GIT_PROMPT_SHOW_UNTRACKED_FILES="${OLD_GIT_PROMPT_SHOW_UNTRACKED_FILES}"
   fi
   unset OLD_GIT_PROMPT_SHOW_UNTRACKED_FILES
 
-  if [[ -z "${GIT_PROMPT_IGNORE_SUBMODULES-}" ]]; then
+  if [[ -z "${GIT_PROMPT_IGNORE_SUBMODULES+x}" ]]; then
     GIT_PROMPT_IGNORE_SUBMODULES="${OLD_GIT_PROMPT_IGNORE_SUBMODULES}"
   fi
   unset OLD_GIT_PROMPT_IGNORE_SUBMODULES
@@ -390,11 +390,11 @@ function olderThanMinutes() {
   local matches
   local find_exit_code
 
-  if [[ -z "${_find_command-}" ]]; then
+  if [[ -z "${_find_command+x}" ]]; then
     if command -v gfind > /dev/null; then
-      _find_command=gfind
+      _find_command="gfind"
     else
-      _find_command=find
+      _find_command="find"
     fi
   fi
 
@@ -446,7 +446,7 @@ function replaceSymbols() {
   # Disable globbing, so a * could be used as symbol here
   set -f
 
-  if [[ -z ${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING-} ]]; then
+  if [[ -z ${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING+x} ]]; then
     GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING=L
   fi
 
@@ -464,7 +464,7 @@ function createPrivateIndex {
   # Create a copy of the index to avoid conflicts with parallel git commands, e.g. git rebase.
   local __GIT_INDEX_FILE
   local __GIT_INDEX_PRIVATE
-  if [[ -z "${GIT_INDEX_FILE-}" ]]; then
+  if [[ -z "${GIT_INDEX_FILE+x}" ]]; then
     __GIT_INDEX_FILE="$(git rev-parse --git-dir)/index"
   else
     __GIT_INDEX_FILE="${GIT_INDEX_FILE}"
@@ -489,13 +489,13 @@ function updatePrompt() {
   export __GIT_PROMPT_IGNORE_SUBMODULES="${GIT_PROMPT_IGNORE_SUBMODULES-}"
   export __GIT_PROMPT_WITH_USERNAME_AND_REPO="${GIT_PROMPT_WITH_USERNAME_AND_REPO-}"
 
-  if [[ -z "${GIT_PROMPT_SHOW_UNTRACKED_FILES-}" ]]; then
+  if [[ -z "${GIT_PROMPT_SHOW_UNTRACKED_FILES+x}" ]]; then
     export __GIT_PROMPT_SHOW_UNTRACKED_FILES=normal
   else
     export __GIT_PROMPT_SHOW_UNTRACKED_FILES="${GIT_PROMPT_SHOW_UNTRACKED_FILES}"
   fi
 
-  if [[ -z "${GIT_PROMPT_SHOW_CHANGED_FILES_COUNT-}" ]]; then
+  if [[ -z "${GIT_PROMPT_SHOW_CHANGED_FILES_COUNT+x}" ]]; then
     export __GIT_PROMPT_SHOW_CHANGED_FILES_COUNT=1
   else
     export __GIT_PROMPT_SHOW_CHANGED_FILES_COUNT="${GIT_PROMPT_SHOW_CHANGED_FILES_COUNT}"
@@ -507,7 +507,7 @@ function updatePrompt() {
   export GIT_INDEX_FILE="${GIT_INDEX_PRIVATE}"
 
   local -a git_status_fields
-  git_status_fields=($("${__GIT_STATUS_CMD}" 2>/dev/null))
+  mapfile -t git_status_fields < <("${__GIT_STATUS_CMD}" 2>/dev/null)
 
   export GIT_BRANCH=$(replaceSymbols "${git_status_fields[0]}")
   local GIT_REMOTE="$(replaceSymbols "${git_status_fields[1]}")"
@@ -520,7 +520,7 @@ function updatePrompt() {
   fi
 
   local GIT_UPSTREAM_PRIVATE="${git_status_fields[3]}"
-  if [[ -z "${__GIT_PROMPT_SHOW_UPSTREAM-}" || "^" == "${GIT_UPSTREAM_PRIVATE}" ]]; then
+  if [[ -z "${__GIT_PROMPT_SHOW_UPSTREAM+x}" || "^" == "${GIT_UPSTREAM_PRIVATE}" ]]; then
     unset GIT_UPSTREAM
   else
     export GIT_UPSTREAM="${GIT_UPSTREAM_PRIVATE}"
@@ -537,10 +537,10 @@ function updatePrompt() {
   local NEW_PROMPT="${EMPTY_PROMPT}"
   if [[ -n "${git_status_fields}" ]]; then
 
-    if [[ -z "${GIT_REMOTE_USERNAME_REPO-}" ]]; then
+    if [[ -z "${GIT_REMOTE_USERNAME_REPO+x}" ]]; then
       local GIT_PROMPT_PREFIX_FINAL="${GIT_PROMPT_PREFIX//_USERNAME_REPO_/${ResetColor}}"
     else 
-      if [[ -z "${GIT_PROMPT_USERNAME_REPO_SEPARATOR-}" ]]; then
+      if [[ -z "${GIT_PROMPT_USERNAME_REPO_SEPARATOR+x}" ]]; then
         local GIT_PROMPT_PREFIX_FINAL="${GIT_PROMPT_PREFIX//_USERNAME_REPO_/${GIT_REMOTE_USERNAME_REPO}${ResetColor}}"
       else
         local GIT_PROMPT_PREFIX_FINAL="${GIT_PROMPT_PREFIX//_USERNAME_REPO_/${GIT_REMOTE_USERNAME_REPO}${ResetColor}${GIT_PROMPT_USERNAME_REPO_SEPARATOR}}"
@@ -568,7 +568,7 @@ function updatePrompt() {
         v="\${GIT_${1}-} ${2}"
       fi
       if eval "test ${v-}" ; then
-        if [[ "${#}" -lt 2 || "${3-}" != '-' ]] && [[ "x{$__GIT_PROMPT_SHOW_CHANGED_FILES_COUNT}" == "x1" || "x${1}" == "xREMOTE" ]]; then
+        if [[ "${#}" -lt 2 || "${3-}" != '-' ]] && [[ "${__GIT_PROMPT_SHOW_CHANGED_FILES_COUNT-}" == "1" || "${1-}" == "REMOTE" ]]; then
           __add_status "\$GIT_PROMPT_${1}\$GIT_${1}\$ResetColor"
         else
           __add_status "\$GIT_PROMPT_${1}\$ResetColor"
@@ -611,11 +611,11 @@ function updatePrompt() {
 function gp_add_virtualenv_to_prompt {
   local ACCUMULATED_VENV_PROMPT=""
   local VENV=""
-  if [[ -n "${VIRTUAL_ENV-}" && -z "${VIRTUAL_ENV_DISABLE_PROMPT-}" ]]; then
+  if [[ -n "${VIRTUAL_ENV-}" && -z "${VIRTUAL_ENV_DISABLE_PROMPT+x}" ]]; then
     VENV=$(basename "${VIRTUAL_ENV}")
     ACCUMULATED_VENV_PROMPT="${ACCUMULATED_VENV_PROMPT}${GIT_PROMPT_VIRTUALENV//_VIRTUALENV_/${VENV}}"
   fi
-  if [[ -n "${NODE_VIRTUAL_ENV-}" && -z "${NODE_VIRTUAL_ENV_DISABLE_PROMPT-}" ]]; then
+  if [[ -n "${NODE_VIRTUAL_ENV-}" && -z "${NODE_VIRTUAL_ENV_DISABLE_PROMPT+x}" ]]; then
     VENV=$(basename "${NODE_VIRTUAL_ENV}")
     ACCUMULATED_VENV_PROMPT="${ACCUMULATED_VENV_PROMPT}${GIT_PROMPT_VIRTUALENV//_VIRTUALENV_/${VENV}}"
   fi
@@ -662,15 +662,15 @@ function git_prompt_toggle() {
 }
 
 function gp_install_prompt {
-  if [[ -z "${OLD_GITPROMPT-}" ]]; then
+  if [[ -z "${OLD_GITPROMPT+x}" ]]; then
     OLD_GITPROMPT=${PS1}
   fi
 
-  if [[ -z "${GIT_PROMPT_OLD_DIR_WAS_GIT-}" ]]; then
+  if [[ -z "${GIT_PROMPT_OLD_DIR_WAS_GIT+x}" ]]; then
     GIT_PROMPT_OLD_DIR_WAS_GIT=$(we_are_on_repo)
   fi
 
-  if [[ -z "${PROMPT_COMMAND}" ]]; then
+  if [[ -z "${PROMPT_COMMAND+x}" ]]; then
     PROMPT_COMMAND=setGitPrompt
   else
     PROMPT_COMMAND="${PROMPT_COMMAND//$'\n'/;}" # convert all new lines to semi-colons

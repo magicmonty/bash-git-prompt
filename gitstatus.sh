@@ -5,7 +5,7 @@
 #
 # Alan K. Stebbens <aks@stebbens.org> [http://github.com/aks]
 
-if [[ -z "${__GIT_PROMPT_DIR-}" ]]; then
+if [[ -z "${__GIT_PROMPT_DIR+x}" ]]; then
   SOURCE="${BASH_SOURCE[0]}"
   while [[ -h "${SOURCE}" ]]; do
     DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
@@ -38,16 +38,16 @@ fi
 gitstatus=$( LC_ALL=C git status "${_ignore_submodules}" --untracked-files="${__GIT_PROMPT_SHOW_UNTRACKED_FILES:-normal}" --porcelain --branch )
 
 # if the status is fatal, exit now
-[[ "${?}" -ne 0 ]] && exit 0
+[[ ! "${?}" ]] && exit 0
 
 git_dir="$(git rev-parse --git-dir 2>/dev/null)"
-[[ -z "${git_dir-}" ]] && exit 0
+[[ -z "${git_dir+x}" ]] && exit 0
 
 __git_prompt_read ()
 {
   local f="${1}"
   shift
-  test -r "${f}" && read "${@}" <"${f}"
+  test -r "${f}" && read -r "${@}" <"${f}"
 }
 
 state=""
@@ -173,11 +173,11 @@ else
   fi
 fi
 
-if [[ -z "${remote-}" ]] ; then
+if [[ -z "${remote+x}" ]] ; then
   remote='.'
 fi
 
-if [[ -z "${upstream-}" ]] ; then
+if [[ -z "${upstream+x}" ]] ; then
   upstream='^'
 fi
 
