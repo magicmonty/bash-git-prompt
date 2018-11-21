@@ -67,8 +67,8 @@ if (( num_changed == 0 && num_staged == 0 && num_untracked == 0 && num_stashed =
   clean=1
 fi
 
-remote=
-upstream=
+remote=""
+upstream=""
 
 if [[ -z "${branch-}" ]]; then
   tag=$( git describe --tags --exact-match 2>/dev/null )
@@ -117,23 +117,23 @@ else
   fi
 fi
 
-if [[ -z "${remote-}" ]] ; then
+if [[ -z "${remote:+x}" ]] ; then
   remote='.'
 fi
 
-if [[ -z "${upstream-}" ]] ; then
+if [[ -z "${upstream:+x}" ]] ; then
   upstream='^'
 fi
 
 printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
-  "$branch" \
-  "$remote" \
-  "$remote_url" \
-  "$upstream" \
+  "${branch}" \
+  "${remote}" \
+  "${remote_url}" \
+  "${upstream}" \
   "${num_staged}" \
   "${num_conflicts}" \
   "${num_changed}" \
-  "${num_untracked}" \
+  "${num_untracked// /}" \
   "${num_stashed}" \
   "${clean}"
 
