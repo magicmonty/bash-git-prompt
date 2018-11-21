@@ -9,7 +9,7 @@ function async_run() {
 function git_prompt_dir() {
   # assume the gitstatus.sh is in the same directory as this script
   # code thanks to http://stackoverflow.com/questions/59895
-  if [[ -z "${__GIT_PROMPT_DIR+x}" ]]; then
+  if [[ -z "${__GIT_PROMPT_DIR:+x}" ]]; then
     local SOURCE="${BASH_SOURCE[0]}"
     while [[ -h "${SOURCE}" ]]; do
       local DIR="$( command cd -P "$( dirname "${SOURCE}" )" && pwd )"
@@ -26,7 +26,7 @@ function echoc() {
 
 function get_theme() {
   local CUSTOM_THEME_FILE="${HOME}/.git-prompt-colors.sh"
-  if [[ ! (-z "${GIT_PROMPT_THEME_FILE+x}" ) ]]; then
+  if [[ ! (-z "${GIT_PROMPT_THEME_FILE:+x}" ) ]]; then
     CUSTOM_THEME_FILE="${GIT_PROMPT_THEME_FILE}"
   fi
   local DEFAULT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
@@ -147,9 +147,9 @@ function git_prompt_make_custom_theme() {
 function gp_set_file_var() {
   local envar="${1}"
   local file="${2}"
-  if eval "[[ -n \"\$${envar}\" && -r \"\$${envar}\" ]]" ; then # is envar set to a readable file?
+  if eval "[[ -n \"\${${envar}+x}\" && -r \"\${${envar}+x}\" ]]" ; then # is envar set to a readable file?
     local basefile
-    eval "basefile=\"\`basename \\\"\$${envar}\\\"\`\""   # assign basefile
+    eval "basefile=\"\`basename \\\"\${${envar}}\\\"\`\""   # assign basefile
     if [[ "${basefile}" = "${file}" || "${basefile}" = ".${file}" ]]; then
       return 0
     fi
@@ -235,7 +235,7 @@ function git_prompt_config() {
     prompt_callback="prompt_callback_default"
   fi
 
-  if [[ "${GIT_PROMPT_LAST_COMMAND_STATE}" = 0 ]]; then
+  if [[ "${GIT_PROMPT_LAST_COMMAND_STATE:-0}" = 0 ]]; then
     LAST_COMMAND_INDICATOR="${GIT_PROMPT_COMMAND_OK}";
   else
     LAST_COMMAND_INDICATOR="${GIT_PROMPT_COMMAND_FAIL}";
@@ -247,45 +247,48 @@ function git_prompt_config() {
 
   # Do this only once to define PROMPT_START and PROMPT_END
 
-  if [[ -z "${PROMPT_START+x}" || -z "${PROMPT_END+x}" ]]; then
+  if [[ -z "${PROMPT_START:+x}" || -z "${PROMPT_END:+x}" ]]; then
 
-    if [[ -z "${GIT_PROMPT_START+x}" ]] ; then
+    if [[ -z "${GIT_PROMPT_START:+x}" ]] ; then
       if ${_isroot}; then
-        PROMPT_START="${GIT_PROMPT_START_ROOT}"
+        PROMPT_START="${GIT_PROMPT_START_ROOT-}"
       else
-        PROMPT_START="${GIT_PROMPT_START_USER}"
+        PROMPT_START="${GIT_PROMPT_START_USER-}"
       fi
     else
-      PROMPT_START="${GIT_PROMPT_START}"
+      PROMPT_START="${GIT_PROMPT_START-}"    
     fi
 
-    if [[ -z "${GIT_PROMPT_END+x}" ]] ; then
+    if [[ -z "${GIT_PROMPT_END:+x}" ]] ; then
       if $_isroot; then
-        PROMPT_END="${GIT_PROMPT_END_ROOT}"
+        PROMPT_END="${GIT_PROMPT_END_ROOT-}"
       else
-        PROMPT_END="${GIT_PROMPT_END_USER}"
+        PROMPT_END="${GIT_PROMPT_END_USER-}"
       fi
     else
-      PROMPT_END="${GIT_PROMPT_END}"
+      PROMPT_END="${GIT_PROMPT_END-}"
     fi
   fi
 
   # set GIT_PROMPT_LEADING_SPACE to 0 if you want to have no leading space in front of the GIT prompt
-  if [[ "${GIT_PROMPT_LEADING_SPACE-}" = 0 ]]; then
+  if [[ "${GIT_PROMPT_LEADING_SPACE:-0}" == 0 ]]; then
     PROMPT_LEADING_SPACE=""
   else
     PROMPT_LEADING_SPACE=" "
   fi
 
-  if [[ "${GIT_PROMPT_ONLY_IN_REPO-}" = 1 ]]; then
+  if [[ "${GIT_PROMPT_ONLY_IN_REPO:-0}" == 1 ]]; then
     EMPTY_PROMPT="${OLD_GITPROMPT}"
-  else
+  elif [[ "${GIT_PROMPT_WITH_VIRTUAL_ENV:-1}" == 1 ]]; then
     local ps="$(gp_add_virtualenv_to_prompt)${PROMPT_START}$(${prompt_callback})${PROMPT_END}"
+    EMPTY_PROMPT="${ps//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
+  else
+    local ps="${PROMPT_START}$(${prompt_callback})${PROMPT_END}"
     EMPTY_PROMPT="${ps//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
   fi
 
   # fetch remote revisions every other $GIT_PROMPT_FETCH_TIMEOUT (default 5) minutes
-  if [[ -z "${GIT_PROMPT_FETCH_TIMEOUT+x}" ]]; then
+  if [[ -z "${GIT_PROMPT_FETCH_TIMEOUT:+x}" ]]; then
     GIT_PROMPT_FETCH_TIMEOUT="5"
   fi
   if [[ -z "${__GIT_STATUS_CMD+x}" ]] ; then          # if GIT_STATUS_CMD not defined..
@@ -484,22 +487,18 @@ function updatePrompt() {
 
   git_prompt_config
 
-  export __GIT_PROMPT_IGNORE_STASH="${GIT_PROMPT_IGNORE_STASH-}"
-  export __GIT_PROMPT_SHOW_UPSTREAM="${GIT_PROMPT_SHOW_UPSTREAM-}"
-  export __GIT_PROMPT_IGNORE_SUBMODULES="${GIT_PROMPT_IGNORE_SUBMODULES-}"
-  export __GIT_PROMPT_WITH_USERNAME_AND_REPO="${GIT_PROMPT_WITH_USERNAME_AND_REPO-}"
+  export __GIT_PROMPT_IGNORE_STASH="${GIT_PROMPT_IGNORE_STASH:-0}"
+  export __GIT_PROMPT_SHOW_UPSTREAM="${GIT_PROMPT_SHOW_UPSTREAM:-0}"
+  export __GIT_PROMPT_IGNORE_SUBMODULES="${GIT_PROMPT_IGNORE_SUBMODULES:-0}"
+  export __GIT_PROMPT_WITH_USERNAME_AND_REPO="${GIT_PROMPT_WITH_USERNAME_AND_REPO:-0}"
 
-  if [[ -z "${GIT_PROMPT_SHOW_UNTRACKED_FILES+x}" ]]; then
+  if [[ -z "${GIT_PROMPT_SHOW_UNTRACKED_FILES:+x}" ]]; then
     export __GIT_PROMPT_SHOW_UNTRACKED_FILES=normal
   else
     export __GIT_PROMPT_SHOW_UNTRACKED_FILES="${GIT_PROMPT_SHOW_UNTRACKED_FILES}"
   fi
 
-  if [[ -z "${GIT_PROMPT_SHOW_CHANGED_FILES_COUNT+x}" ]]; then
-    export __GIT_PROMPT_SHOW_CHANGED_FILES_COUNT=1
-  else
-    export __GIT_PROMPT_SHOW_CHANGED_FILES_COUNT="${GIT_PROMPT_SHOW_CHANGED_FILES_COUNT}"
-  fi
+  local __GIT_PROMPT_SHOW_CHANGED_FILES_COUNT="${GIT_PROMPT_SHOW_CHANGED_FILES_COUNT:-0}"
 
   local GIT_INDEX_PRIVATE="$(createPrivateIndex)"
   #important to define GIT_INDEX_FILE as local: This way it only affects this function (and below) - even with the export afterwards
@@ -567,17 +566,17 @@ function updatePrompt() {
       else
         v="\${GIT_${1}-} ${2}"
       fi
-      if eval "test ${v-}" ; then
-        if [[ "${#}" -lt 2 || "${3-}" != '-' ]] && [[ "${__GIT_PROMPT_SHOW_CHANGED_FILES_COUNT-}" == "1" || "${1-}" == "REMOTE" ]]; then
-          __add_status "\$GIT_PROMPT_${1}\$GIT_${1}\$ResetColor"
+      if eval "[[ ${v} ]]" ; then
+        if [[ "${#}" -lt 2 || "${3-}" != '-' ]] && [[ "${__GIT_PROMPT_SHOW_CHANGED_FILES_COUNT}" == "1" || "${1-}" == "REMOTE" ]]; then
+          __add_status "\${GIT_PROMPT_${1}}\${GIT_${1}}\${ResetColor}"
         else
-          __add_status "\$GIT_PROMPT_${1}\$ResetColor"
+          __add_status "\${GIT_PROMPT_${1}}\${ResetColor}"
         fi
       fi
     }
 
     __add_gitvar_status() {
-      __add_status "\$GIT_PROMPT_${1}\$GIT_${1}\$ResetColor"
+      __add_status "\${GIT_PROMPT_${1}}\${GIT_${1}}\${ResetColor}"
     }
 
     # __add_status SOMETEXT
@@ -588,7 +587,7 @@ function updatePrompt() {
     __chk_gitvar_status 'REMOTE'       '-n'
     if [[ "${GIT_CLEAN}" -eq 0 ]] || [[ "${GIT_PROMPT_CLEAN}" != "" ]]; then
       __add_status        "${GIT_PROMPT_SEPARATOR}"
-      __chk_gitvar_status 'STAGED'     '!= "0" -a ${GIT_STAGED-} != "^"'
+      __chk_gitvar_status 'STAGED'     '!= "0" && ${GIT_STAGED-} != "^"'
       __chk_gitvar_status 'CONFLICTS'  '!= "0"'
       __chk_gitvar_status 'CHANGED'    '!= "0"'
       __chk_gitvar_status 'UNTRACKED'  '!= "0"'
@@ -653,7 +652,7 @@ function prompt_callback_default {
 
 # toggle gitprompt
 function git_prompt_toggle() {
-  if [[ "${GIT_PROMPT_DISABLE-}" = 1 ]]; then
+  if [[ "${GIT_PROMPT_DISABLE:-0}" = 1 ]]; then
     GIT_PROMPT_DISABLE=0
   else
     GIT_PROMPT_DISABLE=1

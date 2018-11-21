@@ -2,7 +2,6 @@
 # prompt-colors.sh
 #
 # source this file to get color definitions
-# if $debug or $verbose is set, the definitions
 # are also printed to STDERR.
 
 define_color_names() {
@@ -60,9 +59,6 @@ define_color_names() {
   # def_color NAME ATTRCODE COLORCODE
   _def_color() {
     local def="${1}=\"\`_term_color ${2} ${3}\`\""
-    if [[ -n "${debug}${verbose}" ]]; then
-      echo 1>&2 "+ ${def}"
-    fi
     eval "${def}"
   }
 
@@ -77,6 +73,6 @@ define_color_names() {
 }
 
 # do the color definitions only once
-if [[ "${#ColorNames[*]}" = 0 || -z "${IntenseBlack-}" || -z "${ResetColor-}" ]]; then
+if [[ -z "${ColorNames+x}" || "${#ColorNames[*]}" = 0 || -z "${IntenseBlack:+x}" || -z "${ResetColor:+x}" ]]; then
   define_color_names
 fi
