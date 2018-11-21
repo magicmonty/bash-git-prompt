@@ -27,7 +27,7 @@ override_git_prompt_colors() {
   #Overrides the prompt_callback function used by bash-git-prompt
   function prompt_callback {
     local PS1="\u@\h: $(gp_truncate_pwd)"
-    gp_set_window_title "$PS1"
+    gp_set_window_title "${PS1}"
     echo -n "${Yellow}[${PS1}]${ResetColor}"
   }
 
