@@ -5,7 +5,9 @@
 #
 # Alan K. Stebbens <aks@stebbens.org> [http://github.com/aks]
 
-if [[ -z "${__GIT_PROMPT_DIR+x}" ]]; then
+set -u
+
+if [[ -z "${__GIT_PROMPT_DIR:+x}" ]]; then
   SOURCE="${BASH_SOURCE[0]}"
   while [[ -h "${SOURCE}" ]]; do
     DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
@@ -15,13 +17,13 @@ if [[ -z "${__GIT_PROMPT_DIR+x}" ]]; then
   __GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 fi
 
-if [[ "${__GIT_PROMPT_IGNORE_SUBMODULES}" == "1" ]]; then
+if [[ "${__GIT_PROMPT_IGNORE_SUBMODULES:-0}" == "1" ]]; then
   _ignore_submodules="--ignore-submodules"
 else
-  _ignore_submodules=
+  _ignore_submodules=""
 fi
 
-if [[ "${__GIT_PROMPT_WITH_USERNAME_AND_REPO}" == "1" ]]; then
+if [[ "${__GIT_PROMPT_WITH_USERNAME_AND_REPO:-0}" == "1" ]]; then
   # returns "user/repo" from remote.origin.url git variable
   #
   # supports urls:
@@ -40,13 +42,13 @@ gitstatus=$( LC_ALL=C git status ${_ignore_submodules} --untracked-files="${__GI
 [[ ! "${?}" ]] && exit 0
 
 git_dir="$(git rev-parse --git-dir 2>/dev/null)"
-[[ -z "${git_dir+x}" ]] && exit 0
+[[ -z "${git_dir:+x}" ]] && exit 0
 
 __git_prompt_read ()
 {
   local f="${1}"
   shift
-  test -r "${f}" && read -r "${@}" <"${f}"
+  [[ -r "${f}" ]] && read -r "${@}" <"${f}"
 }
 
 state=""
@@ -115,8 +117,8 @@ while IFS='' read -r line || [[ -n "${line}" ]]; do
 done <<< "${gitstatus}"
 
 num_stashed=0
-if [[ "${__GIT_PROMPT_IGNORE_STASH}" != "1" ]]; then
-  stash_file="$( git rev-parse --git-dir )/logs/refs/stash"
+if [[ "${__GIT_PROMPT_IGNORE_STASH:-0}" != "1" ]]; then
+  stash_file="${git_dir}/logs/refs/stash"
   if [[ -e "${stash_file}" ]]; then
     while IFS='' read -r wcline || [[ -n "${wcline}" ]]; do
       ((num_stashed++))
@@ -131,8 +133,8 @@ fi
 
 IFS="^" read -ra branch_fields <<< "${branch_line/\#\# }"
 branch="${branch_fields[0]}"
-remote=
-upstream=
+remote=""
+upstream=""
 
 if [[ "${branch}" == *"Initial commit on"* ]]; then
   IFS=" " read -ra fields <<< "$branch"
@@ -172,11 +174,11 @@ else
   fi
 fi
 
-if [[ -z "${remote+x}" ]] ; then
+if [[ -z "${remote:+x}" ]] ; then
   remote='.'
 fi
 
-if [[ -z "${upstream+x}" ]] ; then
+if [[ -z "${upstream:+x}" ]] ; then
   upstream='^'
 fi
 
