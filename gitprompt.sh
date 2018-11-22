@@ -491,14 +491,8 @@ function updatePrompt() {
   __GIT_PROMPT_SHOW_UPSTREAM="${GIT_PROMPT_SHOW_UPSTREAM:-0}"
   __GIT_PROMPT_IGNORE_SUBMODULES="${GIT_PROMPT_IGNORE_SUBMODULES:-0}"
   __GIT_PROMPT_WITH_USERNAME_AND_REPO="${GIT_PROMPT_WITH_USERNAME_AND_REPO:-0}"
-
-  if [[ -z "${GIT_PROMPT_SHOW_UNTRACKED_FILES:+x}" ]]; then
-    export __GIT_PROMPT_SHOW_UNTRACKED_FILES=normal
-  else
-    export __GIT_PROMPT_SHOW_UNTRACKED_FILES="${GIT_PROMPT_SHOW_UNTRACKED_FILES}"
-  fi
-
-  local __GIT_PROMPT_SHOW_CHANGED_FILES_COUNT="${GIT_PROMPT_SHOW_CHANGED_FILES_COUNT:-0}"
+  export __GIT_PROMPT_SHOW_UNTRACKED_FILES="${GIT_PROMPT_SHOW_UNTRACKED_FILES-normal}"
+  local __GIT_PROMPT_SHOW_CHANGED_FILES_COUNT="${GIT_PROMPT_SHOW_CHANGED_FILES_COUNT:-1}"
 
   local GIT_INDEX_PRIVATE="$(createPrivateIndex)"
   #important to define GIT_INDEX_FILE as local: This way it only affects this function (and below) - even with the export afterwards
@@ -568,10 +562,10 @@ function updatePrompt() {
         v="\${GIT_${1}-} ${2}"
       fi
       if eval "[[ ${v} ]]" ; then
-        if [[ "${#}" -lt "2" || "${3-}" != '-' ]] && [[ "${__GIT_PROMPT_SHOW_CHANGED_FILES_COUNT}" == "1" || "${1-}" == "REMOTE" ]]; then
-          __add_status "\${GIT_PROMPT_${1}}\${ResetColor}"
-        else
+        if [[ "${3-}" != '-' ]] && [[ "${__GIT_PROMPT_SHOW_CHANGED_FILES_COUNT}" == "1" || "${1-}" == "REMOTE" ]]; then
           __add_status "\${GIT_PROMPT_${1}}\${GIT_${1}}\${ResetColor}"
+        else
+          __add_status "\${GIT_PROMPT_${1}}\${ResetColor}"
         fi
       fi
     }
