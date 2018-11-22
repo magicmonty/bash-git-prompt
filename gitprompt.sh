@@ -271,7 +271,7 @@ function git_prompt_config() {
   fi
 
   # set GIT_PROMPT_LEADING_SPACE to 0 if you want to have no leading space in front of the GIT prompt
-  if [[ "${GIT_PROMPT_LEADING_SPACE:-0}" == 0 ]]; then
+  if [[ "${GIT_PROMPT_LEADING_SPACE:-1}" = "0" ]]; then
     PROMPT_LEADING_SPACE=""
   else
     PROMPT_LEADING_SPACE=" "
@@ -568,10 +568,10 @@ function updatePrompt() {
         v="\${GIT_${1}-} ${2}"
       fi
       if eval "[[ ${v} ]]" ; then
-        if [[ "${#}" = 2 || "${3-}" != '-' ]] && [[ "${__GIT_PROMPT_SHOW_CHANGED_FILES_COUNT}" == "1" || "${1-}" == "REMOTE" ]]; then
-          __add_status "\${GIT_PROMPT_${1}}\${GIT_${1}}\${ResetColor}"
-        else
+        if [[ "${#}" -lt "2" || "${3-}" != '-' ]] && [[ "${__GIT_PROMPT_SHOW_CHANGED_FILES_COUNT}" == "1" || "${1-}" == "REMOTE" ]]; then
           __add_status "\${GIT_PROMPT_${1}}\${ResetColor}"
+        else
+          __add_status "\${GIT_PROMPT_${1}}\${GIT_${1}}\${ResetColor}"
         fi
       fi
     }
@@ -596,7 +596,7 @@ function updatePrompt() {
       __chk_gitvar_status 'CLEAN'      '= "1"'   -
     fi
     __add_status        "${ResetColor}${GIT_PROMPT_SUFFIX}"
-
+    
     NEW_PROMPT="$(gp_add_virtualenv_to_prompt)${PROMPT_START}$(${prompt_callback})${STATUS_PREFIX}${STATUS}${PROMPT_END}"
   else
     NEW_PROMPT="${EMPTY_PROMPT}"
