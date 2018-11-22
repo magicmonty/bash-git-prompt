@@ -669,14 +669,16 @@ function gp_install_prompt {
     GIT_PROMPT_OLD_DIR_WAS_GIT=$(we_are_on_repo)
   fi
 
-  if [[ -z "${PROMPT_COMMAND+x}" ]]; then
+  if [[ -z "${PROMPT_COMMAND:+x}" ]]; then
     PROMPT_COMMAND=setGitPrompt
   else
+    echo $PROMPT_COMMAND
     PROMPT_COMMAND="${PROMPT_COMMAND//$'\n'/;}" # convert all new lines to semi-colons
-    PROMPT_COMMAND="${PROMPT_COMMAND#\;};" # remove leading semi-colon
-    PROMPT_COMMAND="${PROMPT_COMMAND%% };" # remove trailing spaces
-    PROMPT_COMMAND="${PROMPT_COMMAND%\;};" # remove trailing semi-colon
+    PROMPT_COMMAND="${PROMPT_COMMAND#\;}" # remove leading semi-colon
+    PROMPT_COMMAND="${PROMPT_COMMAND%% }" # remove trailing spaces
+    PROMPT_COMMAND="${PROMPT_COMMAND%\;}" # remove trailing semi-colon
 
+    echo $PROMPT_COMMAND
     local new_entry="setGitPrompt"
     case ";${PROMPT_COMMAND};" in
       *";${new_entry};"*)
