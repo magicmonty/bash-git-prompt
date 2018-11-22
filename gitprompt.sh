@@ -291,7 +291,7 @@ function git_prompt_config() {
   if [[ -z "${GIT_PROMPT_FETCH_TIMEOUT:+x}" ]]; then
     GIT_PROMPT_FETCH_TIMEOUT="5"
   fi
-  if [[ -z "${__GIT_STATUS_CMD+x}" ]] ; then          # if GIT_STATUS_CMD not defined..
+  if [[ -z "${__GIT_STATUS_CMD:+x}" ]] ; then          # if GIT_STATUS_CMD not defined..
     git_prompt_dir
     if ! gp_maybe_set_envar_to_path __GIT_STATUS_CMD "${__GIT_PROMPT_DIR}/${GIT_PROMPT_STATUS_COMMAND}" ; then
       echo 1>&2 "Cannot find ${GIT_PROMPT_STATUS_COMMAND}!"
