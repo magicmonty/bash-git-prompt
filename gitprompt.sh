@@ -533,8 +533,9 @@ function updatePrompt() {
   local GIT_STASHED="${git_status_fields[8]}"
   local GIT_CLEAN="${git_status_fields[9]}"
 
+
   local NEW_PROMPT="${EMPTY_PROMPT}"
-  if [[ -n "${git_status_fields}" ]]; then
+  if [[ "${#git_status_fields[@]}" -gt 0 ]]; then
 
     if [[ -z "${GIT_REMOTE_USERNAME_REPO+x}" ]]; then
       local GIT_PROMPT_PREFIX_FINAL="${GIT_PROMPT_PREFIX//_USERNAME_REPO_/${ResetColor}}"
@@ -567,7 +568,7 @@ function updatePrompt() {
         v="\${GIT_${1}-} ${2}"
       fi
       if eval "[[ ${v} ]]" ; then
-        if [[ "${#}" -lt 2 || "${3-}" != '-' ]] && [[ "${__GIT_PROMPT_SHOW_CHANGED_FILES_COUNT}" == "1" || "${1-}" == "REMOTE" ]]; then
+        if [[ "${#}" = 2 || "${3-}" != '-' ]] && [[ "${__GIT_PROMPT_SHOW_CHANGED_FILES_COUNT}" == "1" || "${1-}" == "REMOTE" ]]; then
           __add_status "\${GIT_PROMPT_${1}}\${GIT_${1}}\${ResetColor}"
         else
           __add_status "\${GIT_PROMPT_${1}}\${ResetColor}"
