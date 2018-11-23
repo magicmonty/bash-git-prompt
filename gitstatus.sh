@@ -137,12 +137,12 @@ remote=""
 upstream=""
 
 if [[ "${branch}" == *"Initial commit on"* ]]; then
-  IFS=" " read -ra fields <<< "$branch"
+  IFS=" " read -ra fields <<< "${branch}"
   branch="${fields[3]}"
   remote="_NO_REMOTE_TRACKING_"
   remote_url='.'
 elif [[ "${branch}" == *"No commits yet on"* ]]; then
-  IFS=" " read -ra fields <<< "$branch"
+  IFS=" " read -ra fields <<< "${branch}"
   branch="${fields[4]}"
   remote="_NO_REMOTE_TRACKING_"
   remote_url='.'
