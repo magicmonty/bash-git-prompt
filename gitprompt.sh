@@ -344,7 +344,7 @@ function setGitPrompt() {
     return
   fi
 
-  if test "$GIT_PROMPT_ENABLE_USR_CMDS" -eq 1; then
+  if test "$GIT_PROMPT_ENABLE_USR_CMDS" = 1; then
     if test -s "$__GIT_PROMPT_DIR/$__GIT_USR_CMD_FILE"; then
       source "$__GIT_PROMPT_DIR/$__GIT_USR_CMD_FILE";
     fi;
