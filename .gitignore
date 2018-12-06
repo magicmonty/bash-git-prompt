@@ -2,3 +2,4 @@
 *.bak
 .idea/
 tags
+*.sw?
