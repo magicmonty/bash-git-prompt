@@ -1,6 +1,6 @@
 set +e
 
-export __GIT_PROMPT_USR_CMDS=mv mv_mv rm rm_rm gitWrap;
+export __GIT_PROMPT_USR_CMDS="mv mv_mv rm rm_rm gitWrap";
 
 ### GIT {mv|rm} wrapper
 gitWrap() {
