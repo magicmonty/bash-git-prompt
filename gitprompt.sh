@@ -319,15 +319,17 @@ function update_old_git_prompt() {
 
 function setGitPrompt() {
   update_old_git_prompt
+	__GIT_USR_CMD_FILE="git_user_cmds.sh"
 
   local repo=$(git rev-parse --show-toplevel 2> /dev/null)
   if [[ ! -e "$repo" ]] && [[ "$GIT_PROMPT_ONLY_IN_REPO" = 1 ]]; then
     # we do not permit bash-git-prompt outside git repos, so nothing to do
     PS1="$OLD_GITPROMPT"
 
-    if test -s "$__GIT_PROMPT_DIR/git_user_cmds.sh"; then
-      unset -f mv rm mv_mv rm_rm;
-    fi;
+		### Exported in __GIT_USR_CMD_FILE
+		for desig in $__GIT_PROMPT_USR_CMDS; do
+			unset -f $desig;
+		done;
 
     return
   fi
@@ -342,8 +344,10 @@ function setGitPrompt() {
     return
   fi
 
-  if test -s "$__GIT_PROMPT_DIR/git_user_cmds.sh"; then
-    source "$__GIT_PROMPT_DIR/git_user_cmds.sh";
+	if test "$GIT_PROMPT_ENABLE_USR_CMDS" -eq 1; then
+		if test -s "$__GIT_PROMPT_DIR/$__GIT_USR_CMD_FILE"; then
+			source "$__GIT_PROMPT_DIR/$__GIT_USR_CMD_FILE";
+		fi;
   fi;
 
   local FETCH_REMOTE_STATUS=1
