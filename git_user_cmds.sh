@@ -28,3 +28,6 @@ mv_mv() {
 rm_rm() {
   /bin/rm "$@";
 }
+
+### EOF 
+### vim:tw=80:et:sts=2:st=2:sw=2:com+=b\:###:fo+=cqtrw:tags=ctags:
