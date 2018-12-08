@@ -2,7 +2,6 @@
 # prompt-colors.sh
 #
 # source this file to get color definitions
-# if $debug or $verbose is set, the definitions
 # are also printed to STDERR.
 
 define_color_names() {
@@ -32,16 +31,16 @@ define_color_names() {
 
   _map_colors() {
     local x=0
-    local attrname="$1"
-    local attrcode=$2
+    local attrname="${1}"
+    local attrcode="${2}"
     while (( x < 8 )) ; do
-      local colorname=${ColorNames[x]}
-      local fgcolorcode=${FgColors[x]}
-      local bgcolorcode=${BgColors[x]}
+      local colorname="${ColorNames[x]}"
+      local fgcolorcode="${FgColors[x]}"
+      local bgcolorcode="${BgColors[x]}"
       longcolorname="${attrname}${colorname}"
-      _def_color $longcolorname     $attrcode $fgcolorcode
-      _def_color ${longcolorname}Fg $attrcode $fgcolorcode
-      _def_color ${longcolorname}Bg $attrcode $bgcolorcode
+      _def_color "${longcolorname}"   "${attrcode}" "${fgcolorcode}"
+      _def_color "${longcolorname}Fg" "${attrcode}" "${fgcolorcode}"
+      _def_color "${longcolorname}Bg" "${attrcode}" "${bgcolorcode}"
       (( x++ ))
     done
   }
@@ -49,7 +48,7 @@ define_color_names() {
   # _term_color [ N | N M ]
   _term_color() {
     local cv
-    if (( $# > 1 )); then
+    if [[ "${#}" -gt 1 ]]; then
       cv="${1};${2}"
     else
       cv="${1}"
@@ -59,17 +58,14 @@ define_color_names() {
 
   # def_color NAME ATTRCODE COLORCODE
   _def_color() {
-    local def="$1=\"\`_term_color $2 $3\`\""
-    if [[ -n "$debug$verbose" ]]; then
-      echo 1>&2 "+ $def"
-    fi
-    eval "$def"
+    local def="${1}=\"\`_term_color ${2} ${3}\`\""
+    eval "${def}"
   }
 
-  _map_colors Bold   $AttrBright
-  _map_colors Bright $AttrBright
-  _map_colors Dim    $AttrDim
-  _map_colors ''     $AttrNorm
+  _map_colors Bold   ${AttrBright}
+  _map_colors Bright ${AttrBright}
+  _map_colors Dim    ${AttrDim}
+  _map_colors ''     ${AttrNorm}
 
   _def_color IntenseBlack 0 90
   _def_color ResetColor   0 0
@@ -77,6 +73,6 @@ define_color_names() {
 }
 
 # do the color definitions only once
-if [[ ${#ColorNames[*]} = 0 || -z "$IntenseBlack" || -z "$ResetColor" ]]; then
+if [[ -z "${ColorNames+x}" || "${#ColorNames[*]}" = 0 || -z "${IntenseBlack:+x}" || -z "${ResetColor:+x}" ]]; then
   define_color_names
 fi

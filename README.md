@@ -98,6 +98,7 @@ The symbols are as follows:
 ```sh
 if [ -f "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh" ]; then
   __GIT_PROMPT_DIR=$(brew --prefix)/opt/bash-git-prompt/share
+  GIT_PROMPT_ONLY_IN_REPO=1
   source "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh"
 fi
 ```
@@ -107,14 +108,13 @@ fi
 - Clone this repository to your home directory.
 
 ```sh
-cd ~
-git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt --depth=1
+git clone https://github.com/magicmonty/bash-git-prompt.git ~/.bash-git-prompt --depth=1
 ```
 
 Add to the `~/.bashrc`:
 ```
-  GIT_PROMPT_ONLY_IN_REPO=1
-  source ~/.bash-git-prompt/gitprompt.sh
+GIT_PROMPT_ONLY_IN_REPO=1
+source ~/.bash-git-prompt/gitprompt.sh
 ```
 
 ### install for the fish shell
@@ -149,6 +149,7 @@ cp gitprompt.fish ~/.config/fish/functions/fish_prompt.fish
 
    # GIT_PROMPT_FETCH_REMOTE_STATUS=0   # uncomment to avoid fetching remote status
    # GIT_PROMPT_IGNORE_SUBMODULES=1 # uncomment to avoid searching for changed files in submodules
+   # GIT_PROMPT_WITH_VIRTUAL_ENV=0 # uncomment to avoid setting virtual environment infos for node/python/conda environments
 
    # GIT_PROMPT_SHOW_UPSTREAM=1 # uncomment to show upstream tracking branch
    # GIT_PROMPT_SHOW_UNTRACKED_FILES=normal # can be no, normal or all; determines counting of untracked files
@@ -258,7 +259,10 @@ function prompt_callback {
     - `gp_truncate_pwd` - a function that returns the current PWD truncated to fit the current terminal width. Specify the length to truncate to as a parameter. Otherwise it defaults to 1/3 of the terminal width.
 
 - If you want to show the git prompt only if you are in a git repository you
-  can set ``GIT_PROMPT_ONLY_IN_REPO=1`` before sourcing the gitprompt script
+  can set `GIT_PROMPT_ONLY_IN_REPO=1` before sourcing the gitprompt script
+
+- You can show an abbreviated `username/repo` in the prompt by setting `GIT_PROMPT_WITH_USERNAME_AND_REPO=1` and setting the placeholder `_USERNAME_REPO_` in your `GIT_PROMPT_PREFIX`. You can also add a `GIT_PROMPT_USERNAME_REPO_SEPARATOR=" | "` so the `username/repo` is nicely separated if there is a remote and if there is no remote, neither the username/repo part nor the separator will be shown. See the theme `Single_line_username_repo.bgptheme` for an example.
+
 
 - There is an indicator at the start of the prompt, which shows
   the result of the last executed command by if you put the placeholder
