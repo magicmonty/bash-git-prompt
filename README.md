@@ -160,6 +160,7 @@ cp gitprompt.fish ~/.config/fish/functions/fish_prompt.fish
 
    # GIT_PROMPT_START=...    # uncomment for custom prompt start sequence
    # GIT_PROMPT_END=...      # uncomment for custom prompt end sequence
+   # GIT_PROMPT_ENABLE_USR_CMDS=1 # enable git repo context sensitive user defined commands, i.e. git mv when inside repo, mv when not
 
    # as last entry source the gitprompt script
    # GIT_PROMPT_THEME=Custom # use custom theme specified in file GIT_PROMPT_THEME_FILE (default ~/.git-prompt-colors.sh)
