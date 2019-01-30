@@ -603,6 +603,10 @@ function updatePrompt() {
 # Helper function that returns virtual env information to be set in prompt
 # Honors virtualenvs own setting VIRTUAL_ENV_DISABLE_PROMPT
 function gp_add_virtualenv_to_prompt {
+  # Exit early if prompt should not include virtual env info
+  if [[ "${GIT_PROMPT_WITH_VIRTUAL_ENV:-1}" == 0 ]]; then
+    return
+  fi
   local ACCUMULATED_VENV_PROMPT=""
   local VENV=""
   if [[ -n "${VIRTUAL_ENV-}" && -z "${VIRTUAL_ENV_DISABLE_PROMPT+x}" ]]; then
