@@ -38,7 +38,7 @@ override_git_prompt_colors() {
 
   Time12a="\$(date +%H:%M)"
   GIT_PROMPT_BRANCH="${Magenta}"        # the git branch that is active in the current directory
-  GIT_PROMPT_MASTER_BRANCH="${Grey}" # used if the git branch that is active in the current directory is $GIT_PROMPT_MASTER_BRANCHES
+  GIT_PROMPT_MASTER_BRANCH="${White}" # used if the git branch that is active in the current directory is $GIT_PROMPT_MASTER_BRANCHES
 
   GIT_PROMPT_PREFIX="["
   GIT_PROMPT_SUFFIX="]"
