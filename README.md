@@ -392,4 +392,3 @@ I accept tips through [Flattr][flattr].
 [flattr]: https://flattr.com/submit/auto?user_id=magicmonty&url=https%3A%2F%2Fgithub.com%2Fmagicmonty%2Fbash-git-prompt
 [homebrew]: http://brew.sh/
 [upforgrabs]: https://github.com/magicmonty/bash-git-prompt/labels/up-for-grabs
-test
