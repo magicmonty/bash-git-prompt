@@ -113,8 +113,10 @@ git clone https://github.com/magicmonty/bash-git-prompt.git ~/.bash-git-prompt -
 
 Add to the `~/.bashrc`:
 ```
-GIT_PROMPT_ONLY_IN_REPO=1
-source ~/.bash-git-prompt/gitprompt.sh
+if [ -f "$HOME/.bash-git-prompt/gitprompt.sh" ]; then
+    GIT_PROMPT_ONLY_IN_REPO=1
+    source $HOME/.bash-git-prompt/gitprompt.sh
+fi
 ```
 
 ### install for the fish shell
