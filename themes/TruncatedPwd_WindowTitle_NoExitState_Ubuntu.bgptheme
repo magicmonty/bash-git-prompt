@@ -31,7 +31,7 @@ override_git_prompt_colors() {
     echo -n "${Yellow}[${PS1}]${ResetColor}"
   }
 
-  local gp_end=" _LAST_COMMAND_INDICATOR_\n${White}${Time12a}${ResetColor}"
+  local gp_end="\n${White}${Time12a}${ResetColor}"
 
   GIT_PROMPT_START_USER=""
   GIT_PROMPT_END_USER="${gp_end} $ "
