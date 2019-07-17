@@ -355,9 +355,12 @@ function setGitPrompt() {
   OLD_GIT_PROMPT_IGNORE_SUBMODULES="${GIT_PROMPT_IGNORE_SUBMODULES}"
   unset GIT_PROMPT_IGNORE_SUBMODULES
 
+  OLD_GIT_PROMPT_SHOW_TRACKING=${GIT_PROMPT_SHOW_TRACKING}
+  unset GIT_PROMPT_SHOW_TRACKING
+
   if [[ -e "${repo}/.bash-git-rc" ]]; then
     # The config file can only contain variable declarations on the form A_B=0 or G_P=all
-    local CONFIG_SYNTAX="^(FETCH_REMOTE_STATUS|GIT_PROMPT_SHOW_UNTRACKED_FILES|GIT_PROMPT_IGNORE_SUBMODULES|GIT_PROMPT_IGNORE)=[0-9a-z]+$"
+    local CONFIG_SYNTAX="^(FETCH_REMOTE_STATUS|GIT_PROMPT_SHOW_UNTRACKED_FILES|GIT_PROMPT_IGNORE_SUBMODULES|GIT_PROMPT_SHOW_TRACKING|GIT_PROMPT_IGNORE)=[0-9a-z]+$"
     if grep -q -v -E "${CONFIG_SYNTAX}" "${repo}/.bash-git-rc"; then
       echo ".bash-git-rc can only contain variable values on the form NAME=value. Ignoring file." >&2
     else
@@ -374,6 +377,11 @@ function setGitPrompt() {
     GIT_PROMPT_IGNORE_SUBMODULES="${OLD_GIT_PROMPT_IGNORE_SUBMODULES}"
   fi
   unset OLD_GIT_PROMPT_IGNORE_SUBMODULES
+
+  if [ -z "${GIT_PROMPT_SHOW_TRACKING}" ]; then
+    GIT_PROMPT_SHOW_TRACKING=${OLD_GIT_PROMPT_SHOW_TRACKING}
+  fi
+  unset OLD_GIT_PROMPT_SHOW_TRACKING
 
   if [[ "${GIT_PROMPT_IGNORE-}" = 1 ]]; then
     PS1="${EMPTY_PROMPT}"
@@ -492,6 +500,7 @@ function updatePrompt() {
   export __GIT_PROMPT_SHOW_UPSTREAM="${GIT_PROMPT_SHOW_UPSTREAM:-0}"
   export __GIT_PROMPT_IGNORE_SUBMODULES="${GIT_PROMPT_IGNORE_SUBMODULES:-0}"
   export __GIT_PROMPT_WITH_USERNAME_AND_REPO="${GIT_PROMPT_WITH_USERNAME_AND_REPO:-0}"
+  export __GIT_PROMPT_SHOW_TRACKING=${GIT_PROMPT_SHOW_TRACKING:-1}
   export __GIT_PROMPT_SHOW_UNTRACKED_FILES="${GIT_PROMPT_SHOW_UNTRACKED_FILES-normal}"
   export __GIT_PROMPT_SHOW_CHANGED_FILES_COUNT="${GIT_PROMPT_SHOW_CHANGED_FILES_COUNT:-1}"
 
@@ -504,9 +513,11 @@ function updatePrompt() {
   while IFS=$'\n' read -r line; do git_status_fields+=("${line}"); done < <("${__GIT_STATUS_CMD}" 2>/dev/null)
 
   export GIT_BRANCH=$(replaceSymbols "${git_status_fields[0]}")
-  local GIT_REMOTE="$(replaceSymbols "${git_status_fields[1]}")"
-  if [[ "." == "${GIT_REMOTE}" ]]; then
-    unset GIT_REMOTE
+  if [[ $__GIT_PROMPT_SHOW_TRACKING != "0" ]]; then
+    local GIT_REMOTE="$(replaceSymbols "${git_status_fields[1]}")"
+    if [[ "." == "${GIT_REMOTE}" ]]; then
+      unset GIT_REMOTE
+    fi
   fi
   local GIT_REMOTE_USERNAME_REPO="$(replaceSymbols "${git_status_fields[2]}")"
   if [[ "." == "${GIT_REMOTE_USERNAME_REPO}" ]]; then
