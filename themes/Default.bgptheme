@@ -43,7 +43,7 @@ define_undefined_git_prompt_colors() {
 
   if [ -z "${GIT_PROMPT_BRANCH+x}" ]; then GIT_PROMPT_BRANCH="${Magenta}"; fi        # the git branch that is active in the current directory
   if [ -z "${GIT_PROMPT_MASTER_BRANCH+x}" ]; then GIT_PROMPT_MASTER_BRANCH="${GIT_PROMPT_BRANCH}"; fi  # used if the git branch that is active in the current directory is $GIT_PROMPT_MASTER_BRANCHES
-  if [ -z "${GIT_PROMPT_STAGED+x}" ]; then GIT_PROMPT_STAGED="${Red}●"; fi           # the number of staged files/directories
+  if [ -z "${GIT_PROMPT_STAGED+x}" ]; then GIT_PROMPT_STAGED="${Red}● "; fi           # the number of staged files/directories
   if [ -z "${GIT_PROMPT_CONFLICTS+x}" ]; then GIT_PROMPT_CONFLICTS="${Red}✖ "; fi       # the number of files in conflict
   if [ -z "${GIT_PROMPT_CHANGED+x}" ]; then GIT_PROMPT_CHANGED="${Blue}✚ "; fi        # the number of changed files
 
