@@ -1,0 +1,36 @@
+# This is a theme for gitprompt.sh,
+# It shows time (hour:minute), hostname, cwd and git information
+
+override_git_prompt_colors() {
+
+  Blue1="\[\033[38;5;27m\]"
+  Blue2="\[\033[38;5;74m\]"
+  Blue3="\[\033[38;5;45m\]"
+
+  Green1="\[\033[38;5;43m\]"
+
+  Magenta1="\[\033[38;5;177m\]"
+  Magenta2="\[\033[38;5;163m\]"
+  Magenta3="\[\033[38;5;127m\]"
+
+  GIT_PROMPT_THEME_NAME="Single_line_Skaane"
+  GIT_PROMPT_BRANCH="${Cyan}"
+  GIT_PROMPT_MASTER_BRANCH="${GIT_PROMPT_BRANCH}"
+  GIT_PROMPT_UNTRACKED="${Magenta3}…"
+  GIT_PROMPT_CHANGED="${Yellow}"
+  GIT_PROMPT_STAGED="${Magenta2}●"
+  GIT_PROMPT_STASHED="${Magenta1}"
+  GIT_PROMPT_CLEAN="${Green1}✔"
+
+
+  Time24="\$(date +%H:%M)"
+
+  GIT_PROMPT_START_USER="${Blue1}[${Blue2}${Time24}${Blue1}] ${Blue3}\h:${BoldBlue}\w${ResetColor}"
+  GIT_PROMPT_START_ROOT="[${Time24}] ${BoldRed}\h:${BoldBlue}\w${ResetColor}"
+
+  GIT_PROMPT_END_USER="${Blue1}\$ ${ResetColor}"
+  GIT_PROMPT_END_ROOT="${Red}#${ResetColor} "
+}
+
+reload_git_prompt_colors "Single_line_Skaane"
+
