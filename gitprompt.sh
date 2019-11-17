@@ -256,7 +256,7 @@ function git_prompt_config() {
         PROMPT_START="${GIT_PROMPT_START_USER-}"
       fi
     else
-      PROMPT_START="${GIT_PROMPT_START-}"    
+      PROMPT_START="${GIT_PROMPT_START-}"
     fi
 
     if [[ -z "${GIT_PROMPT_END:+x}" ]] ; then
@@ -533,7 +533,7 @@ function updatePrompt() {
 
     if [[ -z "${GIT_REMOTE_USERNAME_REPO+x}" ]]; then
       local GIT_PROMPT_PREFIX_FINAL="${GIT_PROMPT_PREFIX//_USERNAME_REPO_/${ResetColor}}"
-    else 
+    else
       if [[ -z "${GIT_PROMPT_USERNAME_REPO_SEPARATOR+x}" ]]; then
         local GIT_PROMPT_PREFIX_FINAL="${GIT_PROMPT_PREFIX//_USERNAME_REPO_/${GIT_REMOTE_USERNAME_REPO}${ResetColor}}"
       else
@@ -542,7 +542,7 @@ function updatePrompt() {
     fi
 
     case "${GIT_BRANCH-}" in
-      "${GIT_PROMPT_MASTER_BRANCHES}")
+      ${GIT_PROMPT_MASTER_BRANCHES})
         local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX_FINAL}${GIT_PROMPT_MASTER_BRANCH}${URL_SHORT-}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM-}"
         ;;
       *)
@@ -590,7 +590,7 @@ function updatePrompt() {
       __chk_gitvar_status 'CLEAN'      '= "1"'   -
     fi
     __add_status        "${ResetColor}${GIT_PROMPT_SUFFIX}"
-    
+
     NEW_PROMPT="$(gp_add_virtualenv_to_prompt)${PROMPT_START}$(${prompt_callback})${STATUS_PREFIX}${STATUS}${PROMPT_END}"
   else
     NEW_PROMPT="${EMPTY_PROMPT}"
