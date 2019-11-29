@@ -303,6 +303,7 @@ function git_prompt_config() {
 
 function setLastCommandState() {
   GIT_PROMPT_LAST_COMMAND_STATE="${?}"
+  return ${GIT_PROMPT_LAST_COMMAND_STATE}
 }
 
 function we_are_on_repo() {
