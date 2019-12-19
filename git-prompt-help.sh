@@ -17,7 +17,7 @@ remote branch.  It can be empty, or one of:
 
     ${GIT_PROMPT_BRANCH}${ResetColor}${GIT_PROMPT_REMOTE}${GIT_PROMPT_SYMBOLS_AHEAD}N${ResetColor} - ahead of remote by N commits
     ${GIT_PROMPT_BRANCH}${ResetColor}${GIT_PROMPT_REMOTE}${GIT_PROMPT_SYMBOLS_BEHIND}M${ResetColor} - behind remote by M commits
-    ${GIT_PROMPT_BRANCH}${ResetColor}${GIT_PROMPT_REMOTE}${GIT_PROMPT_SYMBOLS_AHEAD}N${GIT_PROMPT_SYMBOLS_BEHIND}M${ResetColor} - branches diverged, other by M commits, yours by N commits
+    ${GIT_PROMPT_BRANCH}${ResetColor}${GIT_PROMPT_REMOTE}${GIT_PROMPT_SYMBOLS_BEHIND}M${GIT_PROMPT_SYMBOLS_AHEAD}N${ResetColor} - branches diverged, other by M commits, yours by N commits
 
 LOCALSTATUS is one of the following:
 
@@ -63,7 +63,7 @@ These are examples of the git prompt:
 
   ${p}`format_branch master`${GIT_PROMPT_SEPARATOR}${GIT_PROMPT_STASHED}2${ResetColor}${s}     - on branch "master", 2 stash entries
 
-  ${p}`format_branch experimental`${GIT_PROMPT_REMOTE}${GIT_PROMPT_SEPARATOR}${GIT_PROMPT_SYMBOLS_AHEAD}2${GIT_PROMPT_SYMBOLS_BEHIND}3${ResetColor}${s}
+  ${p}`format_branch experimental`${GIT_PROMPT_REMOTE}${GIT_PROMPT_SYMBOLS_BEHIND}2${GIT_PROMPT_SYMBOLS_AHEAD}3${ResetColor}${GIT_PROMPT_SEPARATOR}${GIT_PROMPT_CLEAN}${ResetColor}${s}
                    - on branch "experimental"; your branch has diverged
                      by 3 commits, remote by 2 commits; the repository is
                      otherwise clean
