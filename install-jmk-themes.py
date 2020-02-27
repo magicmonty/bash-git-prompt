@@ -15,7 +15,7 @@ TARGET_PACKAGE_NAME = "bash-git-prompt"
 OLD_SUFFIX = ".old"
 ORIG_SUFFIX = ".orig"
 
-DRY_RUN_PREFIX = "[DRY_RUN]"
+DRY_RUN_PREFIX = "[DRY_RUN] "
 
 
 def get_source_dir():
@@ -57,20 +57,29 @@ def get_target_theme_dirs():
 
 
 def message(
-    dry_run_message, wet_run_message, prefix=None, suffix=None, sep=":", dry_run=False
+    dry_run_message,
+    wet_run_message,
+    prefix=None,
+    suffix=None,
+    sep=": ",
+    dry_run=False,
+    dry_run_prefix=DRY_RUN_PREFIX,
 ):
     message_parts = []
+    sep = '' if sep is None else sep
     if dry_run:
         message_body = dry_run_message
-        message_parts.append(DRY_RUN_PREFIX)
+        message_parts.append(dry_run_prefix)
     else:
         message_body = wet_run_message
     if prefix is not None:
-        message_parts.append(prefix + sep)
+        message_parts.append(prefix)
+        message_parts.append(sep)
     message_parts.append(message_body)
     if suffix is not None:
-        message_parts.append(sep + suffix)
-    print(" ".join(message_parts))
+        message_parts.append(sep)
+        message_parts.append(suffix)
+    print("".join(message_parts))
 
 
 def remove_file(target, dry_run):
@@ -80,7 +89,14 @@ def remove_file(target, dry_run):
 
 
 def rename_file(source, target, dry_run):
-    suffix = "{source} -> {target}".format(source=source, target=target)
+    (source_dir, source_basename) = os.path.split(source)
+    (target_dir, target_basename) = os.path.split(target)
+    display_source = source
+    if source_dir == target_dir:
+        display_target = target_basename
+    else:
+        display_target = target
+    suffix = "{source} -> {target}".format(source=display_source, target=display_target)
     message("Would rename", "Renaming", suffix=suffix, dry_run=dry_run)
     if not dry_run:
         os.rename(source, target)
