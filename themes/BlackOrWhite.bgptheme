@@ -1,0 +1,129 @@
+######################################################################################
+# This theme for gitprompt.sh is created for the dark and light color schemes as well.
+# Base colors of the theme can be black or white, it depends on which color needed.
+# The user, hostname, time and current path text are using the terminal text color.
+# Git branch state part is using similar colors like git (red, green).
+# Also configurable to display user@hostname/time, last command state and an icon
+# before the branch name.
+# Powerline fonts are needed to display branch icon.
+#
+# By default the prompt base color is black. You can use white color with
+# GIT_PROMPT_BLACK_OR_WHITE_THEME_PS1_COLOR=white
+#
+# By default the prompt display the user and hostname, but you can choose to
+# display time instead with
+# GIT_PROMPT_BLACK_OR_WHITE_THEME_SHOW_TIME_INSTEAD_OF_USER=1
+#
+# By default the last command state is disabled. You can switch on with
+# GIT_PROMPT_BLACK_OR_WHITE_THEME_SHOW_LAST_COMMAND_STATE=1
+#
+# By default to display the branch icon is disabled. You can switch on with
+# GIT_PROMPT_BLACK_OR_WHITE_THEME_SHOW_BRANCH_ICON=1
+#
+# Example usage:
+# if [ -f "$HOME/.bash-git-prompt/gitprompt.sh" ]; then
+#   GIT_PROMPT_THEME=BlackOrWhite
+#   GIT_PROMPT_BLACK_OR_WHITE_THEME_PS1_COLOR=white
+#   GIT_PROMPT_BLACK_OR_WHITE_THEME_SHOW_TIME_INSTEAD_OF_USER=1
+#   GIT_PROMPT_BLACK_OR_WHITE_THEME_SHOW_LAST_COMMAND_STATE=1
+#   GIT_PROMPT_BLACK_OR_WHITE_THEME_SHOW_BRANCH_ICON=1
+#   source $HOME/.bash-git-prompt/gitprompt.sh
+# fi
+#
+# Samples:
+#
+# Display user and hostname
+# ┌─(user@hostname)──(~)
+# └─•
+#
+# Display time instead of user and hostname
+# ┌─(10:58:58)──(~)
+# └─•
+#
+# Display root user prompt
+# ┌─(11:08:06)──(/home/root)
+# └─!
+#
+# Display git branch without or with the branch icon
+# ┌─(10:59:31)──(~/.bash-git-prompt)──(master|✔)
+# └─•
+#
+# ┌─(10:59:31)──(~/.bash-git-prompt)──( master|✔)
+# └─•
+#
+# Display git branch with upstream
+# ┌─(user@hostname)──(~/.bash-git-prompt)──( master {origin/master}|…1)
+# └─•
+#
+# Display last command state
+# ┌─(user@hostname)──(~/.bash-git-prompt)──(>_ ✔)──( master|…1)
+# └─•
+#
+######################################################################################
+override_git_prompt_colors() {
+  GIT_PROMPT_THEME_NAME="BlackOrWhite"
+
+  local PathShort="\w"
+  local PS1Color="${BoldBlack}"
+
+  case $GIT_PROMPT_BLACK_OR_WHITE_THEME_PS1_COLOR in
+    black)
+      PS1Color="${BoldBlack}"
+      ;;
+    white)
+      PS1Color="${BoldWhite}"
+      ;;
+  esac
+
+  local FirstBubbleContent="\u${PS1Color}@${ResetColor}\h"
+  local CommandStateBubbleContent=""
+  local BranchIcon=""
+
+  if [[ "${GIT_PROMPT_BLACK_OR_WHITE_THEME_SHOW_TIME_INSTEAD_OF_USER}" == "1" ]]; then
+    FirstBubbleContent="\t"
+  fi
+
+  if [[ "${GIT_PROMPT_BLACK_OR_WHITE_THEME_SHOW_LAST_COMMAND_STATE}" == "1" ]]; then
+    CommandStateBubbleContent=")──(${ResetColor}>_ _LAST_COMMAND_INDICATOR_${PS1Color}"
+  fi
+
+  if [[ "${GIT_PROMPT_BLACK_OR_WHITE_THEME_SHOW_BRANCH_ICON}" == "1" ]]; then
+    BranchIcon=" "
+  fi
+
+  GIT_PROMPT_LEADING_SPACE=0
+
+  GIT_PROMPT_PREFIX="${PS1Color}──(${ResetColor}${BranchIcon}"
+  GIT_PROMPT_SUFFIX="${PS1Color})${ResetColor}"
+  # GIT_PROMPT_SEPARATOR="|"
+
+  GIT_PROMPT_BRANCH="${PS1Color}"
+  GIT_PROMPT_MASTER_BRANCH="${GIT_PROMPT_BRANCH}"
+  GIT_PROMPT_STAGED="${BoldGreen}•"
+  GIT_PROMPT_CONFLICTS="${BoldRed}x"
+  GIT_PROMPT_CHANGED="${BoldRed}+"
+
+  # GIT_PROMPT_REMOTE=" "
+  GIT_PROMPT_UNTRACKED="${PS1Color}…"
+  GIT_PROMPT_STASHED="${PS1Color}⚑ "
+  GIT_PROMPT_CLEAN="${BoldGreen}✔"
+
+  # GIT_PROMPT_COMMAND_OK="${Green}✔"
+  # GIT_PROMPT_COMMAND_FAIL="${Red}✘-_LAST_COMMAND_STATE_"
+
+  # GIT_PROMPT_SYMBOLS_AHEAD="↑·"
+  # GIT_PROMPT_SYMBOLS_BEHIND="↓·"
+  # GIT_PROMPT_SYMBOLS_PREHASH=":"
+  # GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING="L"
+
+  GIT_PROMPT_VIRTUALENV="[${PS1Color}_VIRTUALENV_${ResetColor}] "
+
+  GIT_PROMPT_UPSTREAM=" {${PS1Color}_UPSTREAM_${ResetColor}}"
+
+  GIT_PROMPT_START_USER="\n${PS1Color}┌─(${ResetColor}${FirstBubbleContent}${PS1Color})──(${ResetColor}${PathShort}${PS1Color}${CommandStateBubbleContent})${ResetColor}"
+  GIT_PROMPT_START_ROOT="${GIT_PROMPT_START_USER}"
+  GIT_PROMPT_END_USER="\n${PS1Color}└─•${ResetColor} "
+  GIT_PROMPT_END_ROOT="\n${PS1Color}└─!${ResetColor} "
+}
+
+reload_git_prompt_colors "BlackOrWhite"
