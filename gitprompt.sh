@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# bash/zsh cross compatibility notes:
+# - always use ${array[@]:offset:length} syntax for array indexing
+
 function async_run() {
   {
     eval "$@" &> /dev/null
@@ -507,6 +510,9 @@ function updatePrompt() {
   local PROMPT_END
   local EMPTY_PROMPT
   local Blue="\[\033[0;34m\]"
+  if [ -n $ZSH_VERSION ]; then
+    Blue='%{fg[blue]%}'
+  fi
 
   git_prompt_config
 
@@ -526,33 +532,33 @@ function updatePrompt() {
   local -a git_status_fields
   while IFS=$'\n' read -r line; do git_status_fields+=("${line}"); done < <("${__GIT_STATUS_CMD}" 2>/dev/null)
 
-  export GIT_BRANCH=$(replaceSymbols "${git_status_fields[0]}")
+  export GIT_BRANCH=$(replaceSymbols "${git_status_fields[@]:0:1}")
   if [[ $__GIT_PROMPT_SHOW_TRACKING != "0" ]]; then
-    local GIT_REMOTE="$(replaceSymbols "${git_status_fields[1]}")"
+    local GIT_REMOTE="$(replaceSymbols "${git_status_fields[@]:1:1}")"
     if [[ "." == "${GIT_REMOTE}" ]]; then
       unset GIT_REMOTE
     fi
   fi
-  local GIT_REMOTE_USERNAME_REPO="$(replaceSymbols "${git_status_fields[2]}")"
+  local GIT_REMOTE_USERNAME_REPO="$(replaceSymbols "${git_status_fields[@]:2:1}")"
   if [[ "." == "${GIT_REMOTE_USERNAME_REPO}" ]]; then
     unset GIT_REMOTE_USERNAME_REPO
   fi
 
   local GIT_FORMATTED_UPSTREAM
-  local GIT_UPSTREAM_PRIVATE="${git_status_fields[3]}"
+  local GIT_UPSTREAM_PRIVATE="${git_status_fields[@]:3:1}"
   if [[ "${__GIT_PROMPT_SHOW_UPSTREAM:-0}" != "1" || "^" == "${GIT_UPSTREAM_PRIVATE}" ]]; then
     unset GIT_FORMATTED_UPSTREAM
   else
     GIT_FORMATTED_UPSTREAM="${GIT_PROMPT_UPSTREAM//_UPSTREAM_/${GIT_UPSTREAM_PRIVATE}}"
   fi
 
-  local GIT_STAGED="${git_status_fields[4]}"
-  local GIT_CONFLICTS="${git_status_fields[5]}"
-  local GIT_CHANGED="${git_status_fields[6]}"
-  local GIT_UNTRACKED="${git_status_fields[7]}"
-  local GIT_STASHED="${git_status_fields[8]}"
-  local GIT_CLEAN="${git_status_fields[9]}"
-  local GIT_DETACHED_HEAD="${git_status_fields[10]}"
+  local GIT_STAGED="${git_status_fields[@]:4:1}"
+  local GIT_CONFLICTS="${git_status_fields[@]:5:1}"
+  local GIT_CHANGED="${git_status_fields[@]:6:1}"
+  local GIT_UNTRACKED="${git_status_fields[@]:7:1}"
+  local GIT_STASHED="${git_status_fields[@]:8:1}"
+  local GIT_CLEAN="${git_status_fields[@]:9:1}"
+  local GIT_DETACHED_HEAD="${git_status_fields[@]:10:1}"
 
   local NEW_PROMPT="${EMPTY_PROMPT}"
   if [[ "${#git_status_fields[@]}" -gt 0 ]]; then
