@@ -31,6 +31,12 @@ unset_git_prompt_colors() {
 define_helpers() {
   Time12a="\$(date +%H:%M)"
   PathShort="\w";
+  NewLine="\n"
+
+  if [ -n "$ZSH_VERSION" ]; then
+    PathShort="%~"
+    NewLine=$'\n'
+  fi
 }
 
 define_undefined_git_prompt_colors() {

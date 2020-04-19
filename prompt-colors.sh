@@ -4,6 +4,10 @@
 # source this file to get color definitions
 # are also printed to STDERR.
 
+# bash/zsh cross compatibility notes:
+# - using colors modules to set colors in zsh, please autoload it
+# - Dim colors, Intense Black not supported in zsh
+
 define_color_names() {
 
   ColorNames=( Black Red Green Yellow Blue Magenta Cyan White )
@@ -34,13 +38,23 @@ define_color_names() {
     local attrname="${1}"
     local attrcode="${2}"
     while (( x < 8 )) ; do
-      local colorname="${ColorNames[x]}"
-      local fgcolorcode="${FgColors[x]}"
-      local bgcolorcode="${BgColors[x]}"
+      local colorname="${ColorNames[@]:$x:1}"
+      local fgcolorcode="${FgColors[@]:$x:1}"
+      local bgcolorcode="${BgColors[@]:$x:1}"
       longcolorname="${attrname}${colorname}"
-      _def_color "${longcolorname}"   "${attrcode}" "${fgcolorcode}"
-      _def_color "${longcolorname}Fg" "${attrcode}" "${fgcolorcode}"
-      _def_color "${longcolorname}Bg" "${attrcode}" "${bgcolorcode}"
+
+      if [ -n "$ZSH_VERSION" ]; then
+        # zsh
+        lowercolorname=$(echo $colorname | tr '[A-Z]' '[a-z]')
+        _def_color_zsh "${longcolorname}"   "${attrcode}" "${lowercolorname}" "fg"
+        _def_color_zsh "${longcolorname}Fg" "${attrcode}" "${lowercolorname}" "fg"
+        _def_color_zsh "${longcolorname}Bg" "${attrcode}" "${lowercolorname}" "bg"
+      else
+        # bash
+        _def_color "${longcolorname}"   "${attrcode}" "${fgcolorcode}"
+        _def_color "${longcolorname}Fg" "${attrcode}" "${fgcolorcode}"
+        _def_color "${longcolorname}Bg" "${attrcode}" "${bgcolorcode}"
+      fi
       (( x++ ))
     done
   }
@@ -62,14 +76,36 @@ define_color_names() {
     eval "${def}"
   }
 
+  # def_color_zsh NAME ATTRCODE COLORNAME FG|BG
+  _def_color_zsh() {
+    if [ "${3}" = "0" ]; then
+      local def="${1}=\"%{\$reset_color%}\""
+    else
+      case ${2} in
+        1) # bold color
+          local def="${1}=\"%{\$${4}_bold[${3}]%}\""
+          ;;
+        *)
+          local def="${1}=\"%{\$${4}[${3}]%}\""
+          ;;
+      esac
+    fi
+    eval "${def}"
+  }
+
+
   _map_colors Bold   ${AttrBright}
   _map_colors Bright ${AttrBright}
   _map_colors Dim    ${AttrDim}
   _map_colors ''     ${AttrNorm}
 
-  _def_color IntenseBlack 0 90
-  _def_color ResetColor   0 0
-
+  if [ -n "$ZSH_VERSION" ]; then
+    _def_color_zsh IntenseBlack 0 90
+    _def_color_zsh ResetColor   0 0
+  else
+    _def_color IntenseBlack 0 90
+    _def_color ResetColor   0 0
+  fi
 }
 
 # do the color definitions only once
