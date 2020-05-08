@@ -9,6 +9,13 @@ function async_run() {
   }&
 }
 
+function async_run_zsh() {
+  {
+    eval "$@" &> /dev/null
+  }&!
+}
+
+
 function git_prompt_dir() {
   # assume the gitstatus.sh is in the same directory as this script
   # code thanks to http://stackoverflow.com/questions/59895
@@ -441,8 +448,12 @@ function checkUpstream() {
   then
     if [[ -n $(git remote show) ]]; then
       (
-        async_run "GIT_TERMINAL_PROMPT=0 git fetch --quiet"
-        disown -h
+        if [ -n $ZSH_VERSION ]; then
+          async_run_zsh "GIT_TERMINAL_PROMPT=0 git fetch --quiet"
+        else
+          async_run "GIT_TERMINAL_PROMPT=0 git fetch --quiet"
+          disown -h
+        fi
       )
     fi
   fi
