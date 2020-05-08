@@ -9,7 +9,15 @@ function async_run() {
   }&
 }
 
-function set_git_prompt_dir() {
+function async_run_zsh() {
+  {
+    eval "$@" &> /dev/null
+  }&!
+}
+
+
+function git_prompt_dir() {
+  # assume the gitstatus.sh is in the same directory as this script
   # code thanks to http://stackoverflow.com/questions/59895
   if [ -z "$__GIT_PROMPT_DIR" ]; then
     __GIT_PROMPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
@@ -441,8 +449,12 @@ function checkUpstream() {
   then
     if [[ -n $(git remote show) ]]; then
       (
-        async_run "GIT_TERMINAL_PROMPT=0 git fetch --quiet"
-        disown -h
+        if [ -n $ZSH_VERSION ]; then
+          async_run_zsh "GIT_TERMINAL_PROMPT=0 git fetch --quiet"
+        else
+          async_run "GIT_TERMINAL_PROMPT=0 git fetch --quiet"
+          disown -h
+        fi
       )
     fi
   fi
