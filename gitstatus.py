@@ -13,6 +13,7 @@ http://www.daniweb.com/software-development/python/code/217214/a-print-function-
 # change those symbols to whatever you prefer
 symbols = {'ahead of': '↑·', 'behind': '↓·', 'prehash': ':'}
 
+import os
 import sys
 import re
 from subprocess import Popen, PIPE
@@ -73,7 +74,8 @@ def get_stash():
 
 # `git status --porcelain --branch` can collect all information
 # branch, remote_branch, untracked, staged, changed, conflicts, ahead, behind
-po = Popen(['git', 'status', '--porcelain', '--branch'], env={'LC_ALL': 'C'}, stdout=PIPE, stderr=PIPE)
+po = Popen(['git', 'status', '--porcelain', '--branch'],
+           env={'HOME': os.environ['HOME'], 'LC_ALL': 'C'}, stdout=PIPE, stderr=PIPE)
 stdout, stderr = po.communicate()
 if po.returncode != 0:
     sys.exit(0)  # Not a git repository
