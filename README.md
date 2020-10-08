@@ -108,7 +108,7 @@ fi
 - Clone this repository to your home directory.
 
 ```sh
-git clone https://github.com/magicmonty/bash-git-prompt.git ~/.bash-git-prompt --depth=1
+git clone git@github.com:loicdubois/bash-git-prompt.git ~/.bash-git-prompt --depth=1
 ```
 
 Add to the `~/.bashrc`:
