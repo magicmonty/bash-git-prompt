@@ -449,7 +449,7 @@ function checkUpstream() {
   then
     if [[ -n $(git remote show) ]]; then
       (
-        if [ -n $ZSH_VERSION ]; then
+        if [ -n "$ZSH_VERSION" ]; then
           async_run_zsh "GIT_TERMINAL_PROMPT=0 git fetch --quiet"
         else
           async_run "GIT_TERMINAL_PROMPT=0 git fetch --quiet"
@@ -522,7 +522,7 @@ function updatePrompt() {
   local PROMPT_END
   local EMPTY_PROMPT
   local Blue="\[\033[0;34m\]"
-  if [ -n $ZSH_VERSION ]; then
+  if [ -n "$ZSH_VERSION" ]; then
     Blue='%{fg[blue]%}'
   fi
 
