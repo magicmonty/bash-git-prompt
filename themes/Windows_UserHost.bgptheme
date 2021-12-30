@@ -1,0 +1,27 @@
+# Based on "Solarized UserHost" with no unicode chars and different
+# colors.
+
+function override_git_prompt_colors() {
+  local light_blue=$(echo -e "\001\e[38;2;140;206;250m\002")
+  local red=$(echo -e "\001\e[38;2;220;20;60m\002")
+  local bold_bright_white=$(echo -e "\001\e[1;97m\002")
+
+  GIT_PROMPT_THEME_NAME='Windows UserHost'
+  GIT_PROMPT_STAGED="${Yellow}* "
+  GIT_PROMPT_UNTRACKED="${Cyan}.. "
+  GIT_PROMPT_STASHED="${BoldMagenta}S "
+  GIT_PROMPT_CLEAN="${Green}v "
+  GIT_PROMPT_COMMAND_OK="${Green}v "
+  GIT_PROMPT_COMMAND_FAIL="${Red}x "
+
+  GIT_PROMPT_START_USER="_LAST_COMMAND_INDICATOR_${Yellow}${PathShort}"
+  GIT_PROMPT_START_ROOT="${GIT_PROMPT_START_USER}"
+  GIT_PROMPT_END_USER="\n${light_blue}\\u${bold_bright_white}@${ResetColor}${light_blue}\\h${red} >${ResetColor} "
+  GIT_PROMPT_END_ROOT="\n${light_blue}\\u${bold_bright_white}@${ResetColor}${light_blue}\\h${red} #${ResetColor} "
+  GIT_PROMPT_LEADING_SPACE=1
+  GIT_PROMPT_PREFIX="${Cyan}["
+  GIT_PROMPT_SUFFIX="${Cyan}]" 
+  GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING="L"
+}
+
+reload_git_prompt_colors 'Windows UserHost'
