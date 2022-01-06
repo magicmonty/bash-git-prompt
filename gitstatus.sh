@@ -36,7 +36,7 @@ else
   remote_url='.'
 fi
 
-gitstatus=$( LC_ALL=C git status ${_ignore_submodules} --untracked-files="${__GIT_PROMPT_SHOW_UNTRACKED_FILES:-normal}" --porcelain --branch )
+gitstatus=$( LC_ALL=C git --no-optional-locks status ${_ignore_submodules} --untracked-files="${__GIT_PROMPT_SHOW_UNTRACKED_FILES:-normal}" --porcelain --branch )
 
 # if the status is fatal, exit now
 [[ ! "${?}" ]] && exit 0
