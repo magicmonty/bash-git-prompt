@@ -10,6 +10,7 @@ function git_prompt_dir() {
   # assume the gitstatus.sh is in the same directory as this script
   # code thanks to http://stackoverflow.com/questions/59895
   if [[ -z "${__GIT_PROMPT_DIR:+x}" ]]; then
+    unset CDPATH
     local SOURCE="${BASH_SOURCE[0]}"
     while [[ -h "${SOURCE}" ]]; do
       local DIR="$( command cd -P "$( dirname "${SOURCE}" )" && pwd )"
