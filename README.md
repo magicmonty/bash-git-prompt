@@ -9,38 +9,7 @@ A ``bash`` prompt that displays information about the current git repository.
 In particular the branch name, difference with remote branch, number of files
 staged, changed, etc.
 
-(an original idea from this [blog post][]).
-
 `gitstatus.sh` and `git-prompt-help.sh` added by [AKS](http://github.com/aks).
-
-# ATTENTION! Breaking changes!
-
-**If you use this prompt already, please update your `.git-prompt-colors.sh`,
-if you have one. It now contains a function named `define_git_prompt_colors()` or `override_git_prompt_colors()`!**
-
-**Please see the ``Custom.bgptemplate`` in the ``themes`` subdirectory of the installation directory!**
-
-**You can now also use the function `override_git_prompt_colors()`. It should define the variable `GIT_PROMPT_THEME_NAME`
-and call the function `reload_git_prompt_colors <ThemeName>` like follows:**
-
-```sh
-override_git_prompt_colors() {
-  GIT_PROMPT_THEME_NAME="Custom" # needed for reload optimization, should be unique
-
-  # Place your overrides here
-  ...
-}
-
-# load the theme
-reload_git_prompt_colors "Custom"
-```
-
-The advantage of this approach is, that you only need to specify the parts, that are different to the Default theme.
-
----
-
-**The variable `GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR` was replaced with a more general placeholder
-named ``_LAST_COMMAND_INDICATOR_``, which is replaced by the state of the last executed command. It is now activated by default.**
 
 ## Examples
 
@@ -75,7 +44,7 @@ The symbols are as follows:
 - Upstream branch
   - Shows the remote tracking branch
   - Disabled by default
-  - Enable by setting GIT_PROMPT_SHOW_UPSTREAM=1
+  - Enable by setting `GIT_PROMPT_SHOW_UPSTREAM=1`
 - Branch Tracking Symbols
   - ``↑n``: ahead of remote by ``n`` commits
   - ``↓n``: behind remote by ``n`` commits
@@ -121,7 +90,7 @@ fi
 
 ### install for the fish shell
 
-- If you cloned the repo to a directory other then ~/.bash-git-prompt , set __GIT_PROMPT_DIR in ~/.config/fish/config.fish
+- If you cloned the repo to a directory other then `~/.bash-git-prompt` , set `__GIT_PROMPT_DIR` in `~/.config/fish/config.fish`
    to that path
 
 - To install as an option in the fish_config GUI
@@ -189,7 +158,7 @@ GIT_PROMPT_THEME=Solarized
 If you set `GIT_PROMPT_THEME` to `Custom`, then the `.git-prompt-colors.sh` in the home directory will be used.
 This file can now be generated with the command `git_prompt_make_custom_theme [<Name of base theme>]`. If the name of
 the base theme is ommitted or the theme file is not found, then the Default theme is used. If you have already a custom
-`.git-prompt-colors.sh` in your home directory, a error message will be shown.
+`.git-prompt-colors.sh` in your home directory, an error message will be shown.
 
 You can display a list of available themes with `git_prompt_list_themes` (the current theme is highlighted)
 
