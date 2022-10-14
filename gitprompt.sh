@@ -378,7 +378,7 @@ function setGitPrompt() {
   fi
   unset OLD_GIT_PROMPT_IGNORE_SUBMODULES
 
-  if [ -z "${GIT_PROMPT_SHOW_TRACKING}" ]; then
+  if [[ -z "${GIT_PROMPT_SHOW_TRACKING+x}" ]]; then
     GIT_PROMPT_SHOW_TRACKING=${OLD_GIT_PROMPT_SHOW_TRACKING}
   fi
   unset OLD_GIT_PROMPT_SHOW_TRACKING
