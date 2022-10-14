@@ -501,7 +501,7 @@ function updatePrompt() {
   export GIT_INDEX_FILE="${GIT_INDEX_PRIVATE}"
 
   local -a git_status_fields
-  readarray -t git_status_fields < <("${__GIT_STATUS_CMD}" 2>/dev/null)
+  while IFS=$'\n' read -r line; do git_status_fields+=("${line}"); done < <("${__GIT_STATUS_CMD}" 2>/dev/null)
 
   export GIT_BRANCH=$(replaceSymbols "${git_status_fields[0]}")
   local GIT_REMOTE="$(replaceSymbols "${git_status_fields[1]}")"
