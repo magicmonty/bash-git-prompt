@@ -472,7 +472,7 @@ function createPrivateIndex {
   else
     __GIT_INDEX_FILE="${GIT_INDEX_FILE}"
   fi
-  __GIT_INDEX_PRIVATE="/tmp/git-index-private$$"
+  __GIT_INDEX_PRIVATE="${TMPDIR:-/tmp}/git-index-private$$"
   command cp "${__GIT_INDEX_FILE}" "${__GIT_INDEX_PRIVATE}" 2>/dev/null
   echo "${__GIT_INDEX_PRIVATE}"
 }
