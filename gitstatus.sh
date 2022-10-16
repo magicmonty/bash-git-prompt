@@ -182,18 +182,4 @@ if [[ -z "${upstream:+x}" ]] ; then
   upstream='^'
 fi
 
-UPSTREAM_TRIMMED=`echo $upstream |xargs`
-
-printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
-  "${branch}${state}" \
-  "${remote}" \
-  "${remote_url}" \
-  "${UPSTREAM_TRIMMED}" \
-  "${num_staged}" \
-  "${num_conflicts}" \
-  "${num_changed}" \
-  "${num_untracked}" \
-  "${num_stashed}" \
-  "${clean}"
-
-exit
+printf '%q %q %q %q %q %q %q %q %q %q' "${branch}${state}" "${remote}" "${remote_url}" "${upstream/% /}" "${num_staged}" "${num_conflicts}" "${num_changed}" "${num_untracked}" "${num_stashed}" "${clean}"

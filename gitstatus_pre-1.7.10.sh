@@ -125,16 +125,4 @@ if [[ -z "${upstream:+x}" ]] ; then
   upstream='^'
 fi
 
-printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
-  "${branch}" \
-  "${remote}" \
-  "${remote_url}" \
-  "${upstream}" \
-  "${num_staged}" \
-  "${num_conflicts}" \
-  "${num_changed}" \
-  "${num_untracked// /}" \
-  "${num_stashed}" \
-  "${clean}"
-
-exit
+printf '%q %q %q %q %q %q %q %q %q %q' "${branch}" "${remote}" "${remote_url}" "${upstream}" "${num_staged}" "${num_conflicts}" "${num_changed}" "${num_untracked// /}" "${num_stashed}" "${clean}"
