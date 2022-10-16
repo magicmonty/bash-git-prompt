@@ -105,7 +105,6 @@ while IFS='' read -r line || [[ -n "${line}" ]]; do
       AA) ((num_conflicts++)); break;;
       #two character matches, first loop
       ?M) ((num_changed++)) ;;
-      ?D) ((num_changed++)) ;;
       ?\ ) ;;
       #single character matches, second loop
       U) ((num_conflicts++)) ;;
