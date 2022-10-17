@@ -667,45 +667,53 @@ function git_prompt_toggle() {
   return
 }
 
+function make_prompt_command_clean() {
+  PROMPT_COMMAND="${PROMPT_COMMAND//$'\n'/;}" # convert all new lines to semi-colons
+  PROMPT_COMMAND="${PROMPT_COMMAND#\;}" # remove leading semi-colon
+  PROMPT_COMMAND="${PROMPT_COMMAND%% }" # remove trailing spaces
+  PROMPT_COMMAND="${PROMPT_COMMAND%\;}" # remove trailing semi-colon
+}
+
+function add_prompt_command() {
+  local new_entry="$1"
+  local insert_before="$2"
+
+  if [[ ";${PROMPT_COMMAND};" == *";${new_entry};"* ]]; then
+    return 0
+  fi
+
+  if [ -z "$PROMPT_COMMAND" ]; then
+    PROMPT_COMMAND="$new_entry"
+    return 0
+  fi
+
+  if [ "$insert_before" == "true" ]; then
+    PROMPT_COMMAND="${new_entry};${PROMPT_COMMAND}"
+  else
+    PROMPT_COMMAND="${PROMPT_COMMAND};${new_entry}"
+  fi
+}
+
+function add_to_beginning_of_prompt_command() {
+  add_prompt_command "$1" "true"
+}
+
+function add_to_end_of_prompt_command() {
+  add_prompt_command "$1" "false"
+}
+
 function gp_install_prompt {
-  if [[ -z "${OLD_GITPROMPT+x}" ]]; then
+  if [ -z "${OLD_GITPROMPT}" ]; then
     OLD_GITPROMPT=${PS1}
   fi
 
-  if [[ -z "${GIT_PROMPT_OLD_DIR_WAS_GIT+x}" ]]; then
+  if [ -z "${GIT_PROMPT_OLD_DIR_WAS_GIT}" ]; then
     GIT_PROMPT_OLD_DIR_WAS_GIT=$(we_are_on_repo)
   fi
 
-  if [[ -z "${PROMPT_COMMAND:+x}" ]]; then
-    PROMPT_COMMAND=setGitPrompt
-  else
-    PROMPT_COMMAND="${PROMPT_COMMAND//$'\n'/;}" # convert all new lines to semi-colons
-    PROMPT_COMMAND="${PROMPT_COMMAND#\;}" # remove leading semi-colon
-    PROMPT_COMMAND="${PROMPT_COMMAND%% }" # remove trailing spaces
-    PROMPT_COMMAND="${PROMPT_COMMAND%\;}" # remove trailing semi-colon
-
-    local new_entry="setGitPrompt"
-    case ";${PROMPT_COMMAND};" in
-      *";${new_entry};"*)
-        # echo "PROMPT_COMMAND already contains: $new_entry"
-        :;;
-      *)
-        PROMPT_COMMAND="${PROMPT_COMMAND};${new_entry}"
-        # echo "PROMPT_COMMAND does not contain: $new_entry"
-        ;;
-    esac
-  fi
-
-  local setLastCommandStateEntry="setLastCommandState"
-  case ";${PROMPT_COMMAND};" in
-    *";${setLastCommandStateEntry};"*)
-      # echo "PROMPT_COMMAND already contains: $setLastCommandStateEntry"
-      :;;
-    *)
-      PROMPT_COMMAND="${setLastCommandStateEntry};${PROMPT_COMMAND}"
-      # echo "PROMPT_COMMAND does not contain: $setLastCommandStateEntry"
-      ;;
-  esac
+  make_prompt_command_clean
+  add_to_end_of_prompt_command "setGitPrompt"
+  add_to_beginning_of_prompt_command "setLastCommandState"
 
   git_prompt_dir
   source "${__GIT_PROMPT_DIR}/git-prompt-help.sh"
