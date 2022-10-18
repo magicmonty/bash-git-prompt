@@ -315,12 +315,11 @@ function we_are_on_repo() {
 }
 
 function update_old_git_prompt() {
-  local in_repo=$(we_are_on_repo)
-  if [[ "${GIT_PROMPT_OLD_DIR_WAS_GIT}" = 0 ]]; then
+  if [[ "${GIT_PROMPT_OLD_DIR_WAS_GIT:-0}" = 0 ]]; then
     OLD_GITPROMPT="${PS1}"
   fi
 
-  GIT_PROMPT_OLD_DIR_WAS_GIT="${in_repo}"
+  GIT_PROMPT_OLD_DIR_WAS_GIT=$(we_are_on_repo)
 }
 
 function setGitPrompt() {
@@ -703,14 +702,6 @@ function add_to_end_of_prompt_command() {
 }
 
 function gp_install_prompt {
-  if [ -z "${OLD_GITPROMPT}" ]; then
-    OLD_GITPROMPT=${PS1}
-  fi
-
-  if [ -z "${GIT_PROMPT_OLD_DIR_WAS_GIT}" ]; then
-    GIT_PROMPT_OLD_DIR_WAS_GIT=$(we_are_on_repo)
-  fi
-
   make_prompt_command_clean
   add_to_end_of_prompt_command "setGitPrompt"
   add_to_beginning_of_prompt_command "setLastCommandState"

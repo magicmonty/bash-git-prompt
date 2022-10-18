@@ -16,3 +16,10 @@ function run_test() {
     exit 1
   fi
 }
+
+function run_prompt_command() {
+  IFS=';' read -ra COMMANDS <<< "$PROMPT_COMMAND"
+  for cmd in "${COMMANDS[@]}"; do
+    $cmd
+  done
+}
