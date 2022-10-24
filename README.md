@@ -352,6 +352,9 @@ Please leave a comment on the issue, that you want to fix it, so others know, th
 
 Pull requests are welcome. I will check them and merge them, if I think they help the project.
 
+## Similar projects
+https://github.com/ohmybash/oh-my-bash
+
 ## Donations
 I accept tips through [Flattr][flattr].
 
