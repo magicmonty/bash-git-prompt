@@ -11,6 +11,10 @@ staged, changed, etc.
 
 `gitstatus.sh` and `git-prompt-help.sh` added by [AKS](http://github.com/aks).
 
+## Prerequisites
+
+* `git` version >= 1.7.10
+
 ## Examples
 
 The prompt may look like the following:
@@ -127,8 +131,6 @@ GIT_PROMPT_ONLY_IN_REPO=1
 # GIT_PROMPT_SHOW_UNTRACKED_FILES=normal # can be no, normal or all; determines counting of untracked files
 
 # GIT_PROMPT_SHOW_CHANGED_FILES_COUNT=0 # uncomment to avoid printing the number of changed files
-
-# GIT_PROMPT_STATUS_COMMAND=gitstatus_pre-1.7.10.sh # uncomment to support Git older than 1.7.10
 
 # GIT_PROMPT_START=...    # uncomment for custom prompt start sequence
 # GIT_PROMPT_END=...      # uncomment for custom prompt end sequence
@@ -339,6 +341,14 @@ from scratch by following this procedure:
 rpmbuild -ta bash-git-prompt-xxx.tar.gz
 ````
 Then you may publish or install the rpm from "~/rpmbuild/RPMS/noarch".
+
+## Breaking changes
+
+### 2022/11/03
+
+* Unsupport of git versions < 1.7.10
+* Remove `gitstatus.py`
+* Change interaction between `gitprompt.sh` and `gitstatus.sh`
 
 ## License
 This code is under the [BSD 2 Clause (NetBSD) license][license].

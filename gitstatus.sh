@@ -1,21 +1,20 @@
 #!/usr/bin/env bash
 # -*- coding: utf-8 -*-
-# gitstatus.sh -- produce the current git repo status on STDOUT
-# Functionally equivalent to 'gitstatus.py', but written in bash (not python).
+# gitstatus.sh -- produce the current git repo status
 #
 # Alan K. Stebbens <aks@stebbens.org> [http://github.com/aks]
 
-set -u
-
-if [[ -z "${__GIT_PROMPT_DIR:+x}" ]]; then
-  SOURCE="${BASH_SOURCE[0]}"
-  while [[ -h "${SOURCE}" ]]; do
-    DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
-    SOURCE="$(readlink "${SOURCE}")"
-    [[ "${SOURCE}" != /* ]] && SOURCE="${DIR}/${SOURCE}"
-  done
-  __GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
-fi
+# These variables are created as evaluable script definitions
+# * VCS_STATUS_BRANCH_NAME
+# * VCS_STATUS_STATE
+# * VCS_STATUS_REMOTE
+# * VCS_STATUS_REMOTE_URL
+# * VCS_STATUS_UPSTREAM
+# * VCS_STATUS_NUM_STAGED
+# * VCS_STATUS_NUM_CONFLICTS
+# * VCS_STATUS_NUM_CHANGED
+# * VCS_STATUS_NUM_UNTRACKED
+# * VCS_STATUS_NUM_STASHED
 
 if [[ "${__GIT_PROMPT_IGNORE_SUBMODULES:-0}" == "1" ]]; then
   _ignore_submodules="--ignore-submodules"
@@ -38,22 +37,18 @@ fi
 
 gitstatus=$( LC_ALL=C git --no-optional-locks status ${_ignore_submodules} --untracked-files="${__GIT_PROMPT_SHOW_UNTRACKED_FILES:-normal}" --porcelain --branch )
 
-# if the status is fatal, exit now
-[[ ! "${?}" ]] && exit 0
+[[ ! "${?}" ]] && return 0
 
 git_dir="$(git rev-parse --git-dir 2>/dev/null)"
-[[ -z "${git_dir:+x}" ]] && exit 0
+[[ -z "${git_dir:+x}" ]] && return 0
 
 __git_prompt_read ()
 {
-  local f="${1}"
+  f="${1}"
   shift
   [[ -r "${f}" ]] && read -r "${@}" <"${f}"
 }
 
-state=""
-step=""
-total=""
 if [[ -d "${git_dir}/rebase-merge" ]]; then
   __git_prompt_read "${git_dir}/rebase-merge/msgnum" step
   __git_prompt_read "${git_dir}/rebase-merge/end" total
@@ -92,6 +87,7 @@ num_staged=0
 num_changed=0
 num_conflicts=0
 num_untracked=0
+
 while IFS='' read -r line || [[ -n "${line}" ]]; do
   status="${line:0:2}"
   while [[ -n ${status} ]]; do
@@ -125,15 +121,9 @@ if [[ "${__GIT_PROMPT_IGNORE_STASH:-0}" != "1" ]]; then
   fi
 fi
 
-clean=0
-if (( num_changed == 0 && num_staged == 0 && num_untracked == 0 && num_stashed == 0 && num_conflicts == 0)) ; then
-  clean=1
-fi
-
 IFS="^" read -ra branch_fields <<< "${branch_line/\#\# }"
+
 branch="${branch_fields[0]}"
-remote=""
-upstream=""
 
 if [[ "${branch}" == *"Initial commit on"* ]]; then
   IFS=" " read -ra fields <<< "${branch}"
@@ -181,18 +171,16 @@ if [[ -z "${upstream:+x}" ]] ; then
   upstream='^'
 fi
 
-UPSTREAM_TRIMMED=`echo $upstream |xargs`
+upstream=$(echo $upstream | xargs)
 
-printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
-  "${branch}${state}" \
-  "${remote}" \
-  "${remote_url}" \
-  "${UPSTREAM_TRIMMED}" \
-  "${num_staged}" \
-  "${num_conflicts}" \
-  "${num_changed}" \
-  "${num_untracked}" \
-  "${num_stashed}" \
-  "${clean}"
-
-exit
+printf "%s;\n%s;\n%s;\n%s;\n%s;\n%s;\n%s;\n%s;\n%s;\n%s;\n" \
+  "VCS_STATUS_BRANCH_NAME=\"$branch\"" \
+  "VCS_STATUS_STATE=\"$state\"" \
+  "VCS_STATUS_REMOTE=\"$remote\"" \
+  "VCS_STATUS_REMOTE_URL=\"$remote_url\"" \
+  "VCS_STATUS_UPSTREAM=\"$upstream\"" \
+  "VCS_STATUS_NUM_STAGED=\"$num_staged\"" \
+  "VCS_STATUS_NUM_CONFLICTS=\"$num_conflicts\"" \
+  "VCS_STATUS_NUM_CHANGED=\"$num_changed\"" \
+  "VCS_STATUS_NUM_UNTRACKED=\"$num_untracked\"" \
+  "VCS_STATUS_NUM_STASHED=\"$num_stashed\""

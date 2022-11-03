@@ -53,7 +53,7 @@ function get_theme() {
         fi
       done
 
-      if [[ "${theme}" = "" ]]; then
+      if [[ -z "${theme}" ]]; then
         GIT_PROMPT_THEME="Default"
       fi
 
@@ -500,107 +500,122 @@ function updatePrompt() {
   local GIT_INDEX_FILE
   export GIT_INDEX_FILE="${GIT_INDEX_PRIVATE}"
 
-  local -a git_status_fields
-  while IFS=$'\n' read -r line; do git_status_fields+=("${line}"); done < <("${__GIT_STATUS_CMD}" 2>/dev/null)
+  # By sourcing the status script, the following variables will be available:
+  #   * VCS_STATUS_BRANCH_NAME
+  #   * VCS_STATUS_STATE
+  #   * VCS_STATUS_REMOTE
+  #   * VCS_STATUS_REMOTE_URL
+  #   * VCS_STATUS_UPSTREAM
+  #   * VCS_STATUS_NUM_STAGED
+  #   * VCS_STATUS_NUM_CONFLICTS
+  #   * VCS_STATUS_NUM_CHANGED
+  #   * VCS_STATUS_NUM_UNTRACKED
+  #   * VCS_STATUS_NUM_STASHED
 
-  export GIT_BRANCH=$(replaceSymbols "${git_status_fields[0]}")
+  # The returns a bunch of variable definitions which can be evaluated
+  eval $("$__GIT_STATUS_CMD")
+
+  VCS_STATUS_BRANCH_NAME="$(replaceSymbols "$VCS_STATUS_BRANCH_NAME")"
+  VCS_STATUS_REMOTE="$(replaceSymbols "$VCS_STATUS_REMOTE")"
+  VCS_STATUS_REMOTE_URL="$(replaceSymbols "$VCS_STATUS_REMOTE_URL")"
+
+  local vcs_clean=0
+  if (( VCS_STATUS_NUM_STAGED == 0 && VCS_STATUS_NUM_CONFLICTS == 0 && VCS_STATUS_NUM_CHANGED == 0 && VCS_STATUS_NUM_UNTRACKED == 0 && VCS_STATUS_NUM_STASHED == 0)) ; then
+    vcs_clean=1
+  fi
+
   if [[ $__GIT_PROMPT_SHOW_TRACKING != "0" ]]; then
-    local GIT_REMOTE="$(replaceSymbols "${git_status_fields[1]}")"
-    if [[ "." == "${GIT_REMOTE}" ]]; then
-      unset GIT_REMOTE
+    if [[ "${VCS_STATUS_REMOTE}" == "." ]]; then
+      unset VCS_STATUS_REMOTE
     fi
   fi
-  local GIT_REMOTE_USERNAME_REPO="$(replaceSymbols "${git_status_fields[2]}")"
-  if [[ "." == "${GIT_REMOTE_USERNAME_REPO}" ]]; then
-    unset GIT_REMOTE_USERNAME_REPO
+
+  if [[ "${VCS_STATUS_REMOTE_URL}" == "." ]]; then
+    unset VCS_STATUS_REMOTE_URL
   fi
 
-  local GIT_FORMATTED_UPSTREAM
-  local GIT_UPSTREAM_PRIVATE="${git_status_fields[3]}"
-  if [[ "${__GIT_PROMPT_SHOW_UPSTREAM:-0}" != "1" || "^" == "${GIT_UPSTREAM_PRIVATE}" ]]; then
+  if [[ "${__GIT_PROMPT_SHOW_UPSTREAM:-0}" != "1" ||  "${VCS_STATUS_UPSTREAM}" == "^" ]]; then
     unset GIT_FORMATTED_UPSTREAM
   else
-    GIT_FORMATTED_UPSTREAM="${GIT_PROMPT_UPSTREAM//_UPSTREAM_/${GIT_UPSTREAM_PRIVATE}}"
+    GIT_FORMATTED_UPSTREAM="${GIT_PROMPT_UPSTREAM//_UPSTREAM_/${VCS_STATUS_UPSTREAM}}"
   fi
 
-  local GIT_STAGED="${git_status_fields[4]}"
-  local GIT_CONFLICTS="${git_status_fields[5]}"
-  local GIT_CHANGED="${git_status_fields[6]}"
-  local GIT_UNTRACKED="${git_status_fields[7]}"
-  local GIT_STASHED="${git_status_fields[8]}"
-  local GIT_CLEAN="${git_status_fields[9]}"
-
-
   local NEW_PROMPT="${EMPTY_PROMPT}"
-  if [[ "${#git_status_fields[@]}" -gt 0 ]]; then
 
-    if [[ -z "${GIT_REMOTE_USERNAME_REPO+x}" ]]; then
-      local GIT_PROMPT_PREFIX_FINAL="${GIT_PROMPT_PREFIX//_USERNAME_REPO_/${ResetColor}}"
-    else
-      if [[ -z "${GIT_PROMPT_USERNAME_REPO_SEPARATOR+x}" ]]; then
-        local GIT_PROMPT_PREFIX_FINAL="${GIT_PROMPT_PREFIX//_USERNAME_REPO_/${GIT_REMOTE_USERNAME_REPO}${ResetColor}}"
-      else
-        local GIT_PROMPT_PREFIX_FINAL="${GIT_PROMPT_PREFIX//_USERNAME_REPO_/${GIT_REMOTE_USERNAME_REPO}${ResetColor}${GIT_PROMPT_USERNAME_REPO_SEPARATOR}}"
-      fi
-    fi
-
-    case "${GIT_BRANCH-}" in
-      ${GIT_PROMPT_MASTER_BRANCHES})
-        local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX_FINAL}${GIT_PROMPT_MASTER_BRANCH}${URL_SHORT-}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM-}"
-        ;;
-      *)
-        local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX_FINAL}${GIT_PROMPT_BRANCH}${URL_SHORT-}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM-}"
-        ;;
-    esac
-    local STATUS=""
-
-    # __add_status KIND VALEXPR INSERT
-    # eg: __add_status  'STAGED' '-ne 0'
-
-    __chk_gitvar_status() {
-      local v
-      if [[ "${2-}" = "-n" ]] ; then
-        v="${2} \"\${GIT_${1}-}\""
-      else
-        v="\${GIT_${1}-} ${2}"
-      fi
-      if eval "[[ ${v} ]]" ; then
-        if [[ "${3-}" != '-' ]] && [[ "${__GIT_PROMPT_SHOW_CHANGED_FILES_COUNT}" == "1" || "${1-}" == "REMOTE" ]]; then
-          __add_status "\${GIT_PROMPT_${1}}\${GIT_${1}}\${ResetColor}"
-        else
-          __add_status "\${GIT_PROMPT_${1}}\${ResetColor}"
-        fi
-      fi
-    }
-
-    __add_gitvar_status() {
-      __add_status "\${GIT_PROMPT_${1}}\${GIT_${1}}\${ResetColor}"
-    }
-
-    # __add_status SOMETEXT
-    __add_status() {
-      eval "STATUS=\"${STATUS}${1}\""
-    }
-
-    __chk_gitvar_status 'REMOTE'       '-n'
-    if [[ "${GIT_CLEAN}" -eq 0 ]] || [[ "${GIT_PROMPT_CLEAN}" != "" ]]; then
-      __add_status        "${GIT_PROMPT_SEPARATOR}"
-      __chk_gitvar_status 'STAGED'     '!= "0" && ${GIT_STAGED-} != "^"'
-      __chk_gitvar_status 'CONFLICTS'  '!= "0"'
-      __chk_gitvar_status 'CHANGED'    '!= "0"'
-      __chk_gitvar_status 'UNTRACKED'  '!= "0"'
-      __chk_gitvar_status 'STASHED'    '!= "0"'
-      __chk_gitvar_status 'CLEAN'      '= "1"'   -
-    fi
-    __add_status        "${ResetColor}${GIT_PROMPT_SUFFIX}"
-
-    if [[ "${GIT_PROMPT_VIRTUAL_ENV_AFTER_PROMPT:-0}" == "0" ]]; then
-      NEW_PROMPT="$(gp_add_virtualenv_to_prompt)${PROMPT_START}$(${prompt_callback})${STATUS_PREFIX}${STATUS}${PROMPT_END}"
-    else
-      NEW_PROMPT="${PROMPT_START}$(${prompt_callback})$(gp_add_virtualenv_to_prompt)${STATUS_PREFIX}${STATUS}${PROMPT_END}"
-    fi
+  if [[ -z "${VCS_STATUS_REMOTE_URL+x}" ]]; then
+    local GIT_PROMPT_PREFIX_FINAL="${GIT_PROMPT_PREFIX//_USERNAME_REPO_/${ResetColor}}"
   else
-    NEW_PROMPT="${EMPTY_PROMPT}"
+    if [[ -z "${GIT_PROMPT_USERNAME_REPO_SEPARATOR+x}" ]]; then
+      local GIT_PROMPT_PREFIX_FINAL="${GIT_PROMPT_PREFIX//_USERNAME_REPO_/${VCS_STATUS_REMOTE_URL}${ResetColor}}"
+    else
+      local GIT_PROMPT_PREFIX_FINAL="${GIT_PROMPT_PREFIX//_USERNAME_REPO_/${VCS_STATUS_REMOTE_URL}${ResetColor}${GIT_PROMPT_USERNAME_REPO_SEPARATOR}}"
+    fi
+  fi
+
+  local actual_branch_prompt="${GIT_PROMPT_BRANCH}"
+  if [[ "${VCS_STATUS_BRANCH_NAME}" == "${GIT_PROMPT_MASTER_BRANCHES}" ]]; then
+      actual_branch_prompt="${GIT_PROMPT_MASTER_BRANCH}"
+  fi
+
+  local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX_FINAL}${actual_branch_prompt}${URL_SHORT-}\${VCS_STATUS_BRANCH_NAME}\${VCS_STATUS_STATE}${ResetColor}${GIT_FORMATTED_UPSTREAM-}"
+  local STATUS=""
+
+  __add_status() {
+    STATUS="${STATUS}${1}"
+  }
+
+  __add_status_only_prompt() {
+    __add_status "${1}${ResetColor}"
+  }
+
+  __add_status_with_files_count() {
+    __add_status "${1}${2}${ResetColor}"
+  }
+
+  __add_status_with_optional_file_count() {
+    if [[ "${__GIT_PROMPT_SHOW_CHANGED_FILES_COUNT}" == "1" ]]; then
+      __add_status_with_files_count "$1" "$2"
+    else
+      __add_status_only_prompt "$1"
+    fi
+  }
+
+  if [[ -n "$VCS_STATUS_REMOTE" ]]; then
+    __add_status_with_files_count "${GIT_PROMPT_REMOTE}" "${VCS_STATUS_REMOTE}"
+  fi
+
+  if [[ "${vcs_clean}" -eq 0 ]]; then
+    __add_status "${GIT_PROMPT_SEPARATOR}"
+
+    if [[ "$VCS_STATUS_NUM_STAGED" != "0" && ${VCS_STATUS_NUM_STAGED} != "^" ]]; then
+      __add_status_with_optional_file_count "$GIT_PROMPT_STAGED" "$VCS_STATUS_NUM_STAGED"
+    fi
+
+    if [[ "$VCS_STATUS_NUM_CONFLICTS" != "0" ]]; then
+      __add_status_with_optional_file_count "$GIT_PROMPT_CONFLICTS" "$VCS_STATUS_NUM_CONFLICTS"
+    fi
+
+    if [[ "$VCS_STATUS_NUM_CHANGED" != "0" ]]; then
+      __add_status_with_optional_file_count "$GIT_PROMPT_CHANGED" "$VCS_STATUS_NUM_CHANGED"
+    fi
+
+    if [[ "$VCS_STATUS_NUM_UNTRACKED" != "0" ]]; then
+      __add_status_with_optional_file_count "$GIT_PROMPT_UNTRACKED" "$VCS_STATUS_NUM_UNTRACKED"
+    fi
+
+    if [[ "$VCS_STATUS_NUM_STASHED" != "0" ]]; then
+      __add_status_with_optional_file_count "$GIT_PROMPT_STASHED" "$VCS_STATUS_NUM_STASHED"
+    fi
+  elif [[ -n "${GIT_PROMPT_CLEAN}" ]]; then
+    __add_status "${GIT_PROMPT_SEPARATOR}"
+    __add_status_only_prompt "$GIT_PROMPT_CLEAN"
+  fi
+  __add_status "${ResetColor}${GIT_PROMPT_SUFFIX}"
+
+  if [[ "${GIT_PROMPT_VIRTUAL_ENV_AFTER_PROMPT:-0}" == "0" ]]; then
+    NEW_PROMPT="$(gp_add_virtualenv_to_prompt)${PROMPT_START}$(${prompt_callback})${STATUS_PREFIX}${STATUS}${PROMPT_END}"
+  else
+    NEW_PROMPT="${PROMPT_START}$(${prompt_callback})$(gp_add_virtualenv_to_prompt)${STATUS_PREFIX}${STATUS}${PROMPT_END}"
   fi
 
   PS1="${NEW_PROMPT//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}${ResetColor}}"

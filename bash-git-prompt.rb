@@ -9,8 +9,7 @@ class BashGitPrompt < Formula
 
   def install
     share.install "gitprompt.sh", "gitprompt.fish", "git-prompt-help.sh",
-                  "gitstatus.py", "gitstatus.sh", "gitstatus_pre-1.7.10.sh",
-                  "prompt-colors.sh"
+                  "gitstatus.sh", "prompt-colors.sh"
 
     (share/"themes").install Dir["themes/*.bgptheme"], "themes/Custom.bgptemplate"
     doc.install "README.md"
