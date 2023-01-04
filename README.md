@@ -9,7 +9,38 @@ A ``bash`` prompt that displays information about the current git repository.
 In particular the branch name, difference with remote branch, number of files
 staged, changed, etc.
 
+(an original idea from this [blog post][]).
+
 `gitstatus.sh` and `git-prompt-help.sh` added by [AKS](http://github.com/aks).
+
+# ATTENTION! Breaking changes!
+
+**If you use this prompt already, please update your `.git-prompt-colors.sh`,
+if you have one. It now contains a function named `define_git_prompt_colors()` or `override_git_prompt_colors()`!**
+
+**Please see the ``Custom.bgptemplate`` in the ``themes`` subdirectory of the installation directory!**
+
+**You can now also use the function `override_git_prompt_colors()`. It should define the variable `GIT_PROMPT_THEME_NAME`
+and call the function `reload_git_prompt_colors <ThemeName>` like follows:**
+
+```sh
+override_git_prompt_colors() {
+  GIT_PROMPT_THEME_NAME="Custom" # needed for reload optimization, should be unique
+
+  # Place your overrides here
+  ...
+}
+
+# load the theme
+reload_git_prompt_colors "Custom"
+```
+
+The advantage of this approach is, that you only need to specify the parts, that are different to the Default theme.
+
+---
+
+**The variable `GIT_PROMPT_SHOW_LAST_COMMAND_INDICATOR` was replaced with a more general placeholder
+named ``_LAST_COMMAND_INDICATOR_``, which is replaced by the state of the last executed command. It is now activated by default.**
 
 ## Examples
 
@@ -44,7 +75,7 @@ The symbols are as follows:
 - Upstream branch
   - Shows the remote tracking branch
   - Disabled by default
-  - Enable by setting `GIT_PROMPT_SHOW_UPSTREAM=1`
+  - Enable by setting GIT_PROMPT_SHOW_UPSTREAM=1
 - Branch Tracking Symbols
   - ``↑n``: ahead of remote by ``n`` commits
   - ``↓n``: behind remote by ``n`` commits
@@ -67,7 +98,6 @@ The symbols are as follows:
 ```sh
 if [ -f "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh" ]; then
   __GIT_PROMPT_DIR=$(brew --prefix)/opt/bash-git-prompt/share
-  GIT_PROMPT_ONLY_IN_REPO=1
   source "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh"
 fi
 ```
@@ -77,20 +107,19 @@ fi
 - Clone this repository to your home directory.
 
 ```sh
-git clone https://github.com/magicmonty/bash-git-prompt.git ~/.bash-git-prompt --depth=1
+cd ~
+git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt --depth=1
 ```
 
 Add to the `~/.bashrc`:
 ```
-if [ -f "$HOME/.bash-git-prompt/gitprompt.sh" ]; then
-    GIT_PROMPT_ONLY_IN_REPO=1
-    source $HOME/.bash-git-prompt/gitprompt.sh
-fi
+  GIT_PROMPT_ONLY_IN_REPO=1
+  source ~/.bash-git-prompt/gitprompt.sh
 ```
 
 ### install for the fish shell
 
-- If you cloned the repo to a directory other then `~/.bash-git-prompt` , set `__GIT_PROMPT_DIR` in `~/.config/fish/config.fish`
+- If you cloned the repo to a directory other then ~/.bash-git-prompt , set __GIT_PROMPT_DIR in ~/.config/fish/config.fish
    to that path
 
 - To install as an option in the fish_config GUI
@@ -115,35 +144,32 @@ cp gitprompt.fish ~/.config/fish/functions/fish_prompt.fish
 
 ```sh
 
-# Set config variables first
-GIT_PROMPT_ONLY_IN_REPO=1
+   # Set config variables first
+   GIT_PROMPT_ONLY_IN_REPO=1
 
-# GIT_PROMPT_FETCH_REMOTE_STATUS=0   # uncomment to avoid fetching remote status
-# GIT_PROMPT_IGNORE_SUBMODULES=1 # uncomment to avoid searching for changed files in submodules
-# GIT_PROMPT_WITH_VIRTUAL_ENV=0 # uncomment to avoid setting virtual environment infos for node/python/conda environments
-# GIT_PROMPT_VIRTUAL_ENV_AFTER_PROMPT=1 # uncomment to place virtual environment infos between prompt and git status (instead of left to the prompt)
+   # GIT_PROMPT_FETCH_REMOTE_STATUS=0   # uncomment to avoid fetching remote status
+   # GIT_PROMPT_IGNORE_SUBMODULES=1 # uncomment to avoid searching for changed files in submodules
 
-# GIT_PROMPT_SHOW_UPSTREAM=1 # uncomment to show upstream tracking branch
-# GIT_PROMPT_SHOW_UNTRACKED_FILES=normal # can be no, normal or all; determines counting of untracked files
+   # GIT_PROMPT_SHOW_UPSTREAM=1 # uncomment to show upstream tracking branch
+   # GIT_PROMPT_SHOW_UNTRACKED_FILES=all # can be no, normal or all; determines counting of untracked files
 
-# GIT_PROMPT_SHOW_CHANGED_FILES_COUNT=0 # uncomment to avoid printing the number of changed files
+   # GIT_PROMPT_SHOW_CHANGED_FILES_COUNT=0 # uncomment to avoid printing the number of changed files
 
-# GIT_PROMPT_STATUS_COMMAND=gitstatus_pre-1.7.10.sh # uncomment to support Git older than 1.7.10
+   # GIT_PROMPT_STATUS_COMMAND=gitstatus_pre-1.7.10.sh # uncomment to support Git older than 1.7.10
 
-# GIT_PROMPT_START=...    # uncomment for custom prompt start sequence
-# GIT_PROMPT_END=...      # uncomment for custom prompt end sequence
+   # GIT_PROMPT_START=...    # uncomment for custom prompt start sequence
+   # GIT_PROMPT_END=...      # uncomment for custom prompt end sequence
 
-# as last entry source the gitprompt script
-# GIT_PROMPT_THEME=Custom # use custom theme specified in file GIT_PROMPT_THEME_FILE (default ~/.git-prompt-colors.sh)
-# GIT_PROMPT_THEME_FILE=~/.git-prompt-colors.sh
-# GIT_PROMPT_THEME=Solarized # use theme optimized for solarized color scheme
-source ~/.bash-git-prompt/gitprompt.sh
+   # as last entry source the gitprompt script
+   # GIT_PROMPT_THEME=Custom # use custom theme specified in file GIT_PROMPT_THEME_FILE (default ~/.git-prompt-colors.sh)
+   # GIT_PROMPT_THEME_FILE=~/.git-prompt-colors.sh
+   # GIT_PROMPT_THEME=Solarized # use theme optimized for solarized color scheme
+   source ~/.bash-git-prompt/gitprompt.sh
 ```
 
 You can set the `GIT_PROMPT_SHOW_UNTRACKED_FILES` variable to `no` or `normal` to speed things up if you have lots of
 untracked files in your repository. This can be the case for build systems that put their build artifacts in
-the subdirectory structure of the git repository. Setting it to `all` will count all untracked files, including files
-listed in .gitignore.
+the subdirectory structure of the git repository.
 
 - `cd` to a git repository and test it!
 
@@ -159,7 +185,7 @@ GIT_PROMPT_THEME=Solarized
 If you set `GIT_PROMPT_THEME` to `Custom`, then the `.git-prompt-colors.sh` in the home directory will be used.
 This file can now be generated with the command `git_prompt_make_custom_theme [<Name of base theme>]`. If the name of
 the base theme is ommitted or the theme file is not found, then the Default theme is used. If you have already a custom
-`.git-prompt-colors.sh` in your home directory, an error message will be shown.
+`.git-prompt-colors.sh` in your home directory, a error message will be shown.
 
 You can display a list of available themes with `git_prompt_list_themes` (the current theme is highlighted)
 
@@ -231,10 +257,7 @@ function prompt_callback {
     - `gp_truncate_pwd` - a function that returns the current PWD truncated to fit the current terminal width. Specify the length to truncate to as a parameter. Otherwise it defaults to 1/3 of the terminal width.
 
 - If you want to show the git prompt only if you are in a git repository you
-  can set `GIT_PROMPT_ONLY_IN_REPO=1` before sourcing the gitprompt script
-
-- You can show an abbreviated `username/repo` in the prompt by setting `GIT_PROMPT_WITH_USERNAME_AND_REPO=1` and setting the placeholder `_USERNAME_REPO_` in your `GIT_PROMPT_PREFIX`. You can also add a `GIT_PROMPT_USERNAME_REPO_SEPARATOR=" | "` so the `username/repo` is nicely separated if there is a remote and if there is no remote, neither the username/repo part nor the separator will be shown. See the theme `Single_line_username_repo.bgptheme` for an example.
-
+  can set ``GIT_PROMPT_ONLY_IN_REPO=1`` before sourcing the gitprompt script
 
 - There is an indicator at the start of the prompt, which shows
   the result of the last executed command by if you put the placeholder
@@ -284,7 +307,7 @@ GIT_PROMPT_COMMAND_FAIL="${Red}✘-_LAST_COMMAND_STATE_ " # displays as ✘-1 fo
 git_prompt_reset
 ```
 
-- You can disable/enable gitprompt by running:
+- You can disable/enable gitprompt by runnning:
 
 ```sh
 git_prompt_toggle
@@ -351,9 +374,6 @@ If you want to contribute you can look for issues with the label [up-for-grabs][
 Please leave a comment on the issue, that you want to fix it, so others know, the labels are "taken".
 
 Pull requests are welcome. I will check them and merge them, if I think they help the project.
-
-## Similar projects
-https://github.com/ohmybash/oh-my-bash
 
 ## Donations
 I accept tips through [Flattr][flattr].
