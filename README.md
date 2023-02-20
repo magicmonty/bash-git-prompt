@@ -133,6 +133,8 @@ GIT_PROMPT_ONLY_IN_REPO=1
 # GIT_PROMPT_START=...    # uncomment for custom prompt start sequence
 # GIT_PROMPT_END=...      # uncomment for custom prompt end sequence
 
+# GIT_PROMPT_START_PREFIX=... # uncomment for custom prefix for the prompt start sequence
+
 # as last entry source the gitprompt script
 # GIT_PROMPT_THEME=Custom # use custom theme specified in file GIT_PROMPT_THEME_FILE (default ~/.git-prompt-colors.sh)
 # GIT_PROMPT_THEME_FILE=~/.git-prompt-colors.sh
@@ -201,6 +203,11 @@ If you use a custom theme in `.git-prompt-colors.sh`, please set `GIT_PROMPT_THE
 #### Further customizations
 
 - You can define `GIT_PROMPT_START` and `GIT_PROMPT_END` to tweak your prompt.
+
+- You can define `GIT_PROMPT_START_PREFIX` to add something to the first line, like, a hostname
+  ```
+  GIT_PROMPT_START_PREFIX="\H"
+  ```
 
 - The default colors are defined within `prompt-colors.sh`, which is sourced by
   `gitprompt.sh`.  The colors used for various git status are defined in

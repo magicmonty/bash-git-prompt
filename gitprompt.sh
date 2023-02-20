@@ -240,12 +240,12 @@ function git_prompt_config() {
 
     if [[ -z "${GIT_PROMPT_START:+x}" ]] ; then
       if ${_isroot}; then
-        PROMPT_START="${GIT_PROMPT_START_ROOT-}"
+        PROMPT_START="${GIT_PROMPT_START_PREFIX:-}${GIT_PROMPT_START_ROOT-}"
       else
-        PROMPT_START="${GIT_PROMPT_START_USER-}"
+        PROMPT_START="${GIT_PROMPT_START_PREFIX:-}${GIT_PROMPT_START_USER-}"
       fi
     else
-      PROMPT_START="${GIT_PROMPT_START-}"
+      PROMPT_START="${GIT_PROMPT_START_PREFIX:-}${GIT_PROMPT_START-}"
     fi
 
     if [[ -z "${GIT_PROMPT_END:+x}" ]] ; then
