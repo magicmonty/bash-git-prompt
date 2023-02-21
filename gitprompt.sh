@@ -18,8 +18,7 @@ function async_run_zsh() {
 }
 
 
-function git_prompt_dir() {
-  # assume the gitstatus.sh is in the same directory as this script
+function set_git_prompt_dir() {
   # code thanks to http://stackoverflow.com/questions/59895
   if [ -z "$__GIT_PROMPT_DIR" ]; then
     __GIT_PROMPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
