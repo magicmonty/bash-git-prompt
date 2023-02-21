@@ -713,12 +713,12 @@ function add_prompt_command() {
     return 0
   fi
 
-  if [ -z "$PROMPT_COMMAND" ]; then
+  if [[ -z "$PROMPT_COMMAND" ]]; then
     PROMPT_COMMAND="$new_entry"
     return 0
   fi
 
-  if [ "$insert_before" == "true" ]; then
+  if [[ "$insert_before" == "true" ]]; then
     PROMPT_COMMAND="${new_entry};${PROMPT_COMMAND}"
   else
     PROMPT_COMMAND="${PROMPT_COMMAND};${new_entry}"

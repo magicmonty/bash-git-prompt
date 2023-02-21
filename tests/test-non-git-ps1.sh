@@ -23,7 +23,7 @@ function test_original_prompt_is_restored() {
   # Navigate back into the repo
   cd "$REPO_ROOT"
   run_prompt_command
-  if [ "$PS1" == "$" ]; then
+  if [[ "$PS1" == "$" ]]; then
     echo "PS1: $PS1 == \$"
     return 1
   fi
