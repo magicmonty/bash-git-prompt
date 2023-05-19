@@ -733,6 +733,28 @@ function add_to_end_of_prompt_command() {
   add_prompt_command "$1" "false"
 }
 
+# Use array if running bash >= 5.1 and PROMPT_COMMAND isn't a string
+if ((BASH_VERSINFO[0] > 5 || BASH_VERSINFO[0] == 5 && BASH_VERSINFO[1] >= 1)); then
+  if [[ $(declare -p PROMPT_COMMAND 2>/dev/null) != "declare --"* ]]; then
+    function make_prompt_command_clean() { :; }
+
+    function add_prompt_command() {
+      local new_entry="$1"
+      local insert_before="$2"
+
+      if [[ ";${PROMPT_COMMAND[*]};" == *";${new_entry};"* ]]; then
+        return 0
+      fi
+
+      if [[ "$insert_before" == "true" ]]; then
+        PROMPT_COMMAND=("${new_entry}" "${PROMPT_COMMAND[@]}")
+      else
+        PROMPT_COMMAND+=("${new_entry}")
+      fi
+    }
+  fi
+fi
+
 function gp_install_prompt {
   make_prompt_command_clean
   add_to_end_of_prompt_command "setGitPrompt"
