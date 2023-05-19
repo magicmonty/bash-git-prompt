@@ -734,9 +734,25 @@ function add_to_end_of_prompt_command() {
 }
 
 function gp_install_prompt {
-  make_prompt_command_clean
-  add_to_end_of_prompt_command "setGitPrompt"
-  add_to_beginning_of_prompt_command "setLastCommandState"
+  # 5.1 supports PROMPT_COMMAND as an array
+  if ((BASH_VERSINFO[0] > 5 || BASH_VERSINFO[0] == 5 && BASH_VERSINFO[1] >= 1)); then
+    if [[ $(declare -p PROMPT_COMMAND 2>/dev/null) == "declare --"* ]]; then
+      make_prompt_command_clean
+      add_to_end_of_prompt_command "setGitPrompt"
+      add_to_beginning_of_prompt_command "setLastCommandState"
+    else
+      if [[ "${PROMPT_COMMAND[*]}" != *setGitPrompt* ]]; then
+        PROMPT_COMMAND+=(setGitPrompt)
+      fi
+      if [[ "${PROMPT_COMMAND[*]}" != *setLastCommandState* ]]; then
+        PROMPT_COMMAND=(setLastCommandState "${PROMPT_COMMAND[@]}")
+      fi
+    fi
+  else
+    make_prompt_command_clean
+    add_to_end_of_prompt_command "setGitPrompt"
+    add_to_beginning_of_prompt_command "setLastCommandState"
+  fi
 
   set_git_prompt_dir
   source "${__GIT_PROMPT_DIR}/git-prompt-help.sh"
