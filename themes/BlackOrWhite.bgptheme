@@ -1,0 +1,460 @@
+######################################################################################
+# This theme for gitprompt.sh is created for the dark and light color schemes as well.
+# Base colors of the theme can be black or white, it depends on which color needed.
+# The text is using the terminal text color.
+# Git branch state part is using similar colors like git (red, green).
+# Also, configurable which part to display and where to show icons.
+# Nerd fonts are needed to display icons.
+#
+# Settings:
+# =========
+#
+# Color options:
+# --------------
+# Variable name: GIT_PROMPT_BLACK_OR_WHITE_THEME_PS1_COLOR
+# Possible values:
+#   - black (default)
+#   - white
+#
+# Command prompt styles:
+# ----------------------
+# Variable name: GIT_PROMPT_BLACK_OR_WHITE_THEME_STYLE
+# Possible values:
+#   - bubbles                  (default)
+#   - bubbles_with_double_line
+#   - powerline
+#
+# Visible sections:
+# -----------------
+# This is a comma-separated list of the shown sections. It will show the sections
+# as you add to the list. If this variable is missing or it has no any values,
+# then it will show the path.
+#
+# Variable name: GIT_PROMPT_BLACK_OR_WHITE_THEME_VISIBLE_SECTIONS
+# Possible options:
+#   - hostname
+#   - last_command_state
+#   - os                 (OS name)
+#   - os_icon            (Only the OS icon)
+#   - time
+#   - user
+#   - user_and_hostname
+#   - path               (default)
+#
+# Icons in sections:
+# -----------------
+# This is a comma-separated list of the shown icons in sections. It will show an
+# icon if originally was not there or it will replace the default icon.
+#
+# Variable name: GIT_PROMPT_BLACK_OR_WHITE_THEME_ADD_OR_REPLACE_ICONS_IN_SECTIONS
+# Possible options:
+#   - git_branch                 (add branch icon before the branch name)
+#   - git_branch_powerline       (add the powerline branch icon before the branch name)
+#   - git_status                 (replace the original icons)
+#   - hostname                   (add icon to the hostname section)
+#   - last_command_state_ok_fail (replace the original icons in the last_command_state section)
+#   - last_command_state_prompt  (replace the original icons in the last_command_state section)
+#   - os                         (add icon to the os section)
+#   - path                       (add icon to the path section)
+#   - time                       (add icon to the time section)
+#   - user                       (add icon to the user section)
+#
+# Extra space after icons:
+# ------------------------
+# Sometimes you need extra space after icons (because of the size of the icons).
+#
+# Variable name: GIT_PROMPT_BLACK_OR_WHITE_THEME_ADD_EXTRA_SPACE_AFTER_ICONS
+# Possible options:
+#   - true
+#   - false
+#
+# Example usage:
+# --------------
+# if [ -f "$HOME/.bash-git-prompt/gitprompt.sh" ]; then
+#   GIT_PROMPT_THEME=BlackOrWhite
+#   GIT_PROMPT_BLACK_OR_WHITE_THEME_PS1_COLOR=white
+#   GIT_PROMPT_BLACK_OR_WHITE_THEME_STYLE=bubbles
+#   GIT_PROMPT_BLACK_OR_WHITE_THEME_VISIBLE_SECTIONS=os_icon,path,last_command_state
+#   GIT_PROMPT_BLACK_OR_WHITE_THEME_ADD_OR_REPLACE_ICONS_IN_SECTIONS=path,last_command_state_prompt,last_command_state_ok_fail,git_branch_powerline,git_status
+#   GIT_PROMPT_BLACK_OR_WHITE_THEME_ADD_EXTRA_SPACE_AFTER_ICONS=true
+#   source $HOME/.bash-git-prompt/gitprompt.sh
+# fi
+#
+# Samples:
+# ========
+#
+# Display user and hostname
+# ┌─(user@hostname)──(~)
+# └─•
+#
+# Display time instead of user and hostname
+# ┌─(10:58:58)──(~)
+# └─•
+#
+# Display root user prompt
+# ┌─(11:08:06)──(/home/root)
+# └─(!)─•
+#
+# Display git branch with or without the branch icon
+# ┌─(10:59:31)──(~/.bash-git-prompt)──( master|✔)
+# └─•
+#
+# ┌─(10:59:31)──(~/.bash-git-prompt)──(master|✔)
+# └─•
+#
+# Display git branch with upstream
+# ┌─(user@hostname)──(~/.bash-git-prompt)──( master {origin/master}|…1)
+# └─•
+#
+# Display last command state
+# ┌─(user@hostname)──(~/.bash-git-prompt)──(>_ ✔)──( master|…1)
+# └─•
+#
+# Display sections with icons
+# ┌─(  user)──(  hostname)──(  ~/.bash-git-prompt)──(   )──( master| 2)
+# └─•
+#
+# ┌─(  11:45:19)──(  ~/.bash-git-prompt)──(   )──( master| 2)
+# └─•
+#
+# Display prompt in different styles
+# ╔═(  macos)══(  user)══(  hostname)══( ~)══(   )
+# ╚═>
+#
+# ╔═(  macos)══(  user)══(  hostname)══(  ~/.bash-git-prompt)══(   )
+# ╠═( master  | 1)
+# ╚═>
+#
+# ┌─      user    hostname    ~    
+# └─•
+#
+# ┌─      user    hostname    ~/.bash-git-prompt        master  | 1
+# └─•
+#
+######################################################################################
+override_git_prompt_colors() {
+  GIT_PROMPT_THEME_NAME="BlackOrWhite"
+
+  local ResetColor="\[\033[0m\]"
+  local PS1BoldBlackColor="\[\033[1;30m\]"                # Bold black no background
+  local PS1BoldWhiteColor="\[\033[1;97m\]"                # Bold white no background
+  local PS1BoldGreenColor="\[\033[1;32m\]"                # Bold green no background
+  local PS1BoldRedColor="\[\033[1;31m\]"                  # Bold red no background
+  local PS1WhiteBlackBackgroundColor="\[\033[0;97;40m\]"  # White with black background
+  local PS1GreenBlackBackgroundColor="\[\033[0;32;40m\]"  # Green with black background
+  local PS1RedBlackBackgroundColor="\[\033[0;31;40m\]"    # Red with black background
+  local PS1BlackWhiteBackgroundColor="\[\033[0;30;107m\]" # Black with white background
+  local PS1GreenWhiteBackgroundColor="\[\033[0;32;107m\]" # Green with white background
+  local PS1RedWhiteBackgroundColor="\[\033[0;31;107m\]"   # Red with white background
+
+  local PS1Color="${PS1BoldBlackColor}"
+  local PS1GreenColor="${PS1BoldGreenColor}"
+  local PS1RedColor="${PS1BoldRedColor}"
+  local PS1SartEndColor="${PS1BoldBlackColor}"
+  local PS1ResetColor="${ResetColor}"
+
+  case $GIT_PROMPT_BLACK_OR_WHITE_THEME_PS1_COLOR in
+    black )
+      # Default
+      ;;
+
+    white )
+      PS1Color="${PS1BoldWhiteColor}"
+      PS1SartEndColor="${PS1BoldWhiteColor}"
+      ;;
+  esac
+
+  local PromptStartPrefix="┌─("
+  local PromptStartMiddle=")──("
+  local PromptStartSuffix=")"
+  local PromptGitPrefix="──("
+  local PromptGitSuffix=")"
+  local PromptEndUser="└─•"
+  local PromptEndRoot="└─(!)─•"
+
+  case $GIT_PROMPT_BLACK_OR_WHITE_THEME_STYLE in
+    bubbles )
+      # Default
+      ;;
+
+    bubbles_with_double_line )
+      PromptStartPrefix="╔═("
+      PromptStartMiddle=")══("
+      PromptStartSuffix=")"
+      PromptGitPrefix="\n╠═("
+      PromptGitSuffix=")"
+      PromptEndUser="╚═>"
+      PromptEndRoot="╚═(!)═>"
+      ;;
+
+    powerline )
+      PS1ResetColor=""
+
+      case $GIT_PROMPT_BLACK_OR_WHITE_THEME_PS1_COLOR in
+        black )
+          PS1Color="${PS1WhiteBlackBackgroundColor}"
+          PS1GreenColor="${PS1GreenBlackBackgroundColor}"
+          PS1RedColor="${PS1RedBlackBackgroundColor}"
+          ;;
+
+        white )
+          PS1Color="${PS1BlackWhiteBackgroundColor}"
+          PS1GreenColor="${PS1GreenWhiteBackgroundColor}"
+          PS1RedColor="${PS1RedWhiteBackgroundColor}"
+          ;;
+      esac
+
+      PromptStartPrefix="┌─${ResetColor}${PS1Color} "
+      PromptStartMiddle="  "
+      PromptStartSuffix=""
+      PromptGitPrefix=" "
+      PromptGitSuffix=" "
+      ;;
+    esac
+
+  local OsType=""
+
+  case "$(uname)" in
+    Darwin )
+      OsType="macos"
+      ;;
+
+    Linux )
+      OsType="$(cat /etc/os-release | grep ^ID= | cut -d'=' -f2)"
+      ;;
+  esac
+
+  local ExtraSpaceAfterIcon=""
+
+  if [[ "$GIT_PROMPT_BLACK_OR_WHITE_THEME_ADD_EXTRA_SPACE_AFTER_ICONS" == "true" ]]; then
+    ExtraSpaceAfterIcon=" "
+  fi
+
+  # os
+  local OsIcon=""
+  # user
+  local UserIcon=""
+  # hostname
+  local ComputerIcon=""
+  # time
+  local ClockIcon=""
+  # path
+  local FolderIcon=""
+  # last_command_state
+  local CommandPromptIcon=">_ "
+  local CommandOkIcon="✔"
+  local CommandFailIcon="✘"
+  # git
+  local BranchIcon=""
+  local StagedIcon="•"
+  local ConflictsIcon="x"
+  local ChangedIcon="+"
+  local RemoteIcon=" "
+  local UntrackedIcon="…"
+  local StashedIcon="⚑${ExtraSpaceAfterIcon}"
+  local CleanIcon="✔"
+  local AheadIcon="↑·"
+  local BehindIcon="↓·"
+  local PrehashIcon=":"
+  local NoRemoteTrackingIcon="L"
+
+  for IconInSection in ${GIT_PROMPT_BLACK_OR_WHITE_THEME_ADD_OR_REPLACE_ICONS_IN_SECTIONS//,/ }; do
+    case $IconInSection in
+      os )
+        case $OsType in
+          macos )
+            OsIcon=" ${ExtraSpaceAfterIcon}"
+            ;;
+
+          archlinux )
+            OsIcon=" ${ExtraSpaceAfterIcon}"
+            ;;
+
+          centos )
+            OsIcon=" ${ExtraSpaceAfterIcon}"
+            ;;
+
+          debian )
+            OsIcon=" ${ExtraSpaceAfterIcon}"
+            ;;
+
+          fedora )
+            OsIcon=" ${ExtraSpaceAfterIcon}"
+            ;;
+
+          gentoo )
+            OsIcon=" ${ExtraSpaceAfterIcon}"
+            ;;
+
+          linuxmint )
+            OsIcon=" ${ExtraSpaceAfterIcon}"
+            ;;
+
+          opensuse )
+            OsIcon=" ${ExtraSpaceAfterIcon}"
+            ;;
+
+          redhat )
+            OsIcon=" ${ExtraSpaceAfterIcon}"
+            ;;
+
+          ubuntu )
+            OsIcon=" ${ExtraSpaceAfterIcon}"
+            ;;
+        esac
+        ;;
+
+      user )
+        UserIcon=" ${ExtraSpaceAfterIcon}"
+        ;;
+
+      hostname )
+        ComputerIcon=" ${ExtraSpaceAfterIcon}"
+        ;;
+
+      time )
+        ClockIcon=" ${ExtraSpaceAfterIcon}"
+        ;;
+
+      path )
+        FolderIcon=" ${ExtraSpaceAfterIcon}"
+        ;;
+
+      last_command_state_prompt )
+        CommandPromptIcon=" ${ExtraSpaceAfterIcon}"
+        ;;
+
+      last_command_state_ok_fail )
+        CommandOkIcon="${ExtraSpaceAfterIcon}"
+        CommandFailIcon="${ExtraSpaceAfterIcon}"
+        ;;
+
+      git_branch_powerline )
+        BranchIcon=" "
+        ;;
+
+      git_branch )
+        BranchIcon=" "
+        ;;
+
+      git_status )
+        StagedIcon="${ExtraSpaceAfterIcon}"
+        ConflictsIcon="ﴜ${ExtraSpaceAfterIcon}"
+        ChangedIcon="${ExtraSpaceAfterIcon}"
+        UntrackedIcon="${ExtraSpaceAfterIcon}"
+        StashedIcon="${ExtraSpaceAfterIcon}"
+        CleanIcon="${ExtraSpaceAfterIcon}"
+        AheadIcon="${ExtraSpaceAfterIcon}${ExtraSpaceAfterIcon}"
+        BehindIcon="${ExtraSpaceAfterIcon}${ExtraSpaceAfterIcon}"
+        NoRemoteTrackingIcon="${ExtraSpaceAfterIcon}"
+        ;;
+    esac
+  done
+
+  local SectionAdded=0
+  local SectionAddedCounter=0
+
+  GIT_PROMPT_START_USER="\n${PS1SartEndColor}${PromptStartPrefix}${PS1ResetColor}"
+
+  for VisibleSection in ${GIT_PROMPT_BLACK_OR_WHITE_THEME_VISIBLE_SECTIONS//,/ }; do
+    if [[ $SectionAdded -eq 1 ]]; then
+      GIT_PROMPT_START_USER+="${PS1Color}${PromptStartMiddle}${PS1ResetColor}"
+      SectionAdded=0
+    fi
+
+    case $VisibleSection in
+      os )
+        GIT_PROMPT_START_USER+="${OsIcon}${OsType}"
+        SectionAdded=1
+        ((SectionAddedCounter++))
+        ;;
+
+      os_icon )
+        GIT_PROMPT_START_USER+="${OsIcon%?}"
+        SectionAdded=1
+        ((SectionAddedCounter++))
+        ;;
+
+      user )
+        GIT_PROMPT_START_USER+="${UserIcon}\u"
+        SectionAdded=1
+        ((SectionAddedCounter++))
+        ;;
+
+      hostname )
+        GIT_PROMPT_START_USER+="${ComputerIcon}\h"
+        SectionAdded=1
+        ((SectionAddedCounter++))
+        ;;
+
+      user_and_hostname )
+        GIT_PROMPT_START_USER+="\u${PS1Color}@${PS1ResetColor}\h"
+        SectionAdded=1
+        ((SectionAddedCounter++))
+        ;;
+
+      time )
+        GIT_PROMPT_START_USER+="${ClockIcon}\t"
+        SectionAdded=1
+        ((SectionAddedCounter++))
+        ;;
+
+      path )
+        GIT_PROMPT_START_USER+="${FolderIcon}\w"
+        SectionAdded=1
+        ((SectionAddedCounter++))
+        ;;
+
+      last_command_state )
+        GIT_PROMPT_START_USER+="${CommandPromptIcon}_LAST_COMMAND_INDICATOR_"
+        SectionAdded=1
+        ((SectionAddedCounter++))
+        ;;
+    esac
+  done
+
+  if [[ $SectionAddedCounter -eq 0 ]]; then
+    GIT_PROMPT_START_USER+="\w"
+  fi
+
+  GIT_PROMPT_START_USER+="${PS1Color}${PromptStartSuffix}${PS1ResetColor}"
+
+  if [[ "$GIT_PROMPT_BLACK_OR_WHITE_THEME_STYLE" == "powerline" ]]; then
+    GIT_PROMPT_START_USER+=" "
+  fi
+
+  GIT_PROMPT_LEADING_SPACE=0
+
+  GIT_PROMPT_PREFIX="${PS1Color}${PromptGitPrefix}${PS1ResetColor}${BranchIcon}"
+  GIT_PROMPT_SUFFIX="${PS1Color}${PromptGitSuffix}${PS1ResetColor}"
+  GIT_PROMPT_SEPARATOR="${PS1Color}${PS1ResetColor}|"
+
+  GIT_PROMPT_BRANCH="${PS1Color}"
+  GIT_PROMPT_MASTER_BRANCH="${GIT_PROMPT_BRANCH}"
+  GIT_PROMPT_STAGED="${PS1GreenColor}${StagedIcon}"
+  GIT_PROMPT_CONFLICTS="${PS1RedColor}${ConflictsIcon}"
+  GIT_PROMPT_CHANGED="${PS1RedColor}${ChangedIcon}"
+
+  GIT_PROMPT_REMOTE="${PS1Color}${RemoteIcon}"
+  GIT_PROMPT_UNTRACKED="${PS1Color}${UntrackedIcon}"
+  GIT_PROMPT_STASHED="${PS1Color}${StashedIcon}"
+  GIT_PROMPT_CLEAN="${PS1GreenColor}${CleanIcon}"
+
+  GIT_PROMPT_COMMAND_OK="${PS1GreenColor}${CommandOkIcon}"
+  GIT_PROMPT_COMMAND_FAIL="${PS1RedColor}${CommandFailIcon}-_LAST_COMMAND_STATE_"
+
+  GIT_PROMPT_SYMBOLS_AHEAD="${PS1Color}${AheadIcon}"
+  GIT_PROMPT_SYMBOLS_BEHIND="${PS1Color}${BehindIcon}"
+  GIT_PROMPT_SYMBOLS_PREHASH="${PrehashIcon}"
+  GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING="${PS1Color}${NoRemoteTrackingIcon}"
+
+  GIT_PROMPT_VIRTUALENV="${PS1Color}${PS1ResetColor}[${PS1Color}_VIRTUALENV_${PS1ResetColor}] "
+
+  GIT_PROMPT_UPSTREAM="${PS1Color} ${PS1ResetColor}{${PS1Color}_UPSTREAM_${PS1ResetColor}}"
+
+  GIT_PROMPT_START_ROOT="${GIT_PROMPT_START_USER}"
+  GIT_PROMPT_END_USER="${ResetColor}${PS1SartEndColor}\n${PromptEndUser}${ResetColor} "
+  GIT_PROMPT_END_ROOT="${ResetColor}${PS1SartEndColor}\n${PromptEndRoot}${ResetColor} "
+}
+
+reload_git_prompt_colors "BlackOrWhite"

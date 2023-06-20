@@ -36,7 +36,7 @@ else
   remote_url='.'
 fi
 
-gitstatus=$( LC_ALL=C git status ${_ignore_submodules} --untracked-files="${__GIT_PROMPT_SHOW_UNTRACKED_FILES:-normal}" --porcelain --branch )
+gitstatus=$( LC_ALL=C git --no-optional-locks status ${_ignore_submodules} --untracked-files="${__GIT_PROMPT_SHOW_UNTRACKED_FILES:-normal}" --porcelain --branch )
 
 # if the status is fatal, exit now
 [[ ! "${?}" ]] && exit 0
@@ -105,7 +105,6 @@ while IFS='' read -r line || [[ -n "${line}" ]]; do
       AA) ((num_conflicts++)); break;;
       #two character matches, first loop
       ?M) ((num_changed++)) ;;
-      ?D) ((num_changed++)) ;;
       ?\ ) ;;
       #single character matches, second loop
       U) ((num_conflicts++)) ;;
@@ -132,26 +131,30 @@ if (( num_changed == 0 && num_staged == 0 && num_untracked == 0 && num_stashed =
 fi
 
 IFS="^" read -ra branch_fields <<< "${branch_line/\#\# }"
-branch="${branch_fields[0]}"
+branch="${branch_fields[@]:0:1}"
 remote=""
 upstream=""
 
+detached_head=0
+
 if [[ "${branch}" == *"Initial commit on"* ]]; then
   IFS=" " read -ra fields <<< "${branch}"
-  branch="${fields[3]}"
+  branch="${fields[@]:3:1}"
   remote="_NO_REMOTE_TRACKING_"
   remote_url='.'
 elif [[ "${branch}" == *"No commits yet on"* ]]; then
   IFS=" " read -ra fields <<< "${branch}"
-  branch="${fields[4]}"
+  branch="${fields[@]:4:1}"
   remote="_NO_REMOTE_TRACKING_"
   remote_url='.'
 elif [[ "${branch}" == *"no branch"* ]]; then
   tag=$( git describe --tags --exact-match )
   if [[ -n "${tag}" ]]; then
-    branch="${tag}"
+    branch="_PRETAG_${tag}"
+    detached_head=1
   else
     branch="_PREHASH_$( git rev-parse --short HEAD )"
+    detached_head=1
   fi
 else
   if [[ "${#branch_fields[@]}" -eq 1 ]]; then
@@ -159,7 +162,7 @@ else
     remote_url='.'
   else
     IFS="[,]" read -ra remote_fields <<< "${branch_fields[1]}"
-    upstream="${remote_fields[0]}"
+    upstream="${remote_fields[@]:0:1}"
     for remote_field in "${remote_fields[@]}"; do
       if [[ "${remote_field}" == "ahead "* ]]; then
         num_ahead="${remote_field:6}"
@@ -184,7 +187,7 @@ fi
 
 UPSTREAM_TRIMMED=`echo $upstream |xargs`
 
-printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
+printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
   "${branch}${state}" \
   "${remote}" \
   "${remote_url}" \
@@ -194,6 +197,7 @@ printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
   "${num_changed}" \
   "${num_untracked}" \
   "${num_stashed}" \
-  "${clean}"
+  "${clean}" \
+  "${detached_head}"
 
 exit

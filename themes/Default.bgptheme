@@ -7,6 +7,7 @@ unset_git_prompt_colors() {
   unset GIT_PROMPT_SUFFIX
   unset GIT_PROMPT_SEPARATOR
   unset GIT_PROMPT_BRANCH
+  unset GIT_PROMPT_DETACHED_HEAD
   unset GIT_PROMPT_STAGED
   unset GIT_PROMPT_CONFLICTS
   unset GIT_PROMPT_CHANGED
@@ -25,12 +26,20 @@ unset_git_prompt_colors() {
   unset GIT_PROMPT_SYMBOLS_AHEAD
   unset GIT_PROMPT_SYMBOLS_BEHIND
   unset GIT_PROMPT_SYMBOLS_PREHASH
+  unset GIT_PROMPT_SYMBOLS_PRETAG
   unset GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING
 }
 
 define_helpers() {
   Time12a="\$(date +%H:%M)"
   PathShort="\w";
+  NewLine="\n"
+
+  if [ -n "$ZSH_VERSION" ]; then
+    Time12a="%T"
+    PathShort="%~"
+    NewLine=$'\n'
+  fi
 }
 
 define_undefined_git_prompt_colors() {
@@ -43,7 +52,8 @@ define_undefined_git_prompt_colors() {
 
   if [ -z "${GIT_PROMPT_BRANCH+x}" ]; then GIT_PROMPT_BRANCH="${Magenta}"; fi        # the git branch that is active in the current directory
   if [ -z "${GIT_PROMPT_MASTER_BRANCH+x}" ]; then GIT_PROMPT_MASTER_BRANCH="${GIT_PROMPT_BRANCH}"; fi  # used if the git branch that is active in the current directory is $GIT_PROMPT_MASTER_BRANCHES
-  if [ -z "${GIT_PROMPT_STAGED+x}" ]; then GIT_PROMPT_STAGED="${Red}●"; fi           # the number of staged files/directories
+  if [ -z "${GIT_PROMPT_DETACHED_HEAD+x}" ]; then GIT_PROMPT_DETACHED_HEAD="${GIT_PROMPT_BRANCH}"; fi  # used if the repo is in a detached head state
+  if [ -z "${GIT_PROMPT_STAGED+x}" ]; then GIT_PROMPT_STAGED="${Red}● "; fi           # the number of staged files/directories
   if [ -z "${GIT_PROMPT_CONFLICTS+x}" ]; then GIT_PROMPT_CONFLICTS="${Red}✖ "; fi       # the number of files in conflict
   if [ -z "${GIT_PROMPT_CHANGED+x}" ]; then GIT_PROMPT_CHANGED="${Blue}✚ "; fi        # the number of changed files
 
@@ -81,13 +91,14 @@ define_undefined_git_prompt_colors() {
   # _LAST_COMMAND_INDICATOR_ will be replaced by the appropriate GIT_PROMPT_COMMAND_OK OR GIT_PROMPT_COMMAND_FAIL
   if [ -z "${GIT_PROMPT_START_USER+x}" ]; then GIT_PROMPT_START_USER="_LAST_COMMAND_INDICATOR_ ${Yellow}${PathShort}${ResetColor}"; fi
   if [ -z "${GIT_PROMPT_START_ROOT+x}" ]; then GIT_PROMPT_START_ROOT="${GIT_PROMPT_START_USER}"; fi
-  if [ -z "${GIT_PROMPT_END_USER+x}" ]; then GIT_PROMPT_END_USER=" \n${White}${Time12a}${ResetColor} $ "; fi
-  if [ -z "${GIT_PROMPT_END_ROOT+x}" ]; then GIT_PROMPT_END_ROOT=" \n${White}${Time12a}${ResetColor} # "; fi
+  if [ -z "${GIT_PROMPT_END_USER+x}" ]; then GIT_PROMPT_END_USER=" ${NewLine}${White}${Time12a}${ResetColor} $ "; fi
+  if [ -z "${GIT_PROMPT_END_ROOT+x}" ]; then GIT_PROMPT_END_ROOT=" ${NewLine}${White}${Time12a}${ResetColor} # "; fi
 
   # Please do not add colors to these symbols
   if [ -z ${GIT_PROMPT_SYMBOLS_AHEAD+x} ]; then GIT_PROMPT_SYMBOLS_AHEAD="↑·"; fi             # The symbol for "n versions ahead of origin"
   if [ -z ${GIT_PROMPT_SYMBOLS_BEHIND+x} ]; then GIT_PROMPT_SYMBOLS_BEHIND="↓·"; fi            # The symbol for "n versions behind of origin"
   if [ -z ${GIT_PROMPT_SYMBOLS_PREHASH+x} ]; then GIT_PROMPT_SYMBOLS_PREHASH=":"; fi            # Written before hash of commit, if no name could be found
+  if [ -z ${GIT_PROMPT_SYMBOLS_PRETAG+x} ]; then GIT_PROMPT_SYMBOLS_PRETAG=""; fi            # Written before tag name
   if [ -z ${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING+x} ]; then GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING="L"; fi # This symbol is written after the branch, if the branch is not tracked
 
   # branch name(s) that will use $GIT_PROMPT_MASTER_BRANCH color
