@@ -1,6 +1,6 @@
 # Informative git prompt for bash and fish
 
-（メッセージを日本語にカスタマイズして、プロンプトにホスト名を追加）
+（メッセージを日本語にカスタマイズ）
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/magicmonty/bash-git-prompt?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
