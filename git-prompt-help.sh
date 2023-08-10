@@ -7,28 +7,28 @@ git_prompt_help() {
   source "${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
 
  cat <<EOF | sed 's/\\\[\\033//g' | sed 's/\\\]//g'
-The git prompt format is ${GIT_PROMPT_PREFIX}<BRANCH><TRACKING>${GIT_PROMPT_SEPARATOR}<LOCALSTATUS>${GIT_PROMPT_SUFFIX}${ResetColor}
+git prompt の書式：${GIT_PROMPT_PREFIX}<BRANCH><TRACKING>${GIT_PROMPT_SEPARATOR}<LOCALSTATUS>${GIT_PROMPT_SUFFIX}${ResetColor}
 
-BRANCH is a branch name, such as "${GIT_PROMPT_MASTER_BRANCH}master${ResetColor}" or "${GIT_PROMPT_BRANCH}stage${ResetColor}", a tag name, or commit
-${GIT_PROMPT_SYMBOLS_PREHASH}hash${ResetColor} prefixed with '${GIT_PROMPT_SYMBOLS_PREHASH:-':'}${ResetColor}'.
+BRANCH は "${GIT_PROMPT_MASTER_BRANCH}master${ResetColor}" や "${GIT_PROMPT_BRANCH}stage${ResetColor}" のようなブランチ名、タグ名、もしくは
+'${GIT_PROMPT_SYMBOLS_PREHASH:-':'}${ResetColor}'プリフィックスが付いたコミット${GIT_PROMPT_SYMBOLS_PREHASH}hash${ResetColor}。
 
-TRACKING indicates how the local branch differs from the
-remote branch.  It can be empty, or one of:
+TRACKING は、ローカルブランチがリモートブランチからどれだけ乖離していかを表す。
+これは空の文字列もしくは以下のいずれか：
 
-    ${GIT_PROMPT_BRANCH}${ResetColor}${GIT_PROMPT_REMOTE}${GIT_PROMPT_SYMBOLS_AHEAD}N${ResetColor} - ahead of remote by N commits
-    ${GIT_PROMPT_BRANCH}${ResetColor}${GIT_PROMPT_REMOTE}${GIT_PROMPT_SYMBOLS_BEHIND}M${ResetColor} - behind remote by M commits
-    ${GIT_PROMPT_BRANCH}${ResetColor}${GIT_PROMPT_REMOTE}${GIT_PROMPT_SYMBOLS_BEHIND}M${GIT_PROMPT_SYMBOLS_AHEAD}N${ResetColor} - branches diverged, other by M commits, yours by N commits
+    ${GIT_PROMPT_BRANCH}${ResetColor}${GIT_PROMPT_REMOTE}${GIT_PROMPT_SYMBOLS_AHEAD}N${ResetColor} - リモートより N コミット分進んでいる
+    ${GIT_PROMPT_BRANCH}${ResetColor}${GIT_PROMPT_REMOTE}${GIT_PROMPT_SYMBOLS_BEHIND}M${ResetColor} - リモートより M ミット分遅れている
+    ${GIT_PROMPT_BRANCH}${ResetColor}${GIT_PROMPT_REMOTE}${GIT_PROMPT_SYMBOLS_BEHIND}M${GIT_PROMPT_SYMBOLS_AHEAD}N${ResetColor} - ブランチは分岐済み。他は M コミット分、あなたは N コミット分
 
-LOCALSTATUS is one of the following:
+LOCALSTATUS は以下のいずれか：
 
-    ${GIT_PROMPT_CLEAN}${ResetColor} - repository clean
-    ${GIT_PROMPT_STAGED}N${ResetColor} - N staged files
-    ${GIT_PROMPT_CONFLICTS}N${ResetColor} - N files with merge conflicts
-    ${GIT_PROMPT_CHANGED}N${ResetColor} - N changed but *unstaged* files
-    ${GIT_PROMPT_UNTRACKED}N${ResetColor} - N untracked files
-    ${GIT_PROMPT_STASHED}N${ResetColor} - N stash entries
+    ${GIT_PROMPT_CLEAN}${ResetColor} - リポジトリはクリーン（同期が取れている）
+    ${GIT_PROMPT_STAGED}N${ResetColor} - ステージングされたファイルが N 個
+    ${GIT_PROMPT_CONFLICTS}N${ResetColor} - マージコンフリクトが N ファイル
+    ${GIT_PROMPT_CHANGED}N${ResetColor} - 変更＆未ステージングが N 個
+    ${GIT_PROMPT_UNTRACKED}N${ResetColor} - 未追跡ファイルが N 個
+    ${GIT_PROMPT_STASHED}N${ResetColor} - stash エントリが N 個
 
-See "git_prompt_examples" for examples.
+使用例は "git_prompt_examples" を参照のこと。
 EOF
 }
 
@@ -50,30 +50,27 @@ git_prompt_examples() {
   local s="${GIT_PROMPT_SUFFIX}${ResetColor}"
 
   cat <<EOF | sed 's/\\\[\\033//g' | sed 's/\\\]//g'
-These are examples of the git prompt:
+これらは git prompt の表示状態のサンプルです：
 
-  ${p}`format_branch master`${GIT_PROMPT_REMOTE}${GIT_PROMPT_SYMBOLS_AHEAD}3${ResetColor}|${GIT_PROMPT_CHANGED}1${ResetColor}${s}  - on branch "master", ahead of remote by 3 commits, 1
-                     file changed but not staged
+${p}`format_branch master`${GIT_PROMPT_REMOTE}${GIT_PROMPT_SYMBOLS_AHEAD}3${ResetColor}|${GIT_PROMPT_CHANGED}1${ResetColor}${s}  - 現在 "master" ブランチ、リモートより進んでいるのが
+    ３コミット、変更されたが未ステージングが１ファイル
 
-  ${p}`format_branch status`${GIT_PROMPT_SEPARATOR}${GIT_PROMPT_STAGED}2${ResetColor}${s}     - on branch "status", 2 files staged
+${p}`format_branch status`${GIT_PROMPT_SEPARATOR}${GIT_PROMPT_STAGED}2${ResetColor}${s}     - 現在 "status" ブランチ、２ファイルがステージング済み
 
-  ${p}`format_branch master`${GIT_PROMPT_SEPARATOR}${GIT_PROMPT_CHANGED}7${GIT_PROMPT_UNTRACKED}${ResetColor}${s}   - on branch "master", 7 files changed, some files untracked
+${p}`format_branch master`${GIT_PROMPT_SEPARATOR}${GIT_PROMPT_CHANGED}7${GIT_PROMPT_UNTRACKED}${ResetColor}${s}   - 現在 "master" ブランチ, 変更ファイル７、未追跡ファイルあり
 
-  ${p}`format_branch master`${GIT_PROMPT_SEPARATOR}${GIT_PROMPT_CONFLICTS}2${GIT_PROMPT_CHANGED}3${ResetColor}${s}  - on branch "master", 2 conflicts, 3 files changed
+${p}`format_branch master`${GIT_PROMPT_SEPARATOR}${GIT_PROMPT_CONFLICTS}2${GIT_PROMPT_CHANGED}3${ResetColor}${s}  - 現在 "master" ブランチ, コンフリクト２、変更３
 
-  ${p}`format_branch master`${GIT_PROMPT_SEPARATOR}${GIT_PROMPT_STASHED}2${ResetColor}${s}     - on branch "master", 2 stash entries
+${p}`format_branch master`${GIT_PROMPT_SEPARATOR}${GIT_PROMPT_STASHED}2${ResetColor}${s}     - 現在 "master" ブランチ, stash（退避）３
 
-  ${p}`format_branch experimental`${GIT_PROMPT_REMOTE}${GIT_PROMPT_SYMBOLS_BEHIND}2${GIT_PROMPT_SYMBOLS_AHEAD}3${ResetColor}${GIT_PROMPT_SEPARATOR}${GIT_PROMPT_CLEAN}${ResetColor}${s}
-                   - on branch "experimental"; your branch has diverged
-                     by 3 commits, remote by 2 commits; the repository is
-                     otherwise clean
+${p}`format_branch experimental`${GIT_PROMPT_REMOTE}${GIT_PROMPT_SYMBOLS_BEHIND}2${GIT_PROMPT_SYMBOLS_AHEAD}3${ResetColor}${GIT_PROMPT_SEPARATOR}${GIT_PROMPT_CLEAN}${ResetColor}${s} - 現在 "experimental" ブランチ：あなたのブランチは
+    分岐後３コミット、リモートから２コミット、それ以外はクリーン。
 
-  ${p}${GIT_PROMPT_BRANCH}${GIT_PROMPT_SYMBOLS_PREHASH}70c2952${ResetColor}${GIT_PROMPT_SEPARATOR}${GIT_PROMPT_CLEAN}${ResetColor}${s}    - not on any branch; parent commit has hash "70c2952"; the
-                     repository is otherwise clean
+${p}${GIT_PROMPT_BRANCH}${GIT_PROMPT_SYMBOLS_PREHASH}70c2952${ResetColor}${GIT_PROMPT_SEPARATOR}${GIT_PROMPT_CLEAN}${ResetColor}${s}    - どのブランチにもいない状態、親コミットは "70c2952"、
+    それ以外はクリーン。
 
-  ${p}`format_branch extra-features`${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING}${ResetColor}${GIT_PROMPT_SEPARATOR}${GIT_PROMPT_CHANGED}2${GIT_PROMPT_UNTRACKED}4${ResetColor}${s}
-                   - on branch "extra-features"; no remote set (signalled by '${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING}${ResetColor}'),
-                     2 files changed and 4 untracked files exist
+${p}`format_branch extra-features`${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING}${ResetColor}${GIT_PROMPT_SEPARATOR}${GIT_PROMPT_CHANGED}2${GIT_PROMPT_UNTRACKED}4${ResetColor}${s} - 現在 "extra-features" ブランチ、リモートセットは
+    存在しない ( '${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING}${ResetColor}' によるシグナル),変更２ファイルで、未追跡ファイルが４個
 EOF
 }
 
