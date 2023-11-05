@@ -6,7 +6,7 @@
 # Alan K. Stebbens <aks@stebbens.org> [http://github.com/aks]
 
 # helper functions
-count_lines() { echo "${1}" | egrep -c "^${2}" ; }
+count_lines() { echo "${1}" | grep -Ec "^${2}" ; }
 all_lines() { echo "${1}" | grep -v "^$" | wc -l ; }
 
 if [[ -z "${__GIT_PROMPT_DIR-}" ]]; then
@@ -95,7 +95,6 @@ else
 
   # detect if the local branch have a remote tracking branch
   upstream=$( git rev-parse --abbrev-ref "${branch}"@{upstream} 2>&1 )
-
   if [[ "${?}" == 0 ]]; then
      # get the revision list, and count the leading "<" and ">"
     revgit=$( git rev-list --left-right "${remote_ref}...HEAD" 2>/dev/null )
