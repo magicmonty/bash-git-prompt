@@ -36,6 +36,7 @@ else
   remote_url='.'
 fi
 
+# shellcheck disable=SC2086
 gitstatus=$( LC_ALL=C git --no-optional-locks status ${_ignore_submodules} --untracked-files="${__GIT_PROMPT_SHOW_UNTRACKED_FILES:-normal}" --porcelain --branch )
 
 # if the status is fatal, exit now
@@ -185,7 +186,7 @@ if [[ -z "${upstream:+x}" ]] ; then
   upstream='^'
 fi
 
-UPSTREAM_TRIMMED=`echo $upstream |xargs`
+UPSTREAM_TRIMMED=$(echo $upstream | xargs)
 
 printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
   "${branch}${state}" \
