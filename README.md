@@ -361,7 +361,7 @@ Pull requests are welcome. I will check them and merge them, if I think they hel
 
 ## Similar projects
 
-- [oh-my-bash](https://github.com/ohmybash/oh-my-bash]
+- [oh-my-bash](https://github.com/ohmybash/oh-my-bash)
 
 ## Donations
 
