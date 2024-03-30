@@ -649,7 +649,13 @@ function gp_add_virtualenv_to_prompt {
   local ACCUMULATED_VENV_PROMPT=""
   local VENV=""
   if [[ -n "${VIRTUAL_ENV-}" && -z "${VIRTUAL_ENV_DISABLE_PROMPT+x}" ]]; then
-    VENV=$(basename "${VIRTUAL_ENV}")
+    if [[ -n "${VIRTUAL_ENV_PROMPT-}" ]]; then
+      # first trim any starting white space and parenthesis, and then do the same to the end
+      VENV="${VIRTUAL_ENV_PROMPT#"${VIRTUAL_ENV_PROMPT%%[![:space:]]*}("}"
+      VENV="${VENV%")${VENV##*[![:space:]]}"}"
+    else
+      VENV=$(basename "${VIRTUAL_ENV}")
+    fi
     ACCUMULATED_VENV_PROMPT="${ACCUMULATED_VENV_PROMPT}${GIT_PROMPT_VIRTUALENV//_VIRTUALENV_/${VENV}}"
   fi
   if [[ -n "${NODE_VIRTUAL_ENV-}" && -z "${NODE_VIRTUAL_ENV_DISABLE_PROMPT+x}" ]]; then
