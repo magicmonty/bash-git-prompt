@@ -320,6 +320,7 @@ git archive                                \
     HEAD                                   \
     --  *.sh                               \
         *.fish                             \
+        LICENSE.txt                        \
         README.md                          \
         themes                             \
     > bash-git-prompt-${VER}.tar
