@@ -320,6 +320,8 @@ function we_are_on_repo() {
 
 function update_old_git_prompt() {
   if [[ "${GIT_PROMPT_OLD_DIR_WAS_GIT:-0}" = 0 ]]; then
+    OLD_PROMPT_START="${PROMPT_START}"
+    OLD_PROMPT_END="${PROMPT_END}"
     OLD_GITPROMPT="${PS1}"
   fi
 
@@ -332,6 +334,8 @@ function setGitPrompt() {
   local repo=$(git rev-parse --show-toplevel 2> /dev/null)
   if [[ ! -e "${repo}" ]] && [[ "${GIT_PROMPT_ONLY_IN_REPO-}" = 1 ]]; then
     # we do not permit bash-git-prompt outside git repos, so nothing to do
+    PROMPT_START=${OLD_PROMPT_START}
+    PROMPT_END=${OLD_PROMPT_END}
     PS1="${OLD_GITPROMPT}"
     return
   fi
