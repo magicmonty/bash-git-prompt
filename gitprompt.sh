@@ -437,7 +437,7 @@ function olderThanMinutes() {
     return "${?}"
   else
     echo >&2
-    echo " [1;31mWARNING [0m: neither a find that supports -mmin (such as GNU find) or perl is available, disabling remote status checking. Install GNU find as gfind or perl to enable this feature, or set GIT_PROMPT_FETCH_REMOTE_STATUS=0 to disable this warning." >&2
+    echo "[1;31mWARNING[0m: neither a find that supports -mmin (such as GNU find) or perl is available, disabling remote status checking. Install GNU find as gfind or perl to enable this feature, or set GIT_PROMPT_FETCH_REMOTE_STATUS=0 to disable this warning." >&2
     echo >&2
     GIT_PROMPT_FETCH_REMOTE_STATUS=0
     return 1
@@ -485,52 +485,17 @@ function replaceSymbols() {
 }
 
 function createPrivateIndex {
-  # Create a temporary directory and copy of the index to avoid conflicts
-  # with parallel git commands, e.g. git rebase.
-  # Returns the path to the temporary directory, or empty string on failure.
+  # Create a copy of the index to avoid conflicts with parallel git commands, e.g. git rebase.
   local __GIT_INDEX_FILE
-  local __GIT_INDEX_PRIVATE_DIR
-  local __GIT_INDEX_PRIVATE_PATH
-
-  # Determine the original index file path
+  local __GIT_INDEX_PRIVATE
   if [[ -z "${GIT_INDEX_FILE+x}" ]]; then
-    # Ensure git command runs in the correct directory context if needed,
-    # though rev-parse --git-dir should be robust.
-    __GIT_INDEX_FILE="$(git rev-parse --git-dir 2>/dev/null)/index"
-    if [[ $? -ne 0 || -z "$__GIT_INDEX_FILE" || ! -f "$__GIT_INDEX_FILE" ]]; then
-        echo "bash-git-prompt: Could not find git index file." >&2
-        return 1
-    fi
+    __GIT_INDEX_FILE="$(git rev-parse --git-dir)/index"
   else
     __GIT_INDEX_FILE="${GIT_INDEX_FILE}"
-    if [[ ! -f "$__GIT_INDEX_FILE" ]]; then
-        echo "bash-git-prompt: Specified GIT_INDEX_FILE does not exist: ${__GIT_INDEX_FILE}" >&2
-        return 1
-    fi
   fi
-
-  # Use mktemp -d to create a secure temporary directory
-  # The template ensures the directory name starts with 'git-prompt-index.'
-  __GIT_INDEX_PRIVATE_DIR=$(mktemp -d "${TMPDIR:-/tmp}/git-prompt-index.XXXXXXXXXX")
-  if [[ $? -ne 0 || -z "$__GIT_INDEX_PRIVATE_DIR" || ! -d "$__GIT_INDEX_PRIVATE_DIR" ]]; then
-      echo "bash-git-prompt: Failed to create temporary directory." >&2
-      return 1
-  fi
-
-  # Define the path for the index copy within the temporary directory
-  __GIT_INDEX_PRIVATE_PATH="${__GIT_INDEX_PRIVATE_DIR}/index"
-
-  # Copy the original index to the temporary location
-  command cp "${__GIT_INDEX_FILE}" "${__GIT_INDEX_PRIVATE_PATH}" 2>/dev/null
-  if [[ $? -ne 0 ]]; then
-      echo "bash-git-prompt: Failed to copy git index to temporary directory: ${__GIT_INDEX_PRIVATE_DIR}" >&2
-      command rm -rf "${__GIT_INDEX_PRIVATE_DIR}" # Clean up the created temp dir if copy fails
-      return 1
-  fi
-
-  # Return the path to the temporary directory
-  echo "${__GIT_INDEX_PRIVATE_DIR}"
-  return 0
+  __GIT_INDEX_PRIVATE="${TMPDIR:-/tmp}/git-index-private$$"
+  command cp "${__GIT_INDEX_FILE}" "${__GIT_INDEX_PRIVATE}" 2>/dev/null
+  echo "${__GIT_INDEX_PRIVATE}"
 }
 
 function get_branch_prefix() {
@@ -576,55 +541,14 @@ function updatePrompt() {
   export __GIT_PROMPT_SHOW_UNTRACKED_FILES="${GIT_PROMPT_SHOW_UNTRACKED_FILES-normal}"
   export __GIT_PROMPT_SHOW_CHANGED_FILES_COUNT="${GIT_PROMPT_SHOW_CHANGED_FILES_COUNT:-1}"
 
-  # Create private index directory
-  local GIT_INDEX_PRIVATE_DIR
-  GIT_INDEX_PRIVATE_DIR=$(createPrivateIndex)
-  local create_private_index_exit_code=$?
-
-  # Define local variable for cleanup, regardless of success/failure of createPrivateIndex
-  # This ensures cleanup attempt if the directory path was partially created or returned.
-  local -r final_git_index_private_dir="${GIT_INDEX_PRIVATE_DIR}"
-
-  # Check if private index creation failed
-  if [[ $create_private_index_exit_code -ne 0 ]]; then
-      # Error message already printed by createPrivateIndex
-      # Set empty prompt and return to avoid running git status with potential issues
-      PS1="${EMPTY_PROMPT}"
-      # Attempt cleanup in case directory was partially created
-      [[ -n "$final_git_index_private_dir" ]] && command rm -rf "${final_git_index_private_dir}" 2>/dev/null
-      return 1 # Indicate an issue
-  fi
-
-  # Define the path to the private index file within the temp directory
-  local GIT_INDEX_PRIVATE="${final_git_index_private_dir}/index"
-  # Important: define GIT_INDEX_FILE as local. Export it for __GIT_STATUS_CMD.
+  local GIT_INDEX_PRIVATE="$(createPrivateIndex)"
+  #important to define GIT_INDEX_FILE as local: This way it only affects this function (and below) - even with the export afterwards
   local GIT_INDEX_FILE
   export GIT_INDEX_FILE="${GIT_INDEX_PRIVATE}"
 
   local -a git_status_fields
-  local git_status_exit_code=0
-  # Use a subshell to isolate potential errors and ensure cleanup happens
-  (
-    # Run the status command. Redirect stderr to avoid cluttering the user's terminal on errors.
-    while IFS=$'\n' read -r line; do git_status_fields+=("${line}"); done < <("${__GIT_STATUS_CMD}" 2>/dev/null)
-  )
-  git_status_exit_code=$?
+  while IFS=$'\n' read -r line; do git_status_fields+=("${line}"); done < <("${__GIT_STATUS_CMD}" 2>/dev/null)
 
-  # Check if git status command failed or returned no data
-  if [[ $git_status_exit_code -ne 0 || ${#git_status_fields[@]} -eq 0 ]]; then
-      # Git status failed or repo is gone? Set empty prompt and clean up.
-      PS1="${EMPTY_PROMPT}"
-      command rm -rf "${final_git_index_private_dir}" 2>/dev/null
-      # Maybe print a warning if the exit code was non-zero?
-      if [[ $git_status_exit_code -ne 0 ]]; then
-          echo "bash-git-prompt: git status command failed (exit code ${git_status_exit_code})." >&2
-      fi
-      # Unset exported variable
-      unset GIT_INDEX_FILE
-      return 1 # Indicate an issue
-  fi
-
-  # Process git status fields
   export GIT_BRANCH=$(replaceSymbols "${git_status_fields[@]:0:1}")
   if [[ $__GIT_PROMPT_SHOW_TRACKING != "0" ]]; then
     local GIT_REMOTE="$(replaceSymbols "${git_status_fields[@]:1:1}")"
@@ -654,7 +578,6 @@ function updatePrompt() {
   local GIT_DETACHED_HEAD="${git_status_fields[@]:10:1}"
 
   local NEW_PROMPT="${EMPTY_PROMPT}"
-  # Check if git_status_fields has content (redundant due to earlier check, but safe)
   if [[ "${#git_status_fields[@]}" -gt 0 ]]; then
 
     if [[ -z "${GIT_REMOTE_USERNAME_REPO+x}" ]]; then
@@ -717,18 +640,11 @@ function updatePrompt() {
       NEW_PROMPT="${PROMPT_START}$(${prompt_callback})$(gp_add_virtualenv_to_prompt)${STATUS_PREFIX}${STATUS}${PROMPT_END}"
     fi
   else
-    # This case should ideally not be reached due to the check after running __GIT_STATUS_CMD
     NEW_PROMPT="${EMPTY_PROMPT}"
   fi
 
-  # Final PS1 assignment
   PS1="${NEW_PROMPT//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}${ResetColor}}"
-
-  # Cleanup the temporary directory
-  command rm -rf "${final_git_index_private_dir}" 2>/dev/null
-
-  # Unset the exported variable
-  unset GIT_INDEX_FILE
+  command rm "${GIT_INDEX_PRIVATE}" 2>/dev/null
 }
 
 # Helper function that returns virtual env information to be set in prompt
@@ -853,5 +769,3 @@ function gp_install_prompt {
 }
 
 gp_install_prompt
-
-
