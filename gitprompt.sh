@@ -369,7 +369,7 @@ function setGitPrompt() {
   fi
 
   local FETCH_REMOTE_STATUS=1
-  if [[ "${GIT_PROMPT_FETCH_REMOTE_STATUS}" = 0 ]]; then
+  if [[ "${GIT_PROMPT_FETCH_REMOTE_STATUS-}" = 0 ]]; then
     FETCH_REMOTE_STATUS=0
   fi
 
@@ -564,7 +564,7 @@ function get_branch_prefix() {
 
 function updatePrompt() {
   local Blue="\[\033[0;34m\]"
-  if [ -n "$ZSH_VERSION" ]; then
+  if [ -n "${ZSH_VERSION-}" ]; then
     Blue='%{fg[blue]%}'
   fi
 
@@ -636,7 +636,7 @@ function updatePrompt() {
 
     local BRANCH_PREFIX
     BRANCH_PREFIX="$(get_branch_prefix "${GIT_BRANCH}" "${GIT_DETACHED_HEAD}")"
-    local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX_FINAL}${BRANCH_PREFIX}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM}"
+    local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX_FINAL}${BRANCH_PREFIX}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM-}"
     local STATUS=""
 
     # __add_status KIND VALEXPR INSERT
