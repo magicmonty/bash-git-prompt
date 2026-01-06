@@ -186,7 +186,7 @@ if [[ -z "${upstream:+x}" ]] ; then
   upstream='^'
 fi
 
-UPSTREAM_TRIMMED=$(echo $upstream | xargs)
+UPSTREAM_TRIMMED=$(echo "$upstream" | xargs)
 
 printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
   "${branch}${state}" \

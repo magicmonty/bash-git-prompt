@@ -45,7 +45,7 @@ define_color_names() {
 
       if [ -n "$ZSH_VERSION" ]; then
         # zsh
-        lowercolorname=$(echo $colorname | tr '[A-Z]' '[a-z]')
+        lowercolorname=$(echo "$colorname" | tr '[:upper:]' '[:lower:]')
         _def_color_zsh "${longcolorname}"   "${attrcode}" "${lowercolorname}" "fg"
         _def_color_zsh "${longcolorname}Fg" "${attrcode}" "${lowercolorname}" "fg"
         _def_color_zsh "${longcolorname}Bg" "${attrcode}" "${lowercolorname}" "bg"
@@ -67,7 +67,7 @@ define_color_names() {
     else
       cv="${1}"
     fi
-    echo "\[\033[${cv}m\]"
+    printf "\[\033[%sm\]" "${cv}"
   }
 
   # def_color NAME ATTRCODE COLORCODE
