@@ -583,7 +583,7 @@ function updatePrompt() {
   export GIT_INDEX_FILE="${GIT_INDEX_PRIVATE}"
 
   local -a git_status_fields
-  while IFS=$'\n' read -r line; do git_status_fields+=("${line}"); done < <("${__GIT_STATUS_CMD}" 2>/dev/null)
+  while IFS=$'\n' read -r line; do git_status_fields+=("${line}"); done < <("${__GIT_STATUS_CMD}" 3>&- 4>&- 5>&- 6>&- 7>&- 8>&- 9>&- 2>/dev/null)
 
   export GIT_BRANCH
   GIT_BRANCH=$(replaceSymbols "${git_status_fields[0]}")
