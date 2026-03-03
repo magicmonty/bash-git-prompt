@@ -6,7 +6,7 @@
 function async_run() {
   {
     eval "$*" &> /dev/null
-  }&
+  } 3>&- 4>&- 5>&- 6>&- 7>&- 8>&- 9>&- &
 }
 
 function async_run_zsh() {
@@ -14,7 +14,7 @@ function async_run_zsh() {
     eval "$*" &> /dev/null
 
   # `true` is used here to allow bash to parse the script, as the zsh `&!` syntax will otherwise stop parsing prior to any execution.
-  }&! true
+  } 3>&- 4>&- 5>&- 6>&- 7>&- 8>&- 9>&- &! true
 }
 
 
