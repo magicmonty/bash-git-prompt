@@ -133,7 +133,7 @@ if (( num_changed == 0 && num_staged == 0 && num_untracked == 0 && num_stashed =
 fi
 
 IFS="^" read -ra branch_fields <<< "${branch_line/\#\# }"
-branch="${branch_fields[@]:0:1}"
+branch="${branch_fields[0]}"
 remote=""
 upstream=""
 
@@ -141,12 +141,12 @@ detached_head=0
 
 if [[ "${branch}" == *"Initial commit on"* ]]; then
   IFS=" " read -ra fields <<< "${branch}"
-  branch="${fields[@]:3:1}"
+  branch="${fields[3]}"
   remote="_NO_REMOTE_TRACKING_"
   remote_url='.'
 elif [[ "${branch}" == *"No commits yet on"* ]]; then
   IFS=" " read -ra fields <<< "${branch}"
-  branch="${fields[@]:4:1}"
+  branch="${fields[4]}"
   remote="_NO_REMOTE_TRACKING_"
   remote_url='.'
 elif [[ "${branch}" == *"no branch"* ]]; then
@@ -164,7 +164,7 @@ else
     remote_url='.'
   else
     IFS="[,]" read -ra remote_fields <<< "${branch_fields[1]}"
-    upstream="${remote_fields[@]:0:1}"
+    upstream="${remote_fields[0]}"
     for remote_field in "${remote_fields[@]}"; do
       if [[ "${remote_field}" == "ahead "* ]]; then
         num_ahead="${remote_field:6}"

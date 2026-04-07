@@ -5,13 +5,13 @@
 
 function async_run() {
   {
-    eval "$@" &> /dev/null
+    eval "$*" &> /dev/null
   }&
 }
 
 function async_run_zsh() {
   {
-    eval "$@" &> /dev/null
+    eval "$*" &> /dev/null
 
   # `true` is used here to allow bash to parse the script, as the zsh `&!` syntax will otherwise stop parsing prior to any execution.
   }&! true
@@ -64,7 +64,8 @@ function get_theme() {
 
       # use default theme, if theme was not found
       for themefile in "${__GIT_PROMPT_DIR}/themes/"*.bgptheme; do
-        local basename=${themefile##*/}
+        local basename
+        basename=${themefile##*/}
         if [[ "${basename%.bgptheme}" = "${GIT_PROMPT_THEME}" ]]; then
           theme="${GIT_PROMPT_THEME}"
           break
@@ -84,6 +85,7 @@ function git_prompt_load_colors() {
   [[ -n "${__PROMPT_COLORS_FILE+x}" ]] && return   # already loaded
   if gp_set_file_var __PROMPT_COLORS_FILE prompt-colors.sh ; then
     # outsource the color defs
+    # shellcheck disable=SC1090
     source "${__PROMPT_COLORS_FILE}"
   else
     echo 1>&2 "Cannot find prompt-colors.sh!"
@@ -97,12 +99,15 @@ function git_prompt_load_theme() {
   if [[ "${__GIT_PROMPT_THEME_FILE}" == "${__GIT_PROMPT_THEME_FILE_LOADED-}" ]]; then
     return
   fi
+  # shellcheck disable=SC1090,SC1091
   source "${DEFAULT_THEME_FILE}"
+  # shellcheck disable=SC1090
   source "${__GIT_PROMPT_THEME_FILE}"
   __GIT_PROMPT_THEME_FILE_LOADED="${__GIT_PROMPT_THEME_FILE}"
 }
 
 function git_prompt_list_themes() {
+  # shellcheck disable=SC2154
   git_prompt_load_colors
   get_theme
 
@@ -110,6 +115,7 @@ function git_prompt_list_themes() {
     local basename="${themefile##*/}"
     local theme="${basename%.bgptheme}"
     if [[ "${GIT_PROMPT_THEME}" = "${theme}" ]]; then
+      # shellcheck disable=SC2154
       echoc "${Red}" "*${theme}"
     else
       echo "${theme}"
@@ -117,6 +123,7 @@ function git_prompt_list_themes() {
   done
 
   if [[ "${GIT_PROMPT_THEME}" = "Custom" ]]; then
+    # shellcheck disable=SC2154
     echoc "${Magenta}" "*Custom"
   else
     echoc "${Blue}" "Custom"
@@ -124,6 +131,7 @@ function git_prompt_list_themes() {
 }
 
 function git_prompt_make_custom_theme() {
+  # shellcheck disable=SC2154
   if [[ -r "${HOME}/.git-prompt-colors.sh" ]]; then
     echoc "${Red}" "You have already created a custom theme!"
   else
@@ -294,13 +302,16 @@ function git_prompt_config() {
     EMPTY_PROMPT="${OLD_GITPROMPT}"
   elif [[ "${GIT_PROMPT_WITH_VIRTUAL_ENV:-1}" == 1 ]]; then
     if [[ "${GIT_PROMPT_VIRTUAL_ENV_AFTER_PROMPT:-0}" == "0" ]]; then
-      local ps="$(gp_add_virtualenv_to_prompt)${PROMPT_START}$(${prompt_callback})${PROMPT_END}"
+      local ps
+      ps="$(gp_add_virtualenv_to_prompt)${PROMPT_START}$(${prompt_callback})${PROMPT_END}"
     else
-      local ps="${PROMPT_START}$(${prompt_callback})$(gp_add_virtualenv_to_prompt)${PROMPT_END}"
+      local ps
+      ps="${PROMPT_START}$(${prompt_callback})$(gp_add_virtualenv_to_prompt)${PROMPT_END}"
     fi
     EMPTY_PROMPT="${ps//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
   else
-    local ps="${PROMPT_START}$(${prompt_callback})${PROMPT_END}"
+    local ps
+    ps="${PROMPT_START}$(${prompt_callback})${PROMPT_END}"
     EMPTY_PROMPT="${ps//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
   fi
 
@@ -332,7 +343,8 @@ function update_old_git_prompt() {
 
 function setGitPrompt() {
   # Single git call — reused for both the "are we in a repo" check and later use
-  local repo=$(git rev-parse --show-toplevel 2> /dev/null)
+  local repo
+  repo=$(git rev-parse --show-toplevel 2> /dev/null)
 
   # update_old_git_prompt reads GIT_PROMPT_OLD_DIR_WAS_GIT (previous cycle's value)
   # to decide whether to save PS1, so call it before updating the flag.
@@ -377,6 +389,7 @@ function setGitPrompt() {
     if grep -q -v -E "${CONFIG_SYNTAX}" "${repo}/.bash-git-rc"; then
       echo ".bash-git-rc can only contain variable values on the form NAME=value. Ignoring file." >&2
     else
+      # shellcheck disable=SC1091
       source "${repo}/.bash-git-rc"
     fi
   fi
@@ -530,6 +543,7 @@ function get_branch_prefix() {
     local GIT_BRANCH="${1}"
     local DETACHED_HEAD="${2}"
 
+    # shellcheck disable=SC2254
     case "$GIT_BRANCH" in
       ${GIT_PROMPT_MASTER_BRANCHES})
         local IS_MASTER_BRANCH=1
@@ -562,7 +576,8 @@ function updatePrompt() {
   export __GIT_PROMPT_SHOW_UNTRACKED_FILES="${GIT_PROMPT_SHOW_UNTRACKED_FILES-normal}"
   export __GIT_PROMPT_SHOW_CHANGED_FILES_COUNT="${GIT_PROMPT_SHOW_CHANGED_FILES_COUNT:-1}"
 
-  local GIT_INDEX_PRIVATE="$(createPrivateIndex)"
+  local GIT_INDEX_PRIVATE
+  GIT_INDEX_PRIVATE="$(createPrivateIndex)"
   #important to define GIT_INDEX_FILE as local: This way it only affects this function (and below) - even with the export afterwards
   local GIT_INDEX_FILE
   export GIT_INDEX_FILE="${GIT_INDEX_PRIVATE}"
@@ -570,33 +585,41 @@ function updatePrompt() {
   local -a git_status_fields
   while IFS=$'\n' read -r line; do git_status_fields+=("${line}"); done < <("${__GIT_STATUS_CMD}" 2>/dev/null)
 
-  export GIT_BRANCH=$(replaceSymbols "${git_status_fields[@]:0:1}")
+  export GIT_BRANCH
+  GIT_BRANCH=$(replaceSymbols "${git_status_fields[0]}")
   if [[ $__GIT_PROMPT_SHOW_TRACKING != "0" ]]; then
-    local GIT_REMOTE="$(replaceSymbols "${git_status_fields[@]:1:1}")"
+    local GIT_REMOTE
+    GIT_REMOTE="$(replaceSymbols "${git_status_fields[1]}")"
     if [[ "." == "${GIT_REMOTE}" ]]; then
       unset GIT_REMOTE
     fi
   fi
-  local GIT_REMOTE_USERNAME_REPO="$(replaceSymbols "${git_status_fields[@]:2:1}")"
+  local GIT_REMOTE_USERNAME_REPO
+  GIT_REMOTE_USERNAME_REPO="$(replaceSymbols "${git_status_fields[2]}")"
   if [[ "." == "${GIT_REMOTE_USERNAME_REPO}" ]]; then
     unset GIT_REMOTE_USERNAME_REPO
   fi
 
   local GIT_FORMATTED_UPSTREAM
-  local GIT_UPSTREAM_PRIVATE="${git_status_fields[@]:3:1}"
+  local GIT_UPSTREAM_PRIVATE="${git_status_fields[3]}"
   if [[ "${__GIT_PROMPT_SHOW_UPSTREAM:-0}" != "1" || "^" == "${GIT_UPSTREAM_PRIVATE}" ]]; then
     unset GIT_FORMATTED_UPSTREAM
   else
     GIT_FORMATTED_UPSTREAM="${GIT_PROMPT_UPSTREAM//_UPSTREAM_/${GIT_UPSTREAM_PRIVATE}}"
   fi
 
-  local GIT_STAGED="${git_status_fields[@]:4:1}"
-  local GIT_CONFLICTS="${git_status_fields[@]:5:1}"
-  local GIT_CHANGED="${git_status_fields[@]:6:1}"
-  local GIT_UNTRACKED="${git_status_fields[@]:7:1}"
-  local GIT_STASHED="${git_status_fields[@]:8:1}"
-  local GIT_CLEAN="${git_status_fields[@]:9:1}"
-  local GIT_DETACHED_HEAD="${git_status_fields[@]:10:1}"
+  # shellcheck disable=SC2034
+  local GIT_STAGED="${git_status_fields[4]}"
+  # shellcheck disable=SC2034
+  local GIT_CONFLICTS="${git_status_fields[5]}"
+  # shellcheck disable=SC2034
+  local GIT_CHANGED="${git_status_fields[6]}"
+  # shellcheck disable=SC2034
+  local GIT_UNTRACKED="${git_status_fields[7]}"
+  # shellcheck disable=SC2034
+  local GIT_STASHED="${git_status_fields[8]}"
+  local GIT_CLEAN="${git_status_fields[9]}"
+  local GIT_DETACHED_HEAD="${git_status_fields[10]}"
 
   local NEW_PROMPT="${EMPTY_PROMPT}"
   if [[ "${#git_status_fields[@]}" -gt 0 ]]; then
@@ -611,7 +634,8 @@ function updatePrompt() {
       fi
     fi
 
-    local BRANCH_PREFIX="$(get_branch_prefix $GIT_BRANCH $GIT_DETACHED_HEAD)"
+    local BRANCH_PREFIX
+    BRANCH_PREFIX="$(get_branch_prefix "${GIT_BRANCH}" "${GIT_DETACHED_HEAD}")"
     local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX_FINAL}${BRANCH_PREFIX}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM}"
     local STATUS=""
 
@@ -634,10 +658,6 @@ function updatePrompt() {
       fi
     }
 
-    __add_gitvar_status() {
-      __add_status "\${GIT_PROMPT_${1}}\${GIT_${1}}\${ResetColor}"
-    }
-
     # __add_status SOMETEXT
     __add_status() {
       eval "STATUS=\"${STATUS}${1}\""
@@ -646,7 +666,7 @@ function updatePrompt() {
     __chk_gitvar_status 'REMOTE'       '-n'
     if [[ "${GIT_CLEAN}" -eq 0 ]] || [[ "${GIT_PROMPT_CLEAN}" != "" ]]; then
       __add_status        "${GIT_PROMPT_SEPARATOR}"
-      __chk_gitvar_status 'STAGED'     '!= "0" && ${GIT_STAGED-} != "^"'
+      __chk_gitvar_status 'STAGED'     "!= \"0\" && \${GIT_STAGED-} != \"^\""
       __chk_gitvar_status 'CONFLICTS'  '!= "0"'
       __chk_gitvar_status 'CHANGED'    '!= "0"'
       __chk_gitvar_status 'UNTRACKED'  '!= "0"'

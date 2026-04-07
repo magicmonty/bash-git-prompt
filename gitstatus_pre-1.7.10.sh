@@ -6,8 +6,8 @@
 # Alan K. Stebbens <aks@stebbens.org> [http://github.com/aks]
 
 # helper functions
-count_lines() { echo "${1}" | grep -Ec "^${2}" ; }
-all_lines() { echo "${1}" | grep -v "^$" | wc -l ; }
+count_lines() { grep -Ec "^${2}" <<< "${1}" ; }
+all_lines() { grep -c . <<< "${1}" ; }
 
 if [[ -z "${__GIT_PROMPT_DIR-}" ]]; then
   SOURCE="${BASH_SOURCE[0]}"
@@ -32,25 +32,24 @@ else
   remote_url='.'
 fi
 
-gitsym=$( git symbolic-ref HEAD 2>/dev/null )
-
-#If exit status OK, we have a branch
-if [[ "${?}" == 0 ]]; then
+if gitsym=$( git symbolic-ref HEAD 2>/dev/null ); then
+  # If exit status OK, we have a branch
   # the current branch is the tail end of the symbolic reference
   branch="${gitsym##refs/heads/}"    # get the basename after "refs/heads/"
 fi
 
-gitstatus=$( git diff --name-status 2>&1 )
-
-# if the diff is fatal, exit now
-if [[ "${?}" != 0 ]]; then exit 0; fi
+if ! gitstatus=$( git diff --name-status 2>&1 ); then
+  # if the diff is fatal, exit now
+  exit 0
+fi
 
 staged_files=$( git diff --staged --name-status )
 
 num_changed=$(( $( all_lines "${gitstatus}" ) - $( count_lines "${gitstatus}" U ) ))
 num_conflicts=$( count_lines "${staged_files}" U )
 num_staged=$(( $( all_lines "${staged_files}" ) - num_conflicts ))
-num_untracked=$( git ls-files --others --exclude-standard $(git rev-parse --show-cdup) | wc -l )
+cdup=$(git rev-parse --show-cdup)
+num_untracked=$( git ls-files --others --exclude-standard "${cdup}" | wc -l )
 
 num_stashed=0
 if [[ "${__GIT_PROMPT_IGNORE_STASH}" != "1" ]]; then
@@ -94,11 +93,9 @@ else
   fi
 
   # detect if the local branch have a remote tracking branch
-  upstream=$( git rev-parse --abbrev-ref "${branch}"@{upstream} 2>&1 )
-  if [[ "${?}" == 0 ]]; then
+  if upstream=$( git rev-parse --abbrev-ref "${branch}@{upstream}" 2>&1 ); then
      # get the revision list, and count the leading "<" and ">"
-    revgit=$( git rev-list --left-right "${remote_ref}...HEAD" 2>/dev/null )
-    if [[ "${?}" == 0 ]]; then
+    if revgit=$( git rev-list --left-right "${remote_ref}...HEAD" 2>/dev/null ); then
       num_revs=$( all_lines "${revgit}" )
       num_ahead=$( count_lines "${revgit}" "^>" )
       num_behind=$(( num_revs - num_ahead ))

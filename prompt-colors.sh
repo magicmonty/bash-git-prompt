@@ -17,10 +17,6 @@ define_color_names() {
   local AttrNorm=0
   local AttrBright=1
   local AttrDim=2
-  local AttrUnder=4
-  local AttrBlink=5
-  local AttrRev=7
-  local AttrHide=8
 
   # define "BoldCOLOR", "BrightCOLOR", and "DimCOLOR" names
 
@@ -38,14 +34,14 @@ define_color_names() {
     local attrname="${1}"
     local attrcode="${2}"
     while (( x < 8 )) ; do
-      local colorname="${ColorNames[@]:$x:1}"
-      local fgcolorcode="${FgColors[@]:$x:1}"
-      local bgcolorcode="${BgColors[@]:$x:1}"
+      local colorname="${ColorNames[$x]}"
+      local fgcolorcode="${FgColors[$x]}"
+      local bgcolorcode="${BgColors[$x]}"
       longcolorname="${attrname}${colorname}"
 
       if [ -n "$ZSH_VERSION" ]; then
         # zsh
-        lowercolorname=$(echo $colorname | tr '[A-Z]' '[a-z]')
+        lowercolorname=$(printf "%s" "${colorname}" | tr '[:upper:]' '[:lower:]')
         _def_color_zsh "${longcolorname}"   "${attrcode}" "${lowercolorname}" "fg"
         _def_color_zsh "${longcolorname}Fg" "${attrcode}" "${lowercolorname}" "fg"
         _def_color_zsh "${longcolorname}Bg" "${attrcode}" "${lowercolorname}" "bg"
@@ -67,7 +63,7 @@ define_color_names() {
     else
       cv="${1}"
     fi
-    echo "\[\033[${cv}m\]"
+    printf "\\[\\033[%sm\\]" "${cv}"
   }
 
   # def_color NAME ATTRCODE COLORCODE
