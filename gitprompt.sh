@@ -219,8 +219,6 @@ function gp_format_username_repo() {
 }
 
 function git_prompt_config() {
-  # Only run once per prompt cycle (setGitPrompt sets this flag)
-  [[ "${__GIT_PROMPT_CONFIG_DONE:-0}" == "1" ]] && return
   #Checking if root to change output
   _isroot=false
   [[ "${UID}" -eq 0 ]] && _isroot=true
@@ -308,7 +306,6 @@ function git_prompt_config() {
     # __GIT_STATUS_CMD defined
   fi
   unset GIT_BRANCH
-  __GIT_PROMPT_CONFIG_DONE=1
 }
 
 function setLastCommandState() {
@@ -325,8 +322,6 @@ function update_old_git_prompt() {
 }
 
 function setGitPrompt() {
-  local __GIT_PROMPT_CONFIG_DONE=0
-
   # Single git call — reused for both the "are we in a repo" check and later use
   local repo=$(git rev-parse --show-toplevel 2> /dev/null)
 
@@ -447,9 +442,6 @@ function olderThanMinutes() {
 }
 
 function checkUpstream() {
-  local GIT_PROMPT_FETCH_TIMEOUT
-  git_prompt_config
-
   local FETCH_HEAD="${repo}/.git/FETCH_HEAD"
   # Fech repo if local is stale for more than $GIT_FETCH_TIMEOUT minutes
   if [[ ! -e "${FETCH_HEAD}" ]] || olderThanMinutes "${FETCH_HEAD}" "${GIT_PROMPT_FETCH_TIMEOUT}"
@@ -523,17 +515,10 @@ function get_branch_prefix() {
 }
 
 function updatePrompt() {
-  local LAST_COMMAND_INDICATOR
-  local PROMPT_LEADING_SPACE
-  local PROMPT_START
-  local PROMPT_END
-  local EMPTY_PROMPT
   local Blue="\[\033[0;34m\]"
   if [ -n "$ZSH_VERSION" ]; then
     Blue='%{fg[blue]%}'
   fi
-
-  git_prompt_config
 
   export __GIT_PROMPT_IGNORE_STASH="${GIT_PROMPT_IGNORE_STASH:-0}"
   export __GIT_PROMPT_SHOW_UPSTREAM="${GIT_PROMPT_SHOW_UPSTREAM:-0}"
