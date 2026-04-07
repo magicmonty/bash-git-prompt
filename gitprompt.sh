@@ -33,6 +33,9 @@ function echoc() {
 }
 
 function get_theme() {
+  # If theme file is already resolved, skip resolution (git_prompt_reset clears this)
+  [[ -n "${__GIT_PROMPT_THEME_FILE+x}" ]] && return
+
   local CUSTOM_THEME_FILE="${HOME}/.git-prompt-colors.sh"
   if [[ ! (-z "${GIT_PROMPT_THEME_FILE:+x}" ) ]]; then
     CUSTOM_THEME_FILE="${GIT_PROMPT_THEME_FILE}"
@@ -78,6 +81,7 @@ function get_theme() {
 }
 
 function git_prompt_load_colors() {
+  [[ -n "${__PROMPT_COLORS_FILE+x}" ]] && return   # already loaded
   if gp_set_file_var __PROMPT_COLORS_FILE prompt-colors.sh ; then
     # outsource the color defs
     source "${__PROMPT_COLORS_FILE}"
@@ -89,8 +93,13 @@ function git_prompt_load_colors() {
 function git_prompt_load_theme() {
   get_theme
   local DEFAULT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
+  # Only re-source if the theme file changed since last load
+  if [[ "${__GIT_PROMPT_THEME_FILE}" == "${__GIT_PROMPT_THEME_FILE_LOADED-}" ]]; then
+    return
+  fi
   source "${DEFAULT_THEME_FILE}"
   source "${__GIT_PROMPT_THEME_FILE}"
+  __GIT_PROMPT_THEME_FILE_LOADED="${__GIT_PROMPT_THEME_FILE}"
 }
 
 function git_prompt_list_themes() {
@@ -480,16 +489,31 @@ function replaceSymbols() {
 
 function createPrivateIndex {
   # Create a copy of the index to avoid conflicts with parallel git commands, e.g. git rebase.
-  local __GIT_INDEX_FILE
-  local __GIT_INDEX_PRIVATE
-  if [[ -z "${GIT_INDEX_FILE+x}" ]]; then
-    __GIT_INDEX_FILE="$(git rev-parse --git-dir)/index"
+  # Skip the copy when no parallel git operation is in progress (rebase, merge, cherry-pick, etc.)
+  # to avoid paying the cost of copying a potentially large index file on every prompt.
+  local git_dir
+  if [[ -n "${GIT_INDEX_FILE+x}" ]]; then
+    # GIT_INDEX_FILE already set externally — use it, derive git_dir from it
+    git_dir="$(dirname "${GIT_INDEX_FILE}")"
   else
-    __GIT_INDEX_FILE="${GIT_INDEX_FILE}"
+    git_dir="$(git rev-parse --git-dir 2>/dev/null)"
   fi
-  __GIT_INDEX_PRIVATE="${TMPDIR:-/tmp}/git-index-private$$"
-  command cp "${__GIT_INDEX_FILE}" "${__GIT_INDEX_PRIVATE}" 2>/dev/null
-  echo "${__GIT_INDEX_PRIVATE}"
+
+  local index_file="${GIT_INDEX_FILE:-${git_dir}/index}"
+
+  local needs_copy=0
+  [[ -d "${git_dir}/rebase-merge" ]]     && needs_copy=1
+  [[ -d "${git_dir}/rebase-apply" ]]     && needs_copy=1
+  [[ -f "${git_dir}/MERGE_HEAD" ]]       && needs_copy=1
+  [[ -f "${git_dir}/CHERRY_PICK_HEAD" ]] && needs_copy=1
+
+  if [[ "${needs_copy}" == 1 ]]; then
+    local private="${TMPDIR:-/tmp}/git-index-private$$"
+    command cp "${index_file}" "${private}" 2>/dev/null
+    echo "${private}"
+  else
+    echo "${index_file}"
+  fi
 }
 
 function get_branch_prefix() {
@@ -631,7 +655,9 @@ function updatePrompt() {
   fi
 
   PS1="${NEW_PROMPT//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}${ResetColor}}"
-  command rm "${GIT_INDEX_PRIVATE}" 2>/dev/null
+  # Only remove if it was a temporary copy (path contains "git-index-private")
+  [[ "${GIT_INDEX_PRIVATE}" == *git-index-private* ]] && \
+    command rm "${GIT_INDEX_PRIVATE}" 2>/dev/null
 }
 
 # Helper function that returns virtual env information to be set in prompt
