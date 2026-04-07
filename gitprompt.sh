@@ -26,7 +26,10 @@ function set_git_prompt_dir() {
 }
 
 function echoc() {
-  echo -e "${1}${2}${ResetColor}" | sed 's/\\\]//g'  | sed 's/\\\[//g'
+  local out="${1}${2}${ResetColor}"
+  out="${out//\\\]/}"
+  out="${out//\\\[/}"
+  echo -e "${out}"
 }
 
 function get_theme() {
@@ -216,6 +219,8 @@ function gp_format_username_repo() {
 }
 
 function git_prompt_config() {
+  # Only run once per prompt cycle (setGitPrompt sets this flag)
+  [[ "${__GIT_PROMPT_CONFIG_DONE:-0}" == "1" ]] && return
   #Checking if root to change output
   _isroot=false
   [[ "${UID}" -eq 0 ]] && _isroot=true
@@ -303,19 +308,12 @@ function git_prompt_config() {
     # __GIT_STATUS_CMD defined
   fi
   unset GIT_BRANCH
+  __GIT_PROMPT_CONFIG_DONE=1
 }
 
 function setLastCommandState() {
   GIT_PROMPT_LAST_COMMAND_STATE="${?}"
   return ${GIT_PROMPT_LAST_COMMAND_STATE}
-}
-
-function we_are_on_repo() {
-  if [[ -e "$(git rev-parse --git-dir 2> /dev/null)" ]]; then
-    echo 1
-  else
-    echo 0
-  fi
 }
 
 function update_old_git_prompt() {
@@ -324,14 +322,18 @@ function update_old_git_prompt() {
     OLD_PROMPT_END="${PROMPT_END}"
     OLD_GITPROMPT="${PS1}"
   fi
-
-  GIT_PROMPT_OLD_DIR_WAS_GIT=$(we_are_on_repo)
 }
 
 function setGitPrompt() {
-  update_old_git_prompt
+  local __GIT_PROMPT_CONFIG_DONE=0
 
+  # Single git call — reused for both the "are we in a repo" check and later use
   local repo=$(git rev-parse --show-toplevel 2> /dev/null)
+
+  # update_old_git_prompt reads GIT_PROMPT_OLD_DIR_WAS_GIT (previous cycle's value)
+  # to decide whether to save PS1, so call it before updating the flag.
+  update_old_git_prompt
+  GIT_PROMPT_OLD_DIR_WAS_GIT=$([[ -e "${repo}" ]] && echo 1 || echo 0)
   if [[ ! -e "${repo}" ]] && [[ "${GIT_PROMPT_ONLY_IN_REPO-}" = 1 ]]; then
     # we do not permit bash-git-prompt outside git repos, so nothing to do
     PROMPT_START=${OLD_PROMPT_START}

@@ -120,9 +120,7 @@ num_stashed=0
 if [[ "${__GIT_PROMPT_IGNORE_STASH:-0}" != "1" ]]; then
   stash_file="${git_dir}/logs/refs/stash"
   if [[ -e "${stash_file}" ]]; then
-    while IFS='' read -r wcline || [[ -n "${wcline}" ]]; do
-      ((num_stashed++))
-    done < "${stash_file}"
+    num_stashed=$(wc -l < "${stash_file}")
   fi
 fi
 
@@ -186,7 +184,8 @@ if [[ -z "${upstream:+x}" ]] ; then
   upstream='^'
 fi
 
-UPSTREAM_TRIMMED=$(echo $upstream | xargs)
+UPSTREAM_TRIMMED="${upstream#"${upstream%%[![:space:]]*}"}"
+UPSTREAM_TRIMMED="${UPSTREAM_TRIMMED%"${UPSTREAM_TRIMMED##*[![:space:]]}"}"
 
 printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
   "${branch}${state}" \
