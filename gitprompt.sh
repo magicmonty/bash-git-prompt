@@ -451,11 +451,21 @@ function olderThanMinutes() {
 }
 
 function checkUpstream() {
-  local FETCH_HEAD="${repo}/.git/FETCH_HEAD"
-  # Fech repo if local is stale for more than $GIT_FETCH_TIMEOUT minutes
+  # In a worktree, .git is a file rather than a directory; FETCH_HEAD lives in
+  # the common git dir, not the worktree-local one. Avoid a subprocess for the
+  # normal case by only calling git-rev-parse when .git is a file.
+  local git_common_dir
+  if [[ -f "${repo}/.git" ]]; then
+    git_common_dir="$(git rev-parse --git-common-dir 2>/dev/null)"
+  else
+    git_common_dir="${repo}/.git"
+  fi
+  local FETCH_HEAD="${git_common_dir}/FETCH_HEAD"
+
+  # Fetch repo if local is stale for more than $GIT_FETCH_TIMEOUT minutes
   if [[ ! -e "${FETCH_HEAD}" ]] || olderThanMinutes "${FETCH_HEAD}" "${GIT_PROMPT_FETCH_TIMEOUT}"
   then
-    if [[ -n $(git remote show) ]]; then
+    if [[ -n $(git remote) ]]; then
       (
         if [ -n "$ZSH_VERSION" ]; then
           async_run_zsh "GIT_TERMINAL_PROMPT=0 git fetch --quiet"

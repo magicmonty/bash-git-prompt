@@ -114,7 +114,10 @@ while IFS='' read -r line || [[ -n "${line}" ]]; do
     esac
     status="${status:0:(${#status}-1)}"
   done
-done <<< "${gitstatus}"
+# Use process substitution instead of herestring to work around a bash 5.3+
+# regression where herestrings >= 512 bytes cause a deadlock at the PIPE_BUF
+# boundary.  See: https://lists.gnu.org/archive/html/bug-bash/2024-07/msg00000.html
+done < <(printf '%s\n' "${gitstatus}")
 
 num_stashed=0
 if [[ "${__GIT_PROMPT_IGNORE_STASH:-0}" != "1" ]]; then
