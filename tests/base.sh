@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 function run_test() {
   test_function="$1"

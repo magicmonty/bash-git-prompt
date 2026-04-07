@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1091
 
 SCRIPT_DIR=$(dirname -- "$( readlink -f -- "$0"; )";)
 source "$SCRIPT_DIR/base.sh"
@@ -48,8 +49,8 @@ function test_createprivateindex_copy_path() {
     export TMPDIR="$repo/.tmp"
     mkdir -p "$TMPDIR"
 
-    cd "$repo"
-    GIT_PROMPT_FETCH_REMOTE_STATUS=0
+    cd "$repo" || return 1
+    export GIT_PROMPT_FETCH_REMOTE_STATUS=0
     source "$SCRIPT_DIR/../gitprompt.sh" 2>/dev/null
 
     # ── outside rebase: should return the real index, no copy ──────────────
@@ -104,8 +105,8 @@ function test_prompt_shows_rebase_state() {
     export TMPDIR="$repo/.tmp"
     mkdir -p "$TMPDIR"
 
-    cd "$repo"
-    GIT_PROMPT_FETCH_REMOTE_STATUS=0
+    cd "$repo" || return 1
+    export GIT_PROMPT_FETCH_REMOTE_STATUS=0
     source "$SCRIPT_DIR/../gitprompt.sh" 2>/dev/null
 
     _start_fake_rebase "$git_dir"
@@ -153,8 +154,8 @@ function test_prompt_recovers_after_rebase() {
     export TMPDIR="$repo/.tmp"
     mkdir -p "$TMPDIR"
 
-    cd "$repo"
-    GIT_PROMPT_FETCH_REMOTE_STATUS=0
+    cd "$repo" || return 1
+    export GIT_PROMPT_FETCH_REMOTE_STATUS=0
     source "$SCRIPT_DIR/../gitprompt.sh" 2>/dev/null
 
     # Run once during rebase

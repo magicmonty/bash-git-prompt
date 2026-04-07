@@ -53,11 +53,10 @@ _color_delta() {
 
 MODE="last2"
 RUN_A="" RUN_B=""
-SHOW_ALL=0
 
 for arg in "$@"; do
   case "${arg}" in
-    --all)  SHOW_ALL=1; MODE="all" ;;
+    --all)  MODE="all" ;;
     --list) MODE="list" ;;
     [0-9]*) [[ -z "${RUN_A}" ]] && RUN_A="${arg}" || RUN_B="${arg}"; MODE="pick" ;;
   esac
@@ -68,7 +67,7 @@ done
 declare -a run_timestamps=()
 declare -A run_sha=()
 
-while IFS=$'\t' read -r ts sha iters label min avg max; do
+while IFS=$'\t' read -r ts sha _ label _ _ _; do
   [[ "${ts}" == "timestamp" ]] && continue  # skip header
   if [[ -z "${run_sha["${ts}"]+x}" ]]; then
     run_timestamps+=("${ts}")
@@ -108,7 +107,7 @@ if [[ "${MODE}" == "all" ]]; then
   # Collect all labels in order
   declare -a all_labels=()
   declare -A seen_labels=()
-  while IFS=$'\t' read -r ts sha iters label min avg max; do
+  while IFS=$'\t' read -r ts _ _ label _ _ _; do
     [[ "${ts}" == "timestamp" ]] && continue
     if [[ -z "${seen_labels["${label}"]+x}" ]]; then
       all_labels+=("${label}")
@@ -135,7 +134,7 @@ if [[ "${MODE}" == "all" ]]; then
     for ts in "${run_timestamps[@]}"; do
       # Look up this label/timestamp combo
       avg_val=""
-      while IFS=$'\t' read -r r_ts r_sha r_iters r_label r_min r_avg r_max; do
+      while IFS=$'\t' read -r r_ts _ _ r_label _ r_avg _; do
         [[ "${r_ts}" == "timestamp" ]] && continue
         if [[ "${r_ts}" == "${ts}" && "${r_label}" == "${label}" ]]; then
           avg_val="${r_avg}"
@@ -185,22 +184,19 @@ sha_b="${run_sha["${ts_b}"]}"
 
 # ── load data for both runs ────────────────────────────────────────────────────
 
-declare -A data_a_min data_a_avg data_a_max
-declare -A data_b_min data_b_avg data_b_max
+declare -A data_a_avg
+declare -A data_b_min data_b_avg
 declare -a ordered_labels=()
 declare -A seen_label=()
 
-while IFS=$'\t' read -r ts sha iters label min avg max; do
+while IFS=$'\t' read -r ts _ _ label min avg _; do
   [[ "${ts}" == "timestamp" ]] && continue
   if [[ "${ts}" == "${ts_a}" ]]; then
-    data_a_min["${label}"]="${min}"
     data_a_avg["${label}"]="${avg}"
-    data_a_max["${label}"]="${max}"
   fi
   if [[ "${ts}" == "${ts_b}" ]]; then
     data_b_min["${label}"]="${min}"
     data_b_avg["${label}"]="${avg}"
-    data_b_max["${label}"]="${max}"
     if [[ -z "${seen_label["${label}"]+x}" ]]; then
       ordered_labels+=("${label}")
       seen_label["${label}"]=1

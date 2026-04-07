@@ -86,10 +86,11 @@ git_prompt_color_samples() {
 
   local x=0
   while (( x < 8 )) ; do
-    showColor "${ColorNames[@]:$x:1}"
-    showColor "Dim${ColorNames[@]:$x:1}"
-    showColor "Bold${ColorNames[@]:$x:1}"
-    showColor "Bright${ColorNames[@]:$x:1}"
+    local color_name="${ColorNames[$x]}"
+    showColor "${color_name}"
+    showColor "Dim${color_name}"
+    showColor "Bold${color_name}"
+    showColor "Bright${color_name}"
     (( x++ ))
   done
 }

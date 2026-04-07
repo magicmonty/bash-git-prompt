@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1090,SC1091
 # benchmark.sh -- measure bash-git-prompt prompt latency
 #
 # Usage:
@@ -131,7 +132,7 @@ echo ""
 # ── section 4: internal functions ─────────────────────────────────────────────
 
 echo "── 4. Internal functions (sourced) ─────────────────────────────────────"
-GIT_PROMPT_FETCH_REMOTE_STATUS=0
+export GIT_PROMPT_FETCH_REMOTE_STATUS=0
 # shellcheck disable=SC1090
 source "${REPO_DIR}/gitprompt.sh" 2>/dev/null
 
