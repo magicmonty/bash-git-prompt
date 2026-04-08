@@ -7,8 +7,8 @@ fail_count=0
 for testfile in "$SCRIPT_DIR"/test-*.sh
 do
   echo ""
-  echo "#########  $(basename $testfile) ################"
-  $testfile || ((fail_count++))
+  echo "#########  $(basename "$testfile") ################"
+  "$testfile" || ((fail_count++))
 done
 
 exit $fail_count

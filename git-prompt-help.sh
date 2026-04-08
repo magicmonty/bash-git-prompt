@@ -3,7 +3,9 @@
 # being displayed.
 
 git_prompt_help() {
+  # shellcheck disable=SC1091
   source "${__GIT_PROMPT_DIR}/prompt-colors.sh"
+  # shellcheck disable=SC1091
   source "${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
 
  cat <<EOF | sed 's/\\\[\\033//g' | sed 's/\\\]//g'
@@ -37,6 +39,7 @@ help_git_prompt() { git_prompt_help ; }
 git_prompt_examples() {
 
   format_branch() {
+    # shellcheck disable=SC2254
     case "$1" in
       ${GIT_PROMPT_MASTER_BRANCHES})
         echo "${GIT_PROMPT_MASTER_BRANCH}$1${ResetColor}"
@@ -80,16 +83,18 @@ EOF
 git_prompt_color_samples() {
 
   showColor() {
-    local color=$(eval echo "\${${1}}")
+    local color
+    color=$(eval echo "\${${1}}")
     echo -e "${color}${1}${ResetColor}" | sed 's/\\\]//g'  | sed 's/\\\[//g'
   }
 
   local x=0
   while (( x < 8 )) ; do
-    showColor "${ColorNames[@]:$x:1}"
-    showColor "Dim${ColorNames[@]:$x:1}"
-    showColor "Bold${ColorNames[@]:$x:1}"
-    showColor "Bright${ColorNames[@]:$x:1}"
+    local color_name="${ColorNames[$x]}"
+    showColor "${color_name}"
+    showColor "Dim${color_name}"
+    showColor "Bold${color_name}"
+    showColor "Bright${color_name}"
     (( x++ ))
   done
 }

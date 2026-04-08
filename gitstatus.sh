@@ -114,15 +114,16 @@ while IFS='' read -r line || [[ -n "${line}" ]]; do
     esac
     status="${status:0:(${#status}-1)}"
   done
-done <<< "${gitstatus}"
+# Use process substitution instead of herestring to work around a bash 5.3+
+# regression where herestrings >= 512 bytes cause a deadlock at the PIPE_BUF
+# boundary.  See: https://lists.gnu.org/archive/html/bug-bash/2024-07/msg00000.html
+done < <(printf '%s\n' "${gitstatus}")
 
 num_stashed=0
 if [[ "${__GIT_PROMPT_IGNORE_STASH:-0}" != "1" ]]; then
   stash_file="${git_dir}/logs/refs/stash"
   if [[ -e "${stash_file}" ]]; then
-    while IFS='' read -r wcline || [[ -n "${wcline}" ]]; do
-      ((num_stashed++))
-    done < "${stash_file}"
+    num_stashed=$(wc -l < "${stash_file}")
   fi
 fi
 
@@ -132,7 +133,7 @@ if (( num_changed == 0 && num_staged == 0 && num_untracked == 0 && num_stashed =
 fi
 
 IFS="^" read -ra branch_fields <<< "${branch_line/\#\# }"
-branch="${branch_fields[@]:0:1}"
+branch="${branch_fields[0]}"
 remote=""
 upstream=""
 
@@ -140,12 +141,12 @@ detached_head=0
 
 if [[ "${branch}" == *"Initial commit on"* ]]; then
   IFS=" " read -ra fields <<< "${branch}"
-  branch="${fields[@]:3:1}"
+  branch="${fields[3]}"
   remote="_NO_REMOTE_TRACKING_"
   remote_url='.'
 elif [[ "${branch}" == *"No commits yet on"* ]]; then
   IFS=" " read -ra fields <<< "${branch}"
-  branch="${fields[@]:4:1}"
+  branch="${fields[4]}"
   remote="_NO_REMOTE_TRACKING_"
   remote_url='.'
 elif [[ "${branch}" == *"no branch"* ]]; then
@@ -163,7 +164,7 @@ else
     remote_url='.'
   else
     IFS="[,]" read -ra remote_fields <<< "${branch_fields[1]}"
-    upstream="${remote_fields[@]:0:1}"
+    upstream="${remote_fields[0]}"
     for remote_field in "${remote_fields[@]}"; do
       if [[ "${remote_field}" == "ahead "* ]]; then
         num_ahead="${remote_field:6}"
@@ -186,7 +187,8 @@ if [[ -z "${upstream:+x}" ]] ; then
   upstream='^'
 fi
 
-UPSTREAM_TRIMMED=$(echo $upstream | xargs)
+UPSTREAM_TRIMMED="${upstream#"${upstream%%[![:space:]]*}"}"
+UPSTREAM_TRIMMED="${UPSTREAM_TRIMMED%"${UPSTREAM_TRIMMED##*[![:space:]]}"}"
 
 printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
   "${branch}${state}" \

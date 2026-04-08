@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1091
 
 SCRIPT_DIR=$(dirname -- "$( readlink -f -- "$0"; )";)
 source "$SCRIPT_DIR/base.sh"
@@ -6,12 +7,12 @@ source "$SCRIPT_DIR/base.sh"
 REPO_ROOT="$SCRIPT_DIR/.."
 
 function test_original_prompt_is_restored() {
-  GIT_PROMPT_ONLY_IN_REPO=1
+  export GIT_PROMPT_ONLY_IN_REPO=1
 
   PS1="$"
 
   # Navigate outside the git repo
-  cd "$REPO_ROOT/.."
+  cd "$REPO_ROOT/.." || return 1
   source "$SCRIPT_DIR/../gitprompt.sh"
   run_prompt_command
 
@@ -21,7 +22,7 @@ function test_original_prompt_is_restored() {
   fi
 
   # Navigate back into the repo
-  cd "$REPO_ROOT"
+  cd "$REPO_ROOT" || return 1
   run_prompt_command
   if [[ "$PS1" == "$" ]]; then
     echo "PS1: $PS1 == \$"
@@ -29,7 +30,7 @@ function test_original_prompt_is_restored() {
   fi
 
   # And navigate again outside the repo
-  cd "$REPO_ROOT/.."
+  cd "$REPO_ROOT/.." || return 1
   run_prompt_command
   if [ "$PS1" != "$" ]; then
     echo "PS1: $PS1 != \$"
