@@ -6,7 +6,7 @@
 function async_run() {
   {
     eval "$*" &> /dev/null
-  }&
+  } 3>&- 4>&- 5>&- 6>&- 7>&- 8>&- 9>&- &
 }
 
 function async_run_zsh() {
@@ -14,7 +14,7 @@ function async_run_zsh() {
     eval "$*" &> /dev/null
 
   # `true` is used here to allow bash to parse the script, as the zsh `&!` syntax will otherwise stop parsing prior to any execution.
-  }&! true
+  } 3>&- 4>&- 5>&- 6>&- 7>&- 8>&- 9>&- &! true
 }
 
 
@@ -583,7 +583,7 @@ function updatePrompt() {
   export GIT_INDEX_FILE="${GIT_INDEX_PRIVATE}"
 
   local -a git_status_fields
-  while IFS=$'\n' read -r line; do git_status_fields+=("${line}"); done < <("${__GIT_STATUS_CMD}" 2>/dev/null)
+  while IFS=$'\n' read -r line; do git_status_fields+=("${line}"); done < <("${__GIT_STATUS_CMD}" 3>&- 4>&- 5>&- 6>&- 7>&- 8>&- 9>&- 2>/dev/null)
 
   export GIT_BRANCH
   GIT_BRANCH=$(replaceSymbols "${git_status_fields[0]}")
