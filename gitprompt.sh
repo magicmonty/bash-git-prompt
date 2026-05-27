@@ -363,7 +363,7 @@ function setGitPrompt() {
 
   git_prompt_config
 
-  if [[ ! -e "${repo}" ]] || [[ "${GIT_PROMPT_DISABLE-}" = 1 ]]; then
+  if [[ ! -e "${repo}" ]] || [[ "${GIT_PROMPT_DISABLE-}" = 1 ]] || [[ "${COPILOT_AGENT-}" = 1 ]]; then
     PS1="${EMPTY_PROMPT}"
     return
   fi
