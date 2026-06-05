@@ -34,9 +34,16 @@ define_color_names() {
     local attrname="${1}"
     local attrcode="${2}"
     while (( x < 8 )) ; do
-      local colorname="${ColorNames[$x]}"
-      local fgcolorcode="${FgColors[$x]}"
-      local bgcolorcode="${BgColors[$x]}"
+      # Use ${array[@]:offset:length} slice (0-based offset in both bash and
+      # zsh) rather than direct ${array[x]} indexing, which is 0-based in bash
+      # but 1-based in zsh. shellcheck flags the slice-into-scalar (SC2124),
+      # but it is intentional: we want exactly one element.
+      # shellcheck disable=SC2124
+      local colorname="${ColorNames[@]:$x:1}"
+      # shellcheck disable=SC2124
+      local fgcolorcode="${FgColors[@]:$x:1}"
+      # shellcheck disable=SC2124
+      local bgcolorcode="${BgColors[@]:$x:1}"
       longcolorname="${attrname}${colorname}"
 
       if [ -n "$ZSH_VERSION" ]; then
