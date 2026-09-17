@@ -585,41 +585,48 @@ function updatePrompt() {
   local -a git_status_fields
   while IFS=$'\n' read -r line; do git_status_fields+=("${line}"); done < <("${__GIT_STATUS_CMD}" 3>&- 4>&- 5>&- 6>&- 7>&- 8>&- 9>&- 2>/dev/null)
 
+  # Index git_status_fields with the ${array[@]:offset:length} slice form: its
+  # offset is 0-based in both bash and zsh, whereas direct ${array[N]} indexing
+  # is 0-based in bash but 1-based in zsh, which breaks the prompt under zsh.
+  # The slice-into-scalar triggers shellcheck SC2124, but is intentional here.
   export GIT_BRANCH
-  GIT_BRANCH=$(replaceSymbols "${git_status_fields[0]}")
+  GIT_BRANCH=$(replaceSymbols "${git_status_fields[@]:0:1}")
   if [[ $__GIT_PROMPT_SHOW_TRACKING != "0" ]]; then
     local GIT_REMOTE
-    GIT_REMOTE="$(replaceSymbols "${git_status_fields[1]}")"
+    GIT_REMOTE="$(replaceSymbols "${git_status_fields[@]:1:1}")"
     if [[ "." == "${GIT_REMOTE}" ]]; then
       unset GIT_REMOTE
     fi
   fi
   local GIT_REMOTE_USERNAME_REPO
-  GIT_REMOTE_USERNAME_REPO="$(replaceSymbols "${git_status_fields[2]}")"
+  GIT_REMOTE_USERNAME_REPO="$(replaceSymbols "${git_status_fields[@]:2:1}")"
   if [[ "." == "${GIT_REMOTE_USERNAME_REPO}" ]]; then
     unset GIT_REMOTE_USERNAME_REPO
   fi
 
   local GIT_FORMATTED_UPSTREAM
-  local GIT_UPSTREAM_PRIVATE="${git_status_fields[3]}"
+  # shellcheck disable=SC2124
+  local GIT_UPSTREAM_PRIVATE="${git_status_fields[@]:3:1}"
   if [[ "${__GIT_PROMPT_SHOW_UPSTREAM:-0}" != "1" || "^" == "${GIT_UPSTREAM_PRIVATE}" ]]; then
     unset GIT_FORMATTED_UPSTREAM
   else
     GIT_FORMATTED_UPSTREAM="${GIT_PROMPT_UPSTREAM//_UPSTREAM_/${GIT_UPSTREAM_PRIVATE}}"
   fi
 
-  # shellcheck disable=SC2034
-  local GIT_STAGED="${git_status_fields[4]}"
-  # shellcheck disable=SC2034
-  local GIT_CONFLICTS="${git_status_fields[5]}"
-  # shellcheck disable=SC2034
-  local GIT_CHANGED="${git_status_fields[6]}"
-  # shellcheck disable=SC2034
-  local GIT_UNTRACKED="${git_status_fields[7]}"
-  # shellcheck disable=SC2034
-  local GIT_STASHED="${git_status_fields[8]}"
-  local GIT_CLEAN="${git_status_fields[9]}"
-  local GIT_DETACHED_HEAD="${git_status_fields[10]}"
+  # shellcheck disable=SC2034,SC2124
+  local GIT_STAGED="${git_status_fields[@]:4:1}"
+  # shellcheck disable=SC2034,SC2124
+  local GIT_CONFLICTS="${git_status_fields[@]:5:1}"
+  # shellcheck disable=SC2034,SC2124
+  local GIT_CHANGED="${git_status_fields[@]:6:1}"
+  # shellcheck disable=SC2034,SC2124
+  local GIT_UNTRACKED="${git_status_fields[@]:7:1}"
+  # shellcheck disable=SC2034,SC2124
+  local GIT_STASHED="${git_status_fields[@]:8:1}"
+  # shellcheck disable=SC2124
+  local GIT_CLEAN="${git_status_fields[@]:9:1}"
+  # shellcheck disable=SC2124
+  local GIT_DETACHED_HEAD="${git_status_fields[@]:10:1}"
 
   local NEW_PROMPT="${EMPTY_PROMPT}"
   if [[ "${#git_status_fields[@]}" -gt 0 ]]; then
