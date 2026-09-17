@@ -121,7 +121,7 @@ done < <(printf '%s\n' "${gitstatus}")
 
 num_stashed=0
 if [[ "${__GIT_PROMPT_IGNORE_STASH:-0}" != "1" ]]; then
-  stash_file="${git_dir}/logs/refs/stash"
+  stash_file="$(git rev-parse --git-path logs/refs/stash)"
   if [[ -e "${stash_file}" ]]; then
     num_stashed=$(wc -l < "${stash_file}")
   fi
