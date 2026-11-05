@@ -49,7 +49,7 @@ num_changed=$(( $( all_lines "${gitstatus}" ) - $( count_lines "${gitstatus}" U 
 num_conflicts=$( count_lines "${staged_files}" U )
 num_staged=$(( $( all_lines "${staged_files}" ) - num_conflicts ))
 cdup=$(git rev-parse --show-cdup)
-num_untracked=$( git ls-files --others --exclude-standard "${cdup}" | wc -l )
+num_untracked=$(( $( git ls-files --others --exclude-standard "${cdup}" | wc -l ) ))
 
 num_stashed=0
 if [[ "${__GIT_PROMPT_IGNORE_STASH}" != "1" ]]; then
