@@ -531,8 +531,11 @@ function createPrivateIndex {
   [[ -f "${git_dir}/CHERRY_PICK_HEAD" ]] && needs_copy=1
 
   if [[ "${needs_copy}" == 1 ]]; then
-    local private="${TMPDIR:-/tmp}/git-index-private$$"
+    local private="$(mktemp "${TMPDIR:-/tmp}/git-index-private$$.XXXXXX")"
     command cp "${index_file}" "${private}" 2>/dev/null
+    if [ $? -ne 0 ]; then
+      return
+    fi
     echo "${private}"
   else
     echo "${index_file}"
@@ -580,6 +583,9 @@ function updatePrompt() {
   GIT_INDEX_PRIVATE="$(createPrivateIndex)"
   #important to define GIT_INDEX_FILE as local: This way it only affects this function (and below) - even with the export afterwards
   local GIT_INDEX_FILE
+  if [ -z "$GIT_INDEX_PRIVATE" ]; then
+    return
+  fi
   export GIT_INDEX_FILE="${GIT_INDEX_PRIVATE}"
 
   local -a git_status_fields
